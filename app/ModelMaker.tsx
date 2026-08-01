@@ -121,10 +121,11 @@ function Viewport({ cubes, selected, onSelect }: { cubes: Cube[]; selected: stri
     e.currentTarget.setPointerCapture(e.pointerId);
   };
   const pointerMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
-    if (!drag.current) return;
-    const dx=e.clientX-drag.current.x, dy=e.clientY-drag.current.y;
-    if (Math.abs(dx)+Math.abs(dy)>3) drag.current.moved=true;
-    setView((v)=>({ ...v, yaw: drag.current!.yaw + dx*.008, pitch: Math.max(-1.1,Math.min(1.1,drag.current!.pitch+dy*.006)) }));
+    const activeDrag = drag.current;
+    if (!activeDrag) return;
+    const dx=e.clientX-activeDrag.x, dy=e.clientY-activeDrag.y;
+    if (Math.abs(dx)+Math.abs(dy)>3) activeDrag.moved=true;
+    setView((v)=>({ ...v, yaw: activeDrag.yaw + dx*.008, pitch: Math.max(-1.1,Math.min(1.1,activeDrag.pitch+dy*.006)) }));
   };
   const pointerUp = (e: ReactPointerEvent<HTMLCanvasElement>) => {
     if (drag.current && !drag.current.moved) {
@@ -134,7 +135,7 @@ function Viewport({ cubes, selected, onSelect }: { cubes: Cube[]; selected: stri
     }
     drag.current=null;
   };
-  return <canvas ref={canvas} className="viewport" aria-label="Interactive 3D model viewport" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onWheel={(e)=>setView(v=>({...v,zoom:Math.max(8,Math.min(34,v.zoom-e.deltaY*.015))}))} />;
+  return <canvas ref={canvas} className="viewport" aria-label="Interactive 3D model viewport" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>{drag.current=null}} onWheel={(e)=>setView(v=>({...v,zoom:Math.max(8,Math.min(34,v.zoom-e.deltaY*.015))}))} />;
 }
 
 export default function ModelMaker() {
