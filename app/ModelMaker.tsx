@@ -4,7 +4,8 @@ import { ChangeEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, use
 
 type Vec3 = [number, number, number];
 type Cube = { id: string; name: string; from: Vec3; to: Vec3; rotation: Vec3; color: string; material?: string };
-type Project = { id: string; name: string; description: string; cubes: Cube[]; source: "codex" | "local"; revision: number };
+type ModelKind = "item" | "block" | "furniture" | "mob";
+type Project = { id: string; name: string; description: string; cubes: Cube[]; source: "codex" | "local"; revision: number; kind?: ModelKind; namespace?: string; baseItem?: string; baseEntity?: string };
 
 const COLORS = ["#78c84f", "#293239", "#2bc8d3", "#949da1", "#d5a642", "#bd5a4d", "#725392"];
 const cube = (id: string, name: string, from: Vec3, to: Vec3, color: string, material = "painted metal"): Cube => ({ id, name, from, to, rotation: [0,0,0], color, material });
@@ -12,6 +13,7 @@ const cube = (id: string, name: string, from: Vec3, to: Vec3, color: string, mat
 const atm: Project = {
   id: "codex_atm_01", name: "Weathered ATM", source: "codex", revision: 2,
   description: "A detailed street ATM with screen, keypad, card reader, receipt and cash slots.",
+  kind: "furniture", namespace: "blocksmith", baseItem: "minecraft:paper",
   cubes: [
     cube("atm_body","Main cabinet",[3,0,5],[13,16,12],"#293239"),
     cube("atm_rear","Rear housing",[4,1,11.5],[12,15,13],"#20272c"),
@@ -38,6 +40,7 @@ const atm: Project = {
 const totem: Project = {
   id:"codex_totem_01", name:"Mossy Totem", source:"codex", revision:1,
   description:"The original small block model, kept as a second library example.",
+  kind:"block", namespace:"blocksmith", baseItem:"minecraft:paper",
   cubes:[
     cube("base","Stone base",[3,0,3],[13,4,13],"#7e8b82","stone"),
     cube("body","Totem body",[5,4,5],[11,15,11],"#a36c3f","wood"),
@@ -48,15 +51,35 @@ const totem: Project = {
 const BUILTINS = [atm, totem];
 const clone = <T,>(value:T):T => JSON.parse(JSON.stringify(value));
 const uid = (prefix="cube") => `${prefix}_${Math.random().toString(36).slice(2,9)}`;
+const slug = (value:string) => value.toLowerCase().trim().replace(/[^a-z0-9_.-]+/g,"_").replace(/^_+|_+$/g,"")||"model";
+const modelKind = (project:Project):ModelKind => project.kind || (project.id.includes("atm")?"furniture":"block");
+const namespace = (project:Project) => slug(project.namespace||"blocksmith");
+const textBytes = (value:string) => new TextEncoder().encode(value);
+const joinBytes = (...arrays:Uint8Array[]) => {const out=new Uint8Array(arrays.reduce((n,a)=>n+a.length,0));let at=0;arrays.forEach(a=>{out.set(a,at);at+=a.length});return out};
+const le = (value:number,size:number) => {const out=new Uint8Array(size);for(let i=0;i<size;i++)out[i]=(value>>>(i*8))&255;return out};
+const be = (value:number) => new Uint8Array([(value>>>24)&255,(value>>>16)&255,(value>>>8)&255,value&255]);
+const crcTable=Array.from({length:256},(_,n)=>{let c=n;for(let k=0;k<8;k++)c=(c&1)?0xedb88320^(c>>>1):c>>>1;return c>>>0});
+const crc32=(data:Uint8Array)=>{let c=0xffffffff;for(const b of data)c=crcTable[(c^b)&255]^(c>>>8);return(c^0xffffffff)>>>0};
+const pngChunk=(name:string,data:Uint8Array)=>joinBytes(be(data.length),textBytes(name),data,be(crc32(joinBytes(textBytes(name),data))));
+
+async function proceduralPng(part:Cube){
+  const width=16,height=16,raw=new Uint8Array(height*(1+width*4)),hex=part.color.replace("#","").padEnd(6,"0"),base=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16)),seed=[...`${part.id}:${part.material}`].reduce((n,ch)=>(n*31+ch.charCodeAt(0))>>>0,7),material=(part.material||"").toLowerCase();
+  for(let y=0;y<height;y++){raw[y*(width*4+1)]=0;for(let x=0;x<width;x++){const wave=Math.sin((seed+x*37+y*101)*12.9898)*43758.5453,n=wave-Math.floor(wave);let shade=.88+(n-.5)*.18;if(material.includes("metal")&&n>.88)shade+=.22;if(material.includes("stone")&&n<.22)shade-=.15;if(material.includes("wood")&&x%4===0)shade+=.12;if(material.includes("moss")&&n>.64)shade+=.18;if(material.includes("emissive")||material.includes("light"))shade=1.15+(n>.8?.15:0);const at=y*(width*4+1)+1+x*4;raw[at]=Math.min(255,Math.max(0,Math.round(base[0]*shade)));raw[at+1]=Math.min(255,Math.max(0,Math.round(base[1]*shade)));raw[at+2]=Math.min(255,Math.max(0,Math.round(base[2]*shade)));raw[at+3]=255}}
+  const stream=new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate")),compressed=new Uint8Array(await new Response(stream).arrayBuffer()),ihdr=joinBytes(be(width),be(height),new Uint8Array([8,6,0,0,0]));
+  return joinBytes(new Uint8Array([137,80,78,71,13,10,26,10]),pngChunk("IHDR",ihdr),pngChunk("IDAT",compressed),pngChunk("IEND",new Uint8Array()));
+}
+
+function makeZip(files:{name:string;data:Uint8Array}[]){let offset=0;const locals:Uint8Array[]=[],centrals:Uint8Array[]=[];for(const file of files){const name=textBytes(file.name),crc=crc32(file.data),local=joinBytes(le(0x04034b50,4),le(20,2),le(0,2),le(0,2),le(0,2),le(0,2),le(crc,4),le(file.data.length,4),le(file.data.length,4),le(name.length,2),le(0,2),name,file.data);locals.push(local);centrals.push(joinBytes(le(0x02014b50,4),le(20,2),le(20,2),le(0,2),le(0,2),le(0,2),le(0,2),le(crc,4),le(file.data.length,4),le(file.data.length,4),le(name.length,2),le(0,2),le(0,2),le(0,2),le(0,2),le(0,4),le(offset,4),name));offset+=local.length}const central=joinBytes(...centrals);return joinBytes(...locals,central,le(0x06054b50,4),le(0,2),le(0,2),le(files.length,2),le(files.length,2),le(central.length,4),le(offset,4),le(0,2))}
 
 function minecraftJson(project: Project) {
+  const ns=namespace(project),id=slug(project.name);
   return {
     credit: "Designed with Codex in Blocksmith",
-    texture_size: [64,64],
-    textures: { all: `${project.name.toLowerCase().replace(/\W+/g,"_")}:block/texture` },
-    elements: project.cubes.map((part)=>({ name:part.name, from:part.from, to:part.to,
+    texture_size: [16,16],
+    textures: Object.fromEntries(project.cubes.map((part,i)=>[`p${i}`,`${ns}:block/${id}/${slug(part.name)}_${i}`])),
+    elements: project.cubes.map((part,index)=>({ name:part.name, from:part.from, to:part.to,
       ...(part.rotation.some(Boolean)?{rotation:{origin:part.from.map((v,i)=>(v+part.to[i])/2),axis:"y",angle:part.rotation[1]}}:{}),
-      faces:Object.fromEntries(["north","east","south","west","up","down"].map(face=>[face,{texture:"#all"}]))
+      faces:Object.fromEntries(["north","east","south","west","up","down"].map(face=>[face,{texture:`#p${index}`}]))
     }))
   };
 }
@@ -64,6 +87,22 @@ function minecraftJson(project: Project) {
 function download(name:string,data:unknown) {
   const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
   const a=document.createElement("a"); a.href=url; a.download=`${name.replace(/\W+/g,"_").toLowerCase()||"model"}.json`; a.click(); URL.revokeObjectURL(url);
+}
+
+function validation(project:Project){const notes:{level:"error"|"warning"|"ready";text:string}[]=[];if(!project.cubes.length)notes.push({level:"error",text:"Add at least one cube before exporting."});if(project.cubes.some(c=>c.from.some((v,i)=>v>=c.to[i])))notes.push({level:"error",text:"Every cube FROM value must be smaller than TO."});if(project.cubes.some(c=>[...c.from,...c.to].some(v=>v< -16||v>32)))notes.push({level:"warning",text:"Geometry outside -16 to 32 may render poorly in Java."});if(project.cubes.some(c=>c.rotation.filter(Boolean).length>1))notes.push({level:"warning",text:"Java elements rotate on one axis; export currently uses Y rotation."});if(!notes.some(n=>n.level==="error"))notes.push({level:"ready",text:`Ready for Paper 26.2 as ${modelKind(project)} content.`});return notes}
+
+async function exportPaperBundle(project:Project){
+  const ns=namespace(project),id=slug(project.name),kind=modelKind(project),model=minecraftJson(project),files:{name:string;data:Uint8Array}[]=[];const add=(name:string,data:string|Uint8Array)=>files.push({name,data:typeof data==="string"?textBytes(data):data});
+  add("resource-pack/pack.mcmeta",JSON.stringify({pack:{description:`Blocksmith: ${project.name}`,min_format:88,max_format:88}},null,2));
+  add(`resource-pack/assets/${ns}/models/${kind==="block"?"block":"item"}/${id}.json`,JSON.stringify(model,null,2));
+  if(kind!=="block")add(`resource-pack/assets/${ns}/items/${id}.json`,JSON.stringify({model:{type:"minecraft:model",model:`${ns}:item/${id}`}},null,2));
+  if(kind==="block")add(`resource-pack/assets/${ns}/items/${id}.json`,JSON.stringify({model:{type:"minecraft:model",model:`${ns}:block/${id}`}},null,2));
+  for(let i=0;i<project.cubes.length;i++)add(`resource-pack/assets/${ns}/textures/block/${id}/${slug(project.cubes[i].name)}_${i}.png`,await proceduralPng(project.cubes[i]));
+  const content={schema:1,target:{minecraft:"26.2",paper:"26.2",resource_pack:88},id:`${ns}:${id}`,name:project.name,description:project.description,kind,display:{carrier_item:project.baseItem||"minecraft:paper",scale:1,brightness:"block"},placement:kind==="item"?null:{mode:kind==="block"?"solid":"display",hitbox:kind==="block"?[1,1,1]:[1,project.cubes.reduce((m,c)=>Math.max(m,c.to[1]),16)/16,1]},rig:kind==="mob"?{anchor:project.baseEntity||"minecraft:zombie",hide_anchor:true,bones:project.cubes.map(c=>({id:c.id,name:c.name,pivot:c.from.map((v,i)=>(v+c.to[i])/2),parent:null})),animations:{idle:{loop:true,length_ticks:40,keyframes:[]},walk:{loop:true,length_ticks:20,keyframes:[]},attack:{loop:false,length_ticks:10,keyframes:[]}}}:null};
+  add(`paper/content/${ns}/${id}.json`,JSON.stringify(content,null,2));
+  add("paper/plugin.yml",`name: BlocksmithContent\nversion: 1.0.0\nmain: dev.blocksmith.paper.BlocksmithPlugin\napi-version: '26.2'\ndescription: Runtime target for Blocksmith content bundles\n`);
+  add("README.txt",`BLOCKSMITH PAPER 26.2 BUNDLE\n\nModel: ${project.name}\nType: ${kind}\nID: ${ns}:${id}\n\nresource-pack/ contains the client assets.\npaper/content/ contains placement and display-rig metadata for the Blocksmith Paper runtime.\nFor mobs, the vanilla anchor provides AI and hitboxes while display entities provide the visuals.\n`);
+  const blob=new Blob([makeZip(files) as BlobPart],{type:"application/zip"}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=`${id}-paper-26.2.zip`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 
 function Viewport({project,selected,onSelect}:{project:Project;selected:string|null;onSelect:(id:string)=>void}) {
@@ -108,6 +147,8 @@ export default function ModelMaker(){
   const modelInput=useRef<HTMLInputElement>(null);
   const selectedCube=project.cubes.find(c=>c.id===selected)||null;
   const jsonPreview=useMemo(()=>JSON.stringify(minecraftJson(project),null,2),[project]);
+  const checks=useMemo(()=>validation(project),[project]);
+  const exportBlocked=checks.some(check=>check.level==="error");
 
   useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=[...saved];BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});if(merged.length){setLibrary(merged);setProject(clone(merged[0]));setSelected(merged[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
   useEffect(()=>{if(hydrated)localStorage.setItem("blocksmith-library-v2",JSON.stringify(library))},[library,hydrated]);
@@ -115,7 +156,7 @@ export default function ModelMaker(){
   const updateCube=(patch:Partial<Cube>)=>selectedCube&&commit({...project,cubes:project.cubes.map(c=>c.id===selectedCube.id?{...c,...patch}:c)});
   const save=()=>setLibrary(items=>{const saved={...clone(project),source:"local" as const};const i=items.findIndex(p=>p.id===saved.id);return i<0?[saved,...items]:items.map((p,n)=>n===i?saved:p)});
   const open=(model:Project)=>{setProject(clone(model));setSelected(model.cubes[0]?.id||null);setHistory([]);setFuture([])};
-  const newModel=()=>{const blank:Project={id:uid("model"),name:"Untitled Model",description:"A new local model.",cubes:[],source:"local",revision:1};setLibrary(items=>[blank,...items]);open(blank)};
+  const newModel=()=>{const blank:Project={id:uid("model"),name:"Untitled Model",description:"A new Paper model.",cubes:[],source:"local",revision:1,kind:"item",namespace:"blocksmith",baseItem:"minecraft:paper",baseEntity:"minecraft:zombie"};setLibrary(items=>[blank,...items]);open(blank)};
   const duplicate=()=>{const copy={...clone(project),id:uid("model"),name:`${project.name} Copy`,source:"local" as const};setLibrary(items=>[copy,...items]);open(copy)};
   const deleteModel=()=>{if(project.source==="codex")return;const remaining=library.filter(p=>p.id!==project.id);setLibrary(remaining);open(remaining[0]||clone(atm))};
   const addCube=()=>{const next=cube(uid(),"New cube",[5,5,5],[11,11,11],COLORS[project.cubes.length%COLORS.length],"custom");commit({...project,cubes:[...project.cubes,next]});setSelected(next.id)};
@@ -127,14 +168,14 @@ export default function ModelMaker(){
     <header className="topbar">
       <div className="brand"><span className="brand-cube">B</span><div><strong>BLOCKSMITH</strong><small>CODEX MODEL WORKBENCH</small></div></div>
       <div className="project-title"><span className="status-dot"/><input aria-label="Project name" value={project.name} onChange={e=>setProject({...project,name:e.target.value})}/><span className="saved">{project.source==="codex"?"Published by Codex":"Local draft"}</span></div>
-      <div className="top-actions"><button className="tool-button" onClick={undo} disabled={!history.length} title="Undo">↶</button><button className="tool-button" onClick={redo} disabled={!future.length} title="Redo">↷</button><button className="secondary" onClick={save}>Save</button><button className="secondary" onClick={newModel}>New Model</button><button className="primary" onClick={()=>download(project.name,minecraftJson(project))}>Export JSON</button></div>
+      <div className="top-actions"><button className="tool-button" onClick={undo} disabled={!history.length} title="Undo">↶</button><button className="tool-button" onClick={redo} disabled={!future.length} title="Redo">↷</button><button className="secondary" onClick={save}>Save</button><button className="secondary" onClick={newModel}>New Model</button><button className="primary" disabled={exportBlocked} onClick={()=>exportPaperBundle(project)}>Export Paper Pack</button></div>
     </header>
     <section className="workspace">
       <aside className="left-panel panel"><div className="panel-heading"><div><span className="eyebrow">OUTLINER</span><h2>{project.cubes.length} model parts</h2></div><button className="mini-add" onClick={addCube}>+</button></div><div className="tree-label">⌄ ◈ {project.name}</div><div className="cube-list">{project.cubes.map(c=><button key={c.id} className={`cube-row ${selected===c.id?"active":""}`} onClick={()=>setSelected(c.id)}><span className="cube-glyph">◆</span><span>{c.name}</span><i style={{background:c.color}}/></button>)}</div><button className="add-part" onClick={addCube}>＋ Add cube</button><div className="tips"><strong>Codex workflow</strong><p>Describe a model in this Codex chat.</p><p>Codex adds it here, then publishes it.</p></div></aside>
       <section className="stage"><div className="stage-tools"><span className="badge">PERSPECTIVE</span><span className="badge"><i/> TEXTURED</span></div><Viewport project={project} selected={selected} onSelect={setSelected}/><div className="axis"><span className="x">X</span><span className="y">Y</span><span className="z">Z</span></div><div className="stage-note">Drag to orbit · Scroll to zoom · Click to select</div></section>
-      <aside className="right-panel panel"><div className="panel-heading"><div><span className="eyebrow">INSPECTOR</span><h2>{selectedCube?.name||"Model settings"}</h2></div>{selectedCube&&<button className="delete" onClick={()=>{commit({...project,cubes:project.cubes.filter(c=>c.id!==selectedCube.id)});setSelected(null)}}>×</button>}</div>{selectedCube?<div className="inspector"><label className="field-label">NAME<input value={selectedCube.name} onChange={e=>updateCube({name:e.target.value})}/></label><VectorEditor label="FROM" value={selectedCube.from} onChange={from=>updateCube({from})}/><VectorEditor label="TO" value={selectedCube.to} onChange={to=>updateCube({to})}/><VectorEditor label="ROTATION" value={selectedCube.rotation} onChange={rotation=>updateCube({rotation})}/><label className="field-label">PROCEDURAL MATERIAL<input value={selectedCube.material||""} onChange={e=>updateCube({material:e.target.value})}/></label><div className="field-label">BASE COLOR<div className="swatches">{COLORS.map(color=><button key={color} className={selectedCube.color===color?"chosen":""} style={{background:color}} onClick={()=>updateCube({color})}/>)}</div></div></div>:<p className="empty">Select a part to edit its geometry and material.</p>}<section className="texture-card procedural-card"><span className="eyebrow">MINECRAFT MATERIAL SYSTEM</span><div className="material-preview"><i/><i/><i/><i/><i/><i/><i/><i/><i/></div><strong>Face-attached procedural pixels</strong><p>Patterns are generated from each part’s material and remain locked to every face while you rotate.</p></section><details className="json-box"><summary>Minecraft JSON preview</summary><pre>{jsonPreview}</pre></details></aside>
+      <aside className="right-panel panel"><div className="panel-heading"><div><span className="eyebrow">PAPER 26.2 TARGET</span><h2>{selectedCube?.name||"Model settings"}</h2></div>{selectedCube&&<button className="delete" onClick={()=>{commit({...project,cubes:project.cubes.filter(c=>c.id!==selectedCube.id)});setSelected(null)}}>×</button>}</div><section className="target-card"><label className="field-label">CONTENT TYPE<select value={modelKind(project)} onChange={e=>setProject({...project,kind:e.target.value as ModelKind})}><option value="item">Custom item</option><option value="block">Placeable block</option><option value="furniture">Furniture / display</option><option value="mob">Animated mob</option></select></label><label className="field-label">NAMESPACE<input value={project.namespace||"blocksmith"} onChange={e=>setProject({...project,namespace:slug(e.target.value)})}/></label>{modelKind(project)==="mob"&&<label className="field-label">AI + HITBOX ANCHOR<input value={project.baseEntity||"minecraft:zombie"} onChange={e=>setProject({...project,baseEntity:e.target.value})}/></label>}<div className={`target-summary ${modelKind(project)}`}><b>{modelKind(project)==="mob"?"DISPLAY RIG":modelKind(project)==="item"?"ITEM MODEL":modelKind(project)==="block"?"SOLID PLACEMENT":"DISPLAY MODEL"}</b><span>{modelKind(project)==="mob"?"Idle, walk and attack tracks included":modelKind(project)==="block"?"Model plus solid placement metadata":"Vanilla-client resource-pack content"}</span></div></section>{selectedCube?<div className="inspector"><label className="field-label">NAME<input value={selectedCube.name} onChange={e=>updateCube({name:e.target.value})}/></label><VectorEditor label="FROM" value={selectedCube.from} onChange={from=>updateCube({from})}/><VectorEditor label="TO" value={selectedCube.to} onChange={to=>updateCube({to})}/><VectorEditor label="ROTATION" value={selectedCube.rotation} onChange={rotation=>updateCube({rotation})}/><label className="field-label">PROCEDURAL MATERIAL<input value={selectedCube.material||""} onChange={e=>updateCube({material:e.target.value})}/></label><div className="field-label">BASE COLOR<div className="swatches">{COLORS.map(color=><button aria-label={`Set color ${color}`} key={color} className={selectedCube.color===color?"chosen":""} style={{background:color}} onClick={()=>updateCube({color})}/>)}</div></div></div>:<p className="empty">Select a part to edit its geometry and material.</p>}<section className="validation-card"><span className="eyebrow">EXPORT CHECK</span>{checks.map((check,i)=><p key={i} className={check.level}><i/>{check.text}</p>)}</section><section className="texture-card procedural-card"><span className="eyebrow">MINECRAFT MATERIAL SYSTEM</span><div className="material-preview"><i/><i/><i/><i/><i/><i/><i/><i/><i/></div><strong>Procedural 16×16 textures</strong><p>Export creates real PNG textures for every part, locked to the model’s faces.</p></section><details className="json-box"><summary>Minecraft JSON preview</summary><pre>{jsonPreview}</pre></details></aside>
     </section>
-    <section className="library-dock"><div className="library-title"><div><span className="eyebrow">MODEL LIBRARY</span><h2>Codex creations & local drafts</h2></div><div className="library-actions"><button onClick={duplicate}>Duplicate</button><button onClick={()=>modelInput.current?.click()}>Import JSON</button>{project.source==="local"&&<button className="danger" onClick={deleteModel}>Delete</button>}<input ref={modelInput} hidden type="file" accept=".json,application/json" onChange={importModel}/></div></div><div className="model-cards"><button className="new-card" onClick={newModel}><b>＋</b><span>Blank model</span></button>{library.map(model=><button key={model.id} className={`model-card ${project.id===model.id?"active":""}`} onClick={()=>open(model)}><span className="card-art procedural-art" style={{backgroundColor:model.cubes[0]?.color||"#333"}}><i>{model.cubes.length}</i></span><span className="card-copy"><strong>{model.name}</strong><small>{model.source==="codex"?"CODEX LIBRARY":"LOCAL"} · {model.cubes.length} parts</small></span></button>)}</div></section>
+    <section className="library-dock"><div className="library-title"><div><span className="eyebrow">MODEL LIBRARY</span><h2>Codex creations & local drafts</h2></div><div className="library-actions"><button onClick={duplicate}>Duplicate</button><button onClick={()=>modelInput.current?.click()}>Import JSON</button><button onClick={()=>download(project.name,minecraftJson(project))}>Model JSON</button>{project.source==="local"&&<button className="danger" onClick={deleteModel}>Delete</button>}<input ref={modelInput} hidden type="file" accept=".json,application/json" onChange={importModel}/></div></div><div className="model-cards"><button className="new-card" onClick={newModel}><b>＋</b><span>Blank model</span></button>{library.map(model=><button key={model.id} className={`model-card ${project.id===model.id?"active":""}`} onClick={()=>open(model)}><span className="card-art procedural-art" style={{backgroundColor:model.cubes[0]?.color||"#333"}}><i>{model.cubes.length}</i></span><span className="card-copy"><strong>{model.name}</strong><small>{modelKind(model).toUpperCase()} · {model.cubes.length} parts</small></span></button>)}</div></section>
   </main>;
 }
 
