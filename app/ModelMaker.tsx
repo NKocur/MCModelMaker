@@ -3,239 +3,137 @@
 import { ChangeEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from "react";
 
 type Vec3 = [number, number, number];
-type Cube = { id: string; name: string; from: Vec3; to: Vec3; rotation: Vec3; color: string };
-type Project = { name: string; textureSize: [number, number]; cubes: Cube[] };
+type Cube = { id: string; name: string; from: Vec3; to: Vec3; rotation: Vec3; color: string; material?: string };
+type Project = { id: string; name: string; description: string; textureUrl?: string; textureName?: string; cubes: Cube[]; source: "codex" | "local"; revision: number };
 
-const COLORS = ["#79c34a", "#d18b47", "#58a6d6", "#b983d5", "#e9c46a", "#d96b6b"];
-const starter: Project = {
-  name: "mossy_totem",
-  textureSize: [16, 16],
+const COLORS = ["#78c84f", "#293239", "#2bc8d3", "#949da1", "#d5a642", "#bd5a4d", "#725392"];
+const cube = (id: string, name: string, from: Vec3, to: Vec3, color: string, material = "painted metal"): Cube => ({ id, name, from, to, rotation: [0,0,0], color, material });
+
+const atm: Project = {
+  id: "codex_atm_01", name: "Weathered ATM", source: "codex", revision: 1,
+  description: "A detailed street ATM with screen, keypad, card reader, receipt and cash slots.",
+  textureUrl: "/textures/atm-pixel-texture.png", textureName: "weathered_atm_1024.png",
   cubes: [
-    { id: "base", name: "Stone base", from: [3, 0, 3], to: [13, 4, 13], rotation: [0, 0, 0], color: "#7e8b82" },
-    { id: "body", name: "Totem body", from: [5, 4, 5], to: [11, 15, 11], rotation: [0, 0, 0], color: "#a36c3f" },
-    { id: "cap", name: "Moss cap", from: [3, 15, 3], to: [13, 18, 13], rotation: [0, 0, 0], color: "#79c34a" },
+    cube("atm_body","Main cabinet",[3,0,5],[13,16,12],"#293239"),
+    cube("atm_rear","Rear housing",[4,1,11.5],[12,15,13],"#20272c"),
+    cube("atm_top","Top cap",[2.7,15.5,4.7],[13.3,16.3,12.3],"#596267"),
+    cube("atm_header","Header panel",[4,14,4.3],[12,15.4,5.2],"#3a4449"),
+    cube("atm_status","Status light",[7.25,14.35,4.05],[8.75,14.75,4.4],"#78c84f","emissive light"),
+    cube("atm_bezel","Screen bezel",[4,9.3,4.25],[12,13.9,5.25],"#11181c"),
+    cube("atm_screen","Display",[4.75,10,3.95],[11.25,13.2,4.45],"#159aa6","glowing glass"),
+    cube("atm_console","Sloped console",[3.7,5.1,4.15],[12.3,9.4,6.3],"#4d575c"),
+    cube("atm_keybed","Keypad bed",[4.4,5.7,3.85],[8.65,8.65,4.5],"#171d21"),
+    ...Array.from({length:12},(_,i)=>cube(`key_${i+1}`,`Key ${i+1}`,[4.75+(i%3)*1.15,6.05+Math.floor(i/3)*.62,3.55],[5.55+(i%3)*1.15,6.46+Math.floor(i/3)*.62,3.92],i===11?"#78c84f":i===9?"#bd5a4d":"#b1b7b8","keycap")),
+    cube("card_bezel","Card reader",[9.25,7.15,3.72],[11.8,8.4,4.5],"#171d21"),
+    cube("card_slot","Card slot",[9.65,7.67,3.45],[11.42,7.96,3.78],"#78c84f","status light"),
+    cube("receipt","Receipt slot",[9.45,5.9,3.65],[11.65,6.42,4.2],"#111518"),
+    cube("cash_bezel","Cash tray bezel",[4.15,2.4,4.2],[11.85,4.65,5.3],"#141a1e"),
+    cube("cash_slot","Cash opening",[5,3.05,3.92],[11,3.85,4.45],"#070a0c"),
+    cube("cash_lip","Cash tray lip",[4.75,2.65,3.7],[11.25,3.05,4.35],"#606a6e"),
+    cube("kick","Kick plate",[4,.25,4.55],[12,1.75,5.2],"#1c2327"),
+    cube("left_trim","Left armor trim",[2.75,.3,4.65],[3.35,15.3,5.35],"#737c7d"),
+    cube("right_trim","Right armor trim",[12.65,.3,4.65],[13.25,15.3,5.35],"#737c7d"),
   ],
 };
 
-const copyProject = (p: Project): Project => JSON.parse(JSON.stringify(p));
-const uid = () => `cube_${Math.random().toString(36).slice(2, 8)}`;
+const totem: Project = {
+  id:"codex_totem_01", name:"Mossy Totem", source:"codex", revision:1,
+  description:"The original small block model, kept as a second library example.",
+  cubes:[
+    cube("base","Stone base",[3,0,3],[13,4,13],"#7e8b82","stone"),
+    cube("body","Totem body",[5,4,5],[11,15,11],"#a36c3f","wood"),
+    cube("cap","Moss cap",[3,15,3],[13,18,13],"#79c34a","moss"),
+  ],
+};
+
+const BUILTINS = [atm, totem];
+const clone = <T,>(value:T):T => JSON.parse(JSON.stringify(value));
+const uid = (prefix="cube") => `${prefix}_${Math.random().toString(36).slice(2,9)}`;
 
 function minecraftJson(project: Project) {
   return {
-    credit: "Made with Blocksmith AI",
-    texture_size: project.textureSize,
-    textures: { all: `${project.name}:block/${project.name}` },
-    elements: project.cubes.map((cube) => ({
-      name: cube.name,
-      from: cube.from,
-      to: cube.to,
-      ...(cube.rotation.some(Boolean)
-        ? { rotation: { origin: cube.from.map((v, i) => (v + cube.to[i]) / 2), axis: "y", angle: cube.rotation[1] } }
-        : {}),
-      faces: Object.fromEntries(["north", "east", "south", "west", "up", "down"].map((face) => [face, { texture: "#all" }])),
-    })),
+    credit: "Designed with Codex in Blocksmith",
+    texture_size: [64,64],
+    textures: { all: `${project.name.toLowerCase().replace(/\W+/g,"_")}:block/texture` },
+    elements: project.cubes.map((part)=>({ name:part.name, from:part.from, to:part.to,
+      ...(part.rotation.some(Boolean)?{rotation:{origin:part.from.map((v,i)=>(v+part.to[i])/2),axis:"y",angle:part.rotation[1]}}:{}),
+      faces:Object.fromEntries(["north","east","south","west","up","down"].map(face=>[face,{texture:"#all"}]))
+    }))
   };
 }
 
-function download(name: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = `${name || "model"}.json`;
-  anchor.click();
-  URL.revokeObjectURL(url);
+function download(name:string,data:unknown) {
+  const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:"application/json"}));
+  const a=document.createElement("a"); a.href=url; a.download=`${name.replace(/\W+/g,"_").toLowerCase()||"model"}.json`; a.click(); URL.revokeObjectURL(url);
 }
 
-function Icon({ children }: { children: React.ReactNode }) {
-  return <span className="icon" aria-hidden="true">{children}</span>;
+function Viewport({project,selected,onSelect}:{project:Project;selected:string|null;onSelect:(id:string)=>void}) {
+  const canvas=useRef<HTMLCanvasElement>(null);
+  const [view,setView]=useState({yaw:-.72,pitch:.58,zoom:18});
+  const [texture,setTexture]=useState<HTMLImageElement|null>(null);
+  const drag=useRef<{x:number;y:number;yaw:number;pitch:number;moved:boolean}|null>(null);
+  const projected=useRef<{id:string;poly:[number,number][];depth:number}[]>([]);
+
+  useEffect(()=>{
+    if(!project.textureUrl){setTexture(null);return}
+    const image=new Image(); image.onload=()=>setTexture(image); image.src=project.textureUrl; return()=>{image.onload=null};
+  },[project.textureUrl]);
+
+  useEffect(()=>{
+    const el=canvas.current;if(!el)return;const ctx=el.getContext("2d");if(!ctx)return;
+    const ratio=window.devicePixelRatio||1,rect=el.getBoundingClientRect();el.width=rect.width*ratio;el.height=rect.height*ratio;ctx.scale(ratio,ratio);ctx.clearRect(0,0,rect.width,rect.height);
+    const center={x:rect.width/2,y:rect.height*.58};
+    const projectPoint=(p:Vec3):[number,number,number]=>{const x=p[0]-8,y=p[1]-8,z=p[2]-8,cy=Math.cos(view.yaw),sy=Math.sin(view.yaw),cp=Math.cos(view.pitch),sp=Math.sin(view.pitch),rx=x*cy-z*sy,rz=x*sy+z*cy;return[center.x+rx*view.zoom,center.y-(y*cp-rz*sp)*view.zoom,y*sp+rz*cp]};
+    ctx.lineWidth=1;for(let i=0;i<=16;i++){const a=projectPoint([i,0,0]),b=projectPoint([i,0,16]),c=projectPoint([0,0,i]),d=projectPoint([16,0,i]);ctx.strokeStyle=i===0||i===16?"#687169":"#343a36";ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();ctx.beginPath();ctx.moveTo(c[0],c[1]);ctx.lineTo(d[0],d[1]);ctx.stroke()}
+    type Face={id:string;points:[number,number,number][];color:string;depth:number;light:number};const faces:Face[]=[],polys:{id:string;poly:[number,number][];depth:number}[]=[];
+    project.cubes.forEach(part=>{const[x1,y1,z1]=part.from,[x2,y2,z2]=part.to;const v=[[x1,y1,z1],[x2,y1,z1],[x2,y2,z1],[x1,y2,z1],[x1,y1,z2],[x2,y1,z2],[x2,y2,z2],[x1,y2,z2]].map(p=>projectPoint(p as Vec3));[[[0,1,2,3],.78],[[5,4,7,6],.9],[[4,0,3,7],.72],[[1,5,6,2],.62],[[3,2,6,7],1.08],[[4,5,1,0],.55]].forEach(([indices,light])=>{const points=(indices as number[]).map(n=>v[n]);faces.push({id:part.id,points,color:part.color,depth:points.reduce((s,p)=>s+p[2],0)/4,light:light as number})});const hull=[v[0],v[1],v[5],v[6],v[7],v[3]].map(p=>[p[0],p[1]] as[number,number]);polys.push({id:part.id,poly:hull,depth:v.reduce((s,p)=>s+p[2],0)/8})});
+    const pattern=texture?ctx.createPattern(texture,"repeat"):null;if(pattern&&"setTransform" in pattern)pattern.setTransform(new DOMMatrix().scale(.065));
+    faces.sort((a,b)=>a.depth-b.depth).forEach(face=>{ctx.beginPath();face.points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.closePath();const hex=face.color.replace("#","");const rgb=[0,2,4].map(i=>Math.min(255,parseInt(hex.slice(i,i+2),16)*face.light));ctx.fillStyle=`rgb(${rgb.join(",")})`;ctx.fill();if(pattern){ctx.save();ctx.globalAlpha=.16;ctx.globalCompositeOperation="screen";ctx.fillStyle=pattern;ctx.fill();ctx.restore()}ctx.strokeStyle=face.id===selected?"#e5ff82":"rgba(8,12,10,.72)";ctx.lineWidth=face.id===selected?2:1;ctx.stroke()});projected.current=polys.sort((a,b)=>b.depth-a.depth);
+  },[project,selected,view,texture]);
+
+  const down=(e:ReactPointerEvent<HTMLCanvasElement>)=>{drag.current={x:e.clientX,y:e.clientY,yaw:view.yaw,pitch:view.pitch,moved:false};e.currentTarget.setPointerCapture(e.pointerId)};
+  const move=(e:ReactPointerEvent<HTMLCanvasElement>)=>{const active=drag.current;if(!active)return;const dx=e.clientX-active.x,dy=e.clientY-active.y;if(Math.abs(dx)+Math.abs(dy)>3)active.moved=true;setView(v=>({...v,yaw:active.yaw+dx*.008,pitch:Math.max(-1.1,Math.min(1.1,active.pitch+dy*.006))}))};
+  const up=(e:ReactPointerEvent<HTMLCanvasElement>)=>{const active=drag.current;if(active&&!active.moved){const r=e.currentTarget.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const inside=(poly:[number,number][])=>poly.reduce((hit,p,i)=>{const q=poly[(i+poly.length-1)%poly.length];return((p[1]>y)!==(q[1]>y))&&(x<(q[0]-p[0])*(y-p[1])/(q[1]-p[1])+p[0])?!hit:hit},false);const hit=projected.current.find(p=>inside(p.poly));if(hit)onSelect(hit.id)}drag.current=null};
+  return <canvas ref={canvas} className="viewport" aria-label="Interactive 3D model viewport" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={()=>{drag.current=null}} onWheel={e=>setView(v=>({...v,zoom:Math.max(8,Math.min(34,v.zoom-e.deltaY*.015))}))}/>;
 }
 
-function Viewport({ cubes, selected, onSelect }: { cubes: Cube[]; selected: string | null; onSelect: (id: string) => void }) {
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const [view, setView] = useState({ yaw: -0.72, pitch: 0.58, zoom: 18 });
-  const drag = useRef<{ x: number; y: number; yaw: number; pitch: number; moved: boolean } | null>(null);
-  const projected = useRef<{ id: string; poly: [number, number][]; depth: number }[]>([]);
+export default function ModelMaker(){
+  const [library,setLibrary]=useState<Project[]>(BUILTINS);
+  const [project,setProject]=useState<Project>(clone(atm));
+  const [selected,setSelected]=useState<string|null>(atm.cubes[6].id);
+  const [history,setHistory]=useState<Project[]>([]);const [future,setFuture]=useState<Project[]>([]);const [hydrated,setHydrated]=useState(false);
+  const modelInput=useRef<HTMLInputElement>(null),textureInput=useRef<HTMLInputElement>(null);
+  const selectedCube=project.cubes.find(c=>c.id===selected)||null;
+  const jsonPreview=useMemo(()=>JSON.stringify(minecraftJson(project),null,2),[project]);
 
-  useEffect(() => {
-    const el = canvas.current;
-    if (!el) return;
-    const ctx = el.getContext("2d");
-    if (!ctx) return;
-    const ratio = window.devicePixelRatio || 1;
-    const rect = el.getBoundingClientRect();
-    el.width = rect.width * ratio;
-    el.height = rect.height * ratio;
-    ctx.scale(ratio, ratio);
-    ctx.clearRect(0, 0, rect.width, rect.height);
-
-    const center = { x: rect.width / 2, y: rect.height * 0.55 };
-    const project = (p: Vec3): [number, number, number] => {
-      const x = p[0] - 8, y = p[1] - 8, z = p[2] - 8;
-      const cy = Math.cos(view.yaw), sy = Math.sin(view.yaw);
-      const cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
-      const rx = x * cy - z * sy;
-      const rz = x * sy + z * cy;
-      return [center.x + rx * view.zoom, center.y - (y * cp - rz * sp) * view.zoom, y * sp + rz * cp];
-    };
-
-    ctx.lineWidth = 1;
-    for (let i = 0; i <= 16; i++) {
-      const a = project([i, 0, 0]); const b = project([i, 0, 16]);
-      const c = project([0, 0, i]); const d = project([16, 0, i]);
-      ctx.strokeStyle = i === 0 || i === 16 ? "#6b7168" : "#343a36";
-      ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(c[0], c[1]); ctx.lineTo(d[0], d[1]); ctx.stroke();
-    }
-
-    type Face = { id: string; points: [number, number, number][]; color: string; depth: number; light: number };
-    const faces: Face[] = [];
-    const polys: { id: string; poly: [number, number][]; depth: number }[] = [];
-    cubes.forEach((cube) => {
-      const [x1, y1, z1] = cube.from, [x2, y2, z2] = cube.to;
-      const v = [[x1,y1,z1],[x2,y1,z1],[x2,y2,z1],[x1,y2,z1],[x1,y1,z2],[x2,y1,z2],[x2,y2,z2],[x1,y2,z2]].map((p) => project(p as Vec3));
-      const specs = [
-        { i: [0,1,2,3], l: .72 }, { i: [5,4,7,6], l: .9 }, { i: [4,0,3,7], l: .78 },
-        { i: [1,5,6,2], l: .62 }, { i: [3,2,6,7], l: 1.08 }, { i: [4,5,1,0], l: .55 },
-      ];
-      specs.forEach(({ i, l }) => {
-        const points = i.map((n) => v[n]);
-        faces.push({ id: cube.id, points, color: cube.color, depth: points.reduce((s,p)=>s+p[2],0)/4, light: l });
-      });
-      const hull = [v[0],v[1],v[5],v[6],v[7],v[3]].map((p) => [p[0],p[1]] as [number,number]);
-      polys.push({ id: cube.id, poly: hull, depth: v.reduce((s,p)=>s+p[2],0)/8 });
-    });
-    faces.sort((a,b)=>a.depth-b.depth).forEach((face) => {
-      ctx.beginPath(); face.points.forEach((p,i)=>i ? ctx.lineTo(p[0],p[1]) : ctx.moveTo(p[0],p[1])); ctx.closePath();
-      const hex = face.color.replace("#", "");
-      const rgb = [0,2,4].map((i)=>Math.min(255, parseInt(hex.slice(i,i+2),16)*face.light));
-      ctx.fillStyle = `rgb(${rgb.join(",")})`; ctx.fill();
-      ctx.strokeStyle = face.id === selected ? "#e5ff82" : "rgba(12,16,13,.65)";
-      ctx.lineWidth = face.id === selected ? 2 : 1; ctx.stroke();
-    });
-    projected.current = polys.sort((a,b)=>b.depth-a.depth);
-  }, [cubes, selected, view]);
-
-  const pointerDown = (e: ReactPointerEvent<HTMLCanvasElement>) => {
-    drag.current = { x: e.clientX, y: e.clientY, yaw: view.yaw, pitch: view.pitch, moved: false };
-    e.currentTarget.setPointerCapture(e.pointerId);
-  };
-  const pointerMove = (e: ReactPointerEvent<HTMLCanvasElement>) => {
-    const activeDrag = drag.current;
-    if (!activeDrag) return;
-    const dx=e.clientX-activeDrag.x, dy=e.clientY-activeDrag.y;
-    if (Math.abs(dx)+Math.abs(dy)>3) activeDrag.moved=true;
-    setView((v)=>({ ...v, yaw: activeDrag.yaw + dx*.008, pitch: Math.max(-1.1,Math.min(1.1,activeDrag.pitch+dy*.006)) }));
-  };
-  const pointerUp = (e: ReactPointerEvent<HTMLCanvasElement>) => {
-    if (drag.current && !drag.current.moved) {
-      const rect=e.currentTarget.getBoundingClientRect(), x=e.clientX-rect.left, y=e.clientY-rect.top;
-      const inside=(poly:[number,number][])=>poly.reduce((hit,p,i)=>{const q=poly[(i+poly.length-1)%poly.length];return ((p[1]>y)!==(q[1]>y))&&(x<(q[0]-p[0])*(y-p[1])/(q[1]-p[1])+p[0])?!hit:hit;},false);
-      const hit=projected.current.find((p)=>inside(p.poly)); if(hit) onSelect(hit.id);
-    }
-    drag.current=null;
-  };
-  return <canvas ref={canvas} className="viewport" aria-label="Interactive 3D model viewport" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>{drag.current=null}} onWheel={(e)=>setView(v=>({...v,zoom:Math.max(8,Math.min(34,v.zoom-e.deltaY*.015))}))} />;
-}
-
-export default function ModelMaker() {
-  const [project, setProject] = useState<Project>(starter);
-  const [selected, setSelected] = useState<string | null>("cap");
-  const [history, setHistory] = useState<Project[]>([]);
-  const [future, setFuture] = useState<Project[]>([]);
-  const [prompt, setPrompt] = useState("");
-  const [messages, setMessages] = useState(["Try: “Add two blue cubes for eyes” or “Make the selected cube taller.”"]);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const cube = project.cubes.find((c)=>c.id===selected) ?? null;
-  const jsonPreview = useMemo(()=>JSON.stringify(minecraftJson(project),null,2),[project]);
-
-  const commit = (next: Project) => { setHistory((h)=>[...h.slice(-29),copyProject(project)]); setFuture([]); setProject(next); };
-  const updateCube = (patch: Partial<Cube>) => cube && commit({ ...project, cubes: project.cubes.map((c)=>c.id===cube.id?{...c,...patch}:c) });
-  const addCube = (name="New cube", color=COLORS[project.cubes.length%COLORS.length]) => {
-    const next={id:uid(),name,from:[5,5,5] as Vec3,to:[11,11,11] as Vec3,rotation:[0,0,0] as Vec3,color};
-    commit({...project,cubes:[...project.cubes,next]}); setSelected(next.id);
-  };
-  const removeCube = () => { if(!cube) return; commit({...project,cubes:project.cubes.filter(c=>c.id!==cube.id)}); setSelected(null); };
-  const undo = () => { const prev=history.at(-1); if(!prev)return; setFuture(f=>[copyProject(project),...f]); setProject(prev); setHistory(h=>h.slice(0,-1)); };
-  const redo = () => { const next=future[0]; if(!next)return; setHistory(h=>[...h,copyProject(project)]); setProject(next); setFuture(f=>f.slice(1)); };
-
-  useEffect(()=>{ const saved=localStorage.getItem("blocksmith-project"); if(saved) try { setProject(JSON.parse(saved)); } catch {} },[]);
-  useEffect(()=>{ localStorage.setItem("blocksmith-project",JSON.stringify(project)); },[project]);
-
-  const runPrompt = () => {
-    const text=prompt.trim(); if(!text)return;
-    const lower=text.toLowerCase();
-    if(lower.includes("add") || lower.includes("create")) {
-      const count=lower.includes("two")?2:lower.includes("three")?3:1;
-      const color=COLORS.find(c=>lower.includes({"#58a6d6":"blue","#79c34a":"green","#d96b6b":"red","#e9c46a":"yellow"}[c]||""))||COLORS[project.cubes.length%COLORS.length];
-      const created=Array.from({length:count},(_,i)=>({id:uid(),name:`AI cube ${project.cubes.length+i+1}`,from:[4+i*4,8,4] as Vec3,to:[7+i*4,11,7] as Vec3,rotation:[0,0,0] as Vec3,color}));
-      commit({...project,cubes:[...project.cubes,...created]}); setSelected(created.at(-1)!.id); setMessages(m=>[...m,`You: ${text}`,`Blocksmith: Added ${count} cube${count>1?"s":""}.`]);
-    } else if(cube && (lower.includes("tall")||lower.includes("height"))) {
-      updateCube({to:[cube.to[0],Math.min(32,cube.to[1]+4),cube.to[2]]}); setMessages(m=>[...m,`You: ${text}`,"Blocksmith: Made the selected cube 4 units taller."]);
-    } else if(cube && lower.includes("wide")) {
-      updateCube({from:[Math.max(-16,cube.from[0]-2),cube.from[1],cube.from[2]],to:[Math.min(32,cube.to[0]+2),cube.to[1],cube.to[2]]}); setMessages(m=>[...m,`You: ${text}`,"Blocksmith: Widened the selected cube."]);
-    } else {
-      setMessages(m=>[...m,`You: ${text}`,"Blocksmith: I can currently add colored cubes or make the selected cube taller/wider. Cloud AI is the next connection step."]);
-    }
-    setPrompt("");
-  };
-
-  const importFile = (e: ChangeEvent<HTMLInputElement>) => {
-    const file=e.target.files?.[0]; if(!file)return;
-    file.text().then((raw)=>{ try { const data=JSON.parse(raw); const elements=data.elements||[]; const cubes:Cube[]=elements.map((el:{name?:string;from:Vec3;to:Vec3},i:number)=>({id:uid(),name:el.name||`Cube ${i+1}`,from:el.from,to:el.to,rotation:[0,0,0],color:COLORS[i%COLORS.length]})); commit({...project,name:file.name.replace(/\.json$/i,""),cubes}); setSelected(cubes[0]?.id||null); } catch { setMessages(m=>[...m,"Import failed: that file is not valid Minecraft model JSON."]); } });
-    e.target.value="";
-  };
+  useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=[...saved];BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});if(merged.length){setLibrary(merged);setProject(clone(merged[0]));setSelected(merged[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
+  useEffect(()=>{if(hydrated)localStorage.setItem("blocksmith-library-v2",JSON.stringify(library))},[library,hydrated]);
+  const commit=(next:Project)=>{setHistory(h=>[...h.slice(-39),clone(project)]);setFuture([]);setProject(next)};
+  const updateCube=(patch:Partial<Cube>)=>selectedCube&&commit({...project,cubes:project.cubes.map(c=>c.id===selectedCube.id?{...c,...patch}:c)});
+  const save=()=>setLibrary(items=>{const saved={...clone(project),source:"local" as const};const i=items.findIndex(p=>p.id===saved.id);return i<0?[saved,...items]:items.map((p,n)=>n===i?saved:p)});
+  const open=(model:Project)=>{setProject(clone(model));setSelected(model.cubes[0]?.id||null);setHistory([]);setFuture([])};
+  const newModel=()=>{const blank:Project={id:uid("model"),name:"Untitled Model",description:"A new local model.",cubes:[],source:"local",revision:1};setLibrary(items=>[blank,...items]);open(blank)};
+  const duplicate=()=>{const copy={...clone(project),id:uid("model"),name:`${project.name} Copy`,source:"local" as const};setLibrary(items=>[copy,...items]);open(copy)};
+  const deleteModel=()=>{if(project.source==="codex")return;const remaining=library.filter(p=>p.id!==project.id);setLibrary(remaining);open(remaining[0]||clone(atm))};
+  const addCube=()=>{const next=cube(uid(),"New cube",[5,5,5],[11,11,11],COLORS[project.cubes.length%COLORS.length],"custom");commit({...project,cubes:[...project.cubes,next]});setSelected(next.id)};
+  const undo=()=>{const previous=history.at(-1);if(!previous)return;setFuture(f=>[clone(project),...f]);setProject(previous);setHistory(h=>h.slice(0,-1))};
+  const redo=()=>{const next=future[0];if(!next)return;setHistory(h=>[...h,clone(project)]);setProject(next);setFuture(f=>f.slice(1))};
+  const importModel=(e:ChangeEvent<HTMLInputElement>)=>{const file=e.target.files?.[0];if(!file)return;file.text().then(raw=>{try{const data=JSON.parse(raw),parts:Cube[]=(data.elements||[]).map((el:{name?:string;from:Vec3;to:Vec3},i:number)=>cube(uid(),el.name||`Cube ${i+1}`,el.from,el.to,COLORS[i%COLORS.length]));const imported:Project={id:uid("model"),name:file.name.replace(/\.json$/i,""),description:"Imported Minecraft model",cubes:parts,source:"local",revision:1};setLibrary(items=>[imported,...items]);open(imported)}catch{alert("That file is not valid Minecraft model JSON.")}});e.target.value=""};
+  const importTexture=(e:ChangeEvent<HTMLInputElement>)=>{const file=e.target.files?.[0];if(!file)return;const reader=new FileReader();reader.onload=()=>commit({...project,textureUrl:String(reader.result),textureName:file.name});reader.readAsDataURL(file);e.target.value=""};
 
   return <main className="app-shell">
     <header className="topbar">
-      <div className="brand"><span className="brand-cube">B</span><div><strong>BLOCKSMITH</strong><small>AI MODEL STUDIO</small></div></div>
-      <div className="project-title"><span className="status-dot"/><input aria-label="Project name" value={project.name} onChange={(e)=>setProject({...project,name:e.target.value})}/><span className="saved">Saved locally</span></div>
-      <div className="top-actions">
-        <button className="tool-button" onClick={undo} disabled={!history.length} title="Undo"><Icon>↶</Icon></button>
-        <button className="tool-button" onClick={redo} disabled={!future.length} title="Redo"><Icon>↷</Icon></button>
-        <button className="secondary" onClick={()=>fileInput.current?.click()}>Import</button>
-        <button className="primary" onClick={()=>download(project.name,minecraftJson(project))}>Export JSON</button>
-        <input ref={fileInput} type="file" accept=".json,application/json" hidden onChange={importFile}/>
-      </div>
+      <div className="brand"><span className="brand-cube">B</span><div><strong>BLOCKSMITH</strong><small>CODEX MODEL WORKBENCH</small></div></div>
+      <div className="project-title"><span className="status-dot"/><input aria-label="Project name" value={project.name} onChange={e=>setProject({...project,name:e.target.value})}/><span className="saved">{project.source==="codex"?"Published by Codex":"Local draft"}</span></div>
+      <div className="top-actions"><button className="tool-button" onClick={undo} disabled={!history.length} title="Undo">↶</button><button className="tool-button" onClick={redo} disabled={!future.length} title="Redo">↷</button><button className="secondary" onClick={save}>Save</button><button className="secondary" onClick={newModel}>New Model</button><button className="primary" onClick={()=>download(project.name,minecraftJson(project))}>Export JSON</button></div>
     </header>
-
     <section className="workspace">
-      <aside className="left-panel panel">
-        <div className="panel-heading"><div><span className="eyebrow">OUTLINER</span><h2>Model parts</h2></div><button className="mini-add" onClick={()=>addCube()} aria-label="Add cube">+</button></div>
-        <div className="tree-label">⌄ ◈ {project.name}</div>
-        <div className="cube-list">{project.cubes.map((c)=><button key={c.id} className={`cube-row ${selected===c.id?"active":""}`} onClick={()=>setSelected(c.id)}><span className="cube-glyph">◆</span><span>{c.name}</span><i style={{background:c.color}}/></button>)}</div>
-        <button className="add-part" onClick={()=>addCube()}><span>＋</span> Add cube</button>
-        <div className="tips"><strong>Quick controls</strong><p>Drag to orbit · Scroll to zoom</p><p>Click a cube to select it</p></div>
-      </aside>
-
-      <section className="stage">
-        <div className="stage-tools"><span className="badge">PERSPECTIVE</span><span className="badge"><i/> 16 × 16 GRID</span></div>
-        <Viewport cubes={project.cubes} selected={selected} onSelect={setSelected}/>
-        <div className="axis"><span className="x">X</span><span className="y">Y</span><span className="z">Z</span></div>
-        <div className="stage-note">Minecraft Java · Block / item model</div>
-      </section>
-
-      <aside className="right-panel panel">
-        <div className="panel-heading"><div><span className="eyebrow">INSPECTOR</span><h2>{cube?.name||"Nothing selected"}</h2></div>{cube&&<button className="delete" onClick={removeCube} aria-label="Delete cube">×</button>}</div>
-        {cube ? <div className="inspector">
-          <label className="field-label">NAME<input value={cube.name} onChange={(e)=>updateCube({name:e.target.value})}/></label>
-          <VectorEditor label="FROM" value={cube.from} onChange={(from)=>updateCube({from})}/>
-          <VectorEditor label="TO" value={cube.to} onChange={(to)=>updateCube({to})}/>
-          <VectorEditor label="ROTATION" value={cube.rotation} onChange={(rotation)=>updateCube({rotation})}/>
-          <div className="field-label">MATERIAL COLOR<div className="swatches">{COLORS.map(color=><button key={color} aria-label={`Use ${color}`} className={cube.color===color?"chosen":""} style={{background:color}} onClick={()=>updateCube({color})}/>)}</div></div>
-          <div className="dimensions"><span>SIZE</span><strong>{cube.to.map((n,i)=>n-cube.from[i]).join(" × ")}</strong><small>pixels</small></div>
-        </div> : <p className="empty">Select a cube in the viewport or model parts list.</p>}
-        <details className="json-box"><summary>Minecraft JSON preview</summary><pre>{jsonPreview}</pre></details>
-      </aside>
+      <aside className="left-panel panel"><div className="panel-heading"><div><span className="eyebrow">OUTLINER</span><h2>{project.cubes.length} model parts</h2></div><button className="mini-add" onClick={addCube}>+</button></div><div className="tree-label">⌄ ◈ {project.name}</div><div className="cube-list">{project.cubes.map(c=><button key={c.id} className={`cube-row ${selected===c.id?"active":""}`} onClick={()=>setSelected(c.id)}><span className="cube-glyph">◆</span><span>{c.name}</span><i style={{background:c.color}}/></button>)}</div><button className="add-part" onClick={addCube}>＋ Add cube</button><div className="tips"><strong>Codex workflow</strong><p>Describe a model in this Codex chat.</p><p>Codex adds it here, then publishes it.</p></div></aside>
+      <section className="stage"><div className="stage-tools"><span className="badge">PERSPECTIVE</span><span className="badge"><i/> TEXTURED</span></div><Viewport project={project} selected={selected} onSelect={setSelected}/><div className="axis"><span className="x">X</span><span className="y">Y</span><span className="z">Z</span></div><div className="stage-note">Drag to orbit · Scroll to zoom · Click to select</div></section>
+      <aside className="right-panel panel"><div className="panel-heading"><div><span className="eyebrow">INSPECTOR</span><h2>{selectedCube?.name||"Model settings"}</h2></div>{selectedCube&&<button className="delete" onClick={()=>{commit({...project,cubes:project.cubes.filter(c=>c.id!==selectedCube.id)});setSelected(null)}}>×</button>}</div>{selectedCube?<div className="inspector"><label className="field-label">NAME<input value={selectedCube.name} onChange={e=>updateCube({name:e.target.value})}/></label><VectorEditor label="FROM" value={selectedCube.from} onChange={from=>updateCube({from})}/><VectorEditor label="TO" value={selectedCube.to} onChange={to=>updateCube({to})}/><VectorEditor label="ROTATION" value={selectedCube.rotation} onChange={rotation=>updateCube({rotation})}/><label className="field-label">MATERIAL<input value={selectedCube.material||""} onChange={e=>updateCube({material:e.target.value})}/></label><div className="field-label">COLOR<div className="swatches">{COLORS.map(color=><button key={color} className={selectedCube.color===color?"chosen":""} style={{background:color}} onClick={()=>updateCube({color})}/>)}</div></div></div>:<p className="empty">Select a part to edit its geometry and material.</p>}<section className="texture-card"><span className="eyebrow">MODEL TEXTURE</span>{project.textureUrl?<div className="texture-preview" style={{backgroundImage:`url(${project.textureUrl})`}}/>:<div className="texture-empty">No texture attached</div>}<strong>{project.textureName||"Flat material colors"}</strong><button onClick={()=>textureInput.current?.click()}>Import texture</button><input ref={textureInput} hidden type="file" accept="image/png,image/jpeg,image/webp" onChange={importTexture}/></section><details className="json-box"><summary>Minecraft JSON preview</summary><pre>{jsonPreview}</pre></details></aside>
     </section>
-
-    <section className="ai-dock">
-      <div className="ai-mark">✦</div><div className="chat"><div className="chat-head"><strong>Blocksmith Assistant</strong><span>LOCAL COMMAND MODE</span></div><div className="messages">{messages.slice(-3).map((m,i)=><p key={i}>{m}</p>)}</div>
-      <div className="prompt-row"><input aria-label="AI modeling instruction" placeholder="Describe a change to your model…" value={prompt} onChange={(e)=>setPrompt(e.target.value)} onKeyDown={(e)=>e.key==="Enter"&&runPrompt()}/><button onClick={runPrompt}>Build <span>↗</span></button></div></div>
-    </section>
+    <section className="library-dock"><div className="library-title"><div><span className="eyebrow">MODEL LIBRARY</span><h2>Codex creations & local drafts</h2></div><div className="library-actions"><button onClick={duplicate}>Duplicate</button><button onClick={()=>modelInput.current?.click()}>Import JSON</button>{project.source==="local"&&<button className="danger" onClick={deleteModel}>Delete</button>}<input ref={modelInput} hidden type="file" accept=".json,application/json" onChange={importModel}/></div></div><div className="model-cards"><button className="new-card" onClick={newModel}><b>＋</b><span>Blank model</span></button>{library.map(model=><button key={model.id} className={`model-card ${project.id===model.id?"active":""}`} onClick={()=>open(model)}><span className="card-art" style={model.textureUrl?{backgroundImage:`linear-gradient(135deg,rgba(9,12,10,.15),rgba(9,12,10,.75)),url(${model.textureUrl})`}:{background:`linear-gradient(135deg,${model.cubes[0]?.color||"#333"},#111)`}}><i>{model.cubes.length}</i></span><span className="card-copy"><strong>{model.name}</strong><small>{model.source==="codex"?"CODEX LIBRARY":"LOCAL"} · {model.cubes.length} parts</small></span></button>)}</div></section>
   </main>;
 }
 
-function VectorEditor({label,value,onChange}:{label:string;value:Vec3;onChange:(v:Vec3)=>void}) {
-  return <fieldset className="vector"><legend>{label}</legend>{(["X","Y","Z"] as const).map((axis,i)=><label key={axis}><span>{axis}</span><input type="number" value={value[i]} onChange={(e)=>{const next=[...value] as Vec3;next[i]=Number(e.target.value);onChange(next)}}/></label>)}</fieldset>;
-}
+function VectorEditor({label,value,onChange}:{label:string;value:Vec3;onChange:(v:Vec3)=>void}){return <fieldset className="vector"><legend>{label}</legend>{["X","Y","Z"].map((axis,i)=><label key={axis}><span>{axis}</span><input type="number" value={value[i]} onChange={e=>{const next=[...value] as Vec3;next[i]=Number(e.target.value);onChange(next)}}/></label>)}</fieldset>}
