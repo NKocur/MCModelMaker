@@ -48,7 +48,36 @@ const totem: Project = {
   ],
 };
 
-const BUILTINS = [atm, totem];
+const pickaxe: Project = {
+  id:"codex_voidforge_pickaxe_01", name:"Voidforge Pickaxe", source:"codex", revision:1,
+  description:"An enchanted deep-mining pickaxe with a wrapped dark-oak grip, reinforced metal head and luminous amethyst core.",
+  kind:"item", namespace:"blocksmith", baseItem:"minecraft:netherite_pickaxe",
+  cubes:[
+    cube("pommel","Obsidian pommel",[6.5,0.2,6.5],[9.5,2.1,9.5],"#293239","polished obsidian"),
+    cube("pommel_cap","Pommel crystal",[7.15,-0.5,7.15],[8.85,0.5,8.85],"#725392","emissive amethyst"),
+    cube("handle_core","Dark oak handle",[7,1.8,7],[9,11.8,9],"#70472d","dark wood"),
+    cube("grip_1","Lower grip wrap",[6.7,2.2,6.7],[9.3,3.1,9.3],"#20272c","black leather"),
+    cube("grip_2","Middle grip wrap",[6.7,4.1,6.7],[9.3,5,9.3],"#20272c","black leather"),
+    cube("grip_3","Upper grip wrap",[6.7,6,6.7],[9.3,6.9,9.3],"#20272c","black leather"),
+    cube("grip_4","Top grip wrap",[6.7,7.9,6.7],[9.3,8.8,9.3],"#20272c","black leather"),
+    cube("neck","Reinforced neck",[6.4,10.2,6.4],[9.6,12.4,9.6],"#596267","forged metal"),
+    cube("head_core","Pickaxe head",[3.2,11.8,6.2],[12.8,14.4,9.8],"#657078","forged metal"),
+    cube("head_ridge","Top reinforcement",[4.2,14.2,6.6],[11.8,15.1,9.4],"#949da1","bright metal"),
+    cube("left_arm","Left blade shoulder",[1.7,11.2,6.5],[4.2,14,9.5],"#536068","forged metal"),
+    cube("left_tip","Left mining point",[0.4,10.2,7],[2.2,12.4,9],"#949da1","bright metal"),
+    cube("left_edge","Left cutting edge",[-0.2,9.5,7.35],[1.1,10.9,8.65],"#d2d8d7","sharpened metal"),
+    cube("right_arm","Right blade shoulder",[11.8,11.2,6.5],[14.3,14,9.5],"#536068","forged metal"),
+    cube("right_tip","Right mining point",[13.8,10.2,7],[15.6,12.4,9],"#949da1","bright metal"),
+    cube("right_edge","Right cutting edge",[14.9,9.5,7.35],[16.2,10.9,8.65],"#d2d8d7","sharpened metal"),
+    cube("core_socket","Crystal socket",[6.1,12.2,5.75],[9.9,14.2,6.55],"#171d21","obsidian metal"),
+    cube("amethyst_core","Amethyst power core",[6.8,12.65,5.35],[9.2,13.85,6.05],"#8a60bd","emissive amethyst"),
+    cube("rune_left","Left runic stud",[4.65,12.55,5.7],[5.45,13.35,6.35],"#2bc8d3","emissive rune"),
+    cube("rune_right","Right runic stud",[10.55,12.55,5.7],[11.35,13.35,6.35],"#2bc8d3","emissive rune"),
+    cube("back_plate","Rear head plate",[5.2,12.1,9.55],[10.8,14.1,10.25],"#293239","dark metal"),
+  ],
+};
+
+const BUILTINS = [pickaxe, atm, totem];
 const clone = <T,>(value:T):T => JSON.parse(JSON.stringify(value));
 const uid = (prefix="cube") => `${prefix}_${Math.random().toString(36).slice(2,9)}`;
 const slug = (value:string) => value.toLowerCase().trim().replace(/[^a-z0-9_.-]+/g,"_").replace(/^_+|_+$/g,"")||"model";
@@ -150,7 +179,7 @@ export default function ModelMaker(){
   const checks=useMemo(()=>validation(project),[project]);
   const exportBlocked=checks.some(check=>check.level==="error");
 
-  useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=[...saved];BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});if(merged.length){setLibrary(merged);setProject(clone(merged[0]));setSelected(merged[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
+  useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=[...saved];BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});const builtInIds=new Set(BUILTINS.map(b=>b.id)),ordered=[...BUILTINS.map(b=>clone(merged.find(p=>p.id===b.id)||b)),...merged.filter(p=>!builtInIds.has(p.id))];if(ordered.length){setLibrary(ordered);setProject(clone(ordered[0]));setSelected(ordered[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
   useEffect(()=>{if(hydrated)localStorage.setItem("blocksmith-library-v2",JSON.stringify(library))},[library,hydrated]);
   const commit=(next:Project)=>{setHistory(h=>[...h.slice(-39),clone(project)]);setFuture([]);setProject(next)};
   const updateCube=(patch:Partial<Cube>)=>selectedCube&&commit({...project,cubes:project.cubes.map(c=>c.id===selectedCube.id?{...c,...patch}:c)});
