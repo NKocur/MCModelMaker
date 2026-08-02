@@ -125,6 +125,20 @@ test("Blackwake Skulljack is an overlap-checked animated pirate slot machine", a
   assert.match(source, /blackwakeSkulljack,\s+blackwakePirateChest/);
 });
 
+test("Emerald Fortune Roulette is a two-block animated casino table", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Emerald Fortune Roulette"/);
+  assert.match(source, /group:"Casino Games",pack:"Fantasy Daily Rewards",placementSize:\[2,1,1\]/);
+  assert.match(source, /cubes:overlapChecked\("Emerald Fortune Roulette",rouletteCubes\)/);
+  assert.match(source, /Two-block mahogany tabletop/);
+  assert.match(source, /Emerald betting felt/);
+  assert.match(source, /Array\.from\(\{length:18\}/);
+  assert.match(source, /Ivory roulette ball/);
+  assert.match(source, /name:"Spin wheel",lengthTicks:40,loop:true/);
+  assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeSkulljack/);
+});
+
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Marshlight Trading Post"/);
