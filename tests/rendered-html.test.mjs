@@ -137,10 +137,15 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /fetch\("\/vanilla-26\.2\/catalog\.json"\)/);
   assert.match(source, /const modelApplications=/);
   assert.match(source, /const inheritedModel=/);
+  assert.match(source, /const inheritedModelCaches=new WeakMap/);
   assert.match(source, /const catalogBlockModel=/);
   assert.match(source, /const textureSprite=/);
   assert.match(source, /typeof \(value as \{sprite\?:unknown\}\)\.sprite==="string"/);
   assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
+  assert.match(source, /pixelBudget=interacting\?/);
+  assert.doesNotMatch(source, /Math\.min\(view\.zoom,fitZoom\)\)\*quality/);
+  assert.match(source, /interacting&&project\.structure\?project\.cubes:viewportParts/);
+  assert.match(source, /setTimeout\(\(\)=>setInteracting\(false\),140\)/);
   assert.match(source, /faceDefinition=part\.faceData\?\.\[faceIndex\]/);
   const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
   assert.equal(catalog.version, "26.2");
