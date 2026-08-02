@@ -354,7 +354,7 @@ test("custom furniture exposes and exports multi-block placement footprints", as
   assert.match(source, /hitboxes:cells\.map/);
   assert.match(source, /break_behavior:"remove_entire_object"/);
   assert.match(source, /rotate_offsets_with_facing:true/);
-  assert.match(source, /schema:4/);
+  assert.match(source, /schema:5/);
   assert.match(source, /PLACEMENT FOOTPRINT/);
   assert.match(source, /"WIDTH X","HEIGHT Y","DEPTH Z"/);
   assert.match(source, /FOOTPRINT \{placementFootprint\(project\)\.join/);
@@ -362,4 +362,21 @@ test("custom furniture exposes and exports multi-block placement footprints", as
   assert.match(styles, /\.placement-size/);
   assert.match(styles, /\.footprint-chip/);
   assert.match(styles, /\.library-footprint/);
+});
+
+test("preview and exported models share explicit non-stretching UVs", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const proceduralPixel=/);
+  assert.match(source, /proceduralPixel\(part\.id,part\.material,part\.color,x,y\)/);
+  assert.match(source, /const faceUvForBox=/);
+  assert.match(source, /faceIndex<2\?\[dx,dy\]:faceIndex<4\?\[dz,dy\]:\[dx,dz\]/);
+  assert.match(source, /const splitPartForExport=/);
+  assert.match(source, /start\+=16/);
+  assert.match(source, /parts\.flatMap\(part=>/);
+  assert.match(source, /uv:faceUvForBox\(segment\.from,segment\.to,faceIndex\)/);
+  assert.match(source, /unsplitParts\.flatMap\(part=>splitPartForExport/);
+  assert.match(source, /textureUv:faceDefinition\?\.uv\|\|faceUvForBox\(part\.from,part\.to,faceIndex\)/);
+  assert.match(source, /proceduralPixel\(face\.id,face\.material,face\.color,sampleX,sampleY\)/);
+  assert.match(source, /texture_mapping:UV_SPACE_CONTRACT/);
+  assert.match(source, /oversized_elements:"split_into_max_16_pixel_segments"/);
 });
