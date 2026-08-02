@@ -53,6 +53,24 @@ test("Marsh Alligator is a complete articulated creature rig", async () => {
   assert.match(source, /bite_jaw_4[^\n]+\[-32,0,0\]/);
 });
 
+test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Marshlight Trading Post"/);
+  assert.match(source, /category:"Structures",group:"Settlement Builds",pack:"Wild Frontier"/);
+  assert.match(source, /structure:\{size:\[21,17,17\],blocks:tradingPostBlocks\}/);
+  assert.match(source, /minecraft:spruce_stairs\[facing=\$\{facing\},half=bottom,shape=straight,waterlogged=false\]/);
+  assert.match(source, /minecraft:iron_chain\[axis=y,waterlogged=false\]/);
+  assert.match(source, /minecraft:lantern\[hanging=true,waterlogged=false\]/);
+  assert.match(source, /minecraft:water_cauldron\[level=2\]/);
+  assert.match(source, /minecraft:potted_blue_orchid/);
+  assert.match(source, /minecraft:loom\[facing=west\]/);
+
+  const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
+  for (const block of ["spruce_stairs", "iron_chain", "lantern", "water_cauldron", "potted_blue_orchid", "loom"]) {
+    assert.ok(catalog.blockstates[block], `${block} must exist in the bundled 26.2 references`);
+  }
+});
+
 test("animation authoring follows the Paper display-rig contract", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /ticks_per_second:20/);

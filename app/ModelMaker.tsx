@@ -214,7 +214,28 @@ const makeWatchtowerBlocks=()=>{const blocks:StructureBlock[]=[],put=(x:number,y
 const watchtowerBlocks=normalizeStructureBlocks(makeWatchtowerBlocks());
 const swampWatchtower:Project={id:"codex_swamp_watchtower_01",name:"Swamp Watchtower",description:"A compact layer-built watchtower made from real Minecraft 26.2 block states.",cubes:structureBlocksToCubes(watchtowerBlocks),source:"codex",revision:3,kind:"structure",namespace:"blocksmith",category:"Structures",group:"Swamp Builds",pack:"Wild Frontier",structure:{size:[9,8,9],blocks:watchtowerBlocks}};
 
+const makeTradingPostBlocks=()=>{const placed=new Map<string,StructureBlock>(),put=(x:number,y:number,z:number,state:string)=>placed.set(`${x},${y},${z}`,{id:`trading_post_${x}_${y}_${z}`,x,y,z,state}),stairs=(facing:string)=>`minecraft:spruce_stairs[facing=${facing},half=bottom,shape=straight,waterlogged=false]`,paneX="minecraft:glass_pane[east=true,north=false,south=false,waterlogged=false,west=true]",paneZ="minecraft:glass_pane[east=false,north=true,south=true,waterlogged=false,west=false]",fenceX="minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",fenceZ="minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]";
+  for(let x=2;x<=18;x++)for(let z=3;z<=15;z++){const edge=x===2||x===18||z===3||z===15,weather=(x*7+z*11)%9;put(x,0,z,edge?(weather<3?"minecraft:mossy_stone_bricks":"minecraft:cobblestone"):(weather===0?"minecraft:cracked_stone_bricks":"minecraft:stone_bricks"))}
+  for(let x=3;x<=17;x++)for(let z=4;z<=14;z++)put(x,1,z,"minecraft:spruce_planks");
+  for(const [x,z] of [[3,4],[10,4],[17,4],[3,9],[17,9],[3,14],[10,14],[17,14]])for(let y=2;y<=8;y++)put(x,y,z,"minecraft:stripped_spruce_log[axis=y]");
+  for(let x=4;x<=16;x++)for(let y=2;y<=7;y++){const frontDoor=(x===9||x===10)&&y<=4,frontWindow=(x===5||x===6||x===14||x===15)&&(y===4||y===5),backWindow=(x===6||x===7||x===13||x===14)&&(y===4||y===5);if(!frontDoor)put(x,y,4,frontWindow?paneX:"minecraft:spruce_planks");put(x,y,14,backWindow?paneX:"minecraft:spruce_planks")}
+  for(let z=5;z<=13;z++)for(let y=2;y<=7;y++){const sideWindow=(z===7||z===8||z===11||z===12)&&(y===4||y===5);put(3,y,z,sideWindow?paneZ:"minecraft:spruce_planks");put(17,y,z,sideWindow?paneZ:"minecraft:spruce_planks")}
+  for(let x=4;x<=16;x++)for(let z=5;z<=13;z++)put(x,7,z,"minecraft:spruce_planks");
+  for(let layer=0;layer<8;layer++)for(let z=3;z<=15;z++){put(2+layer,8+layer,z,stairs("east"));put(18-layer,8+layer,z,stairs("west"))}for(let z=3;z<=15;z++)put(10,16,z,"minecraft:spruce_slab[type=top,waterlogged=false]");
+  for(const z of [4,14])for(let x=4;x<=16;x++){const roofHeight=8+Math.min(x-2,18-x);for(let y=8;y<roofHeight;y++)put(x,y,z,(x===10&&y>=10&&y<=12)?paneX:"minecraft:dark_oak_planks")}
+  for(let x=14;x<=15;x++)for(let z=10;z<=11;z++)for(let y=8;y<=15;y++)put(x,y,z,"minecraft:bricks");put(14,16,10,"minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]");put(15,16,10,"minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]");
+  for(let x=7;x<=13;x++)for(let z=0;z<=3;z++)put(x,1,z,"minecraft:spruce_planks");for(let x=5;x<=15;x++)for(let z=0;z<=2;z++)put(x,0,z,"minecraft:water[level=0]");for(const [x,z] of [[7,0],[13,0],[7,3],[13,3]])put(x,0,z,"minecraft:spruce_log[axis=y]");for(let x=8;x<=12;x++)put(x,2,0,fenceX);for(let z=1;z<=2;z++){put(7,2,z,fenceZ);put(13,2,z,fenceZ)}put(7,3,1,"minecraft:lantern[hanging=false,waterlogged=false]");put(13,3,1,"minecraft:lantern[hanging=false,waterlogged=false]");
+  for(let x=4;x<=16;x++)for(let z=2;z<=3;z++)put(x,7,z,"minecraft:spruce_planks");for(let x=4;x<=8;x++)put(x,8,2,fenceX);for(let x=12;x<=16;x++)put(x,8,2,fenceX);put(4,8,3,"minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=false]");put(16,8,3,"minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=false]");
+  for(const [x,z] of [[6,8],[10,8],[14,8],[6,12],[10,12],[14,12]]){put(x,8,z,"minecraft:iron_chain[axis=y,waterlogged=false]");put(x,7,z,"minecraft:lantern[hanging=true,waterlogged=false]")}
+  for(let x=5;x<=8;x++)put(x,2,12,"minecraft:barrel[facing=up,open=false]");put(9,2,12,"minecraft:crafting_table");put(11,2,12,"minecraft:water_cauldron[level=2]");put(13,2,12,"minecraft:bookshelf");put(14,2,12,"minecraft:bookshelf");put(15,2,12,"minecraft:cartography_table");
+  for(let x=6;x<=14;x++)put(x,2,7,"minecraft:dark_oak_slab[type=top,waterlogged=false]");put(7,3,7,"minecraft:potted_dandelion");put(9,3,7,"minecraft:potted_poppy");put(11,3,7,"minecraft:potted_blue_orchid");put(13,3,7,"minecraft:potted_oak_sapling");
+  for(let y=2;y<=6;y++)put(16,y,10,"minecraft:ladder[facing=west,waterlogged=false]");put(5,2,6,"minecraft:furnace[facing=east,lit=true]");put(5,2,10,"minecraft:smoker[facing=east,lit=true]");put(15,2,6,"minecraft:loom[facing=west]");
+  return[...placed.values()]};
+const tradingPostBlocks=normalizeStructureBlocks(makeTradingPostBlocks());
+const marshlightTradingPost:Project={id:"codex_marshlight_trading_post_01",name:"Marshlight Trading Post",description:"A detailed two-level swamp trading post with a framed lodge, steep stair roof, chimney, dock, workshop, loft, lantern rigging, and planted interior.",cubes:structureBlocksToCubes(tradingPostBlocks),source:"codex",revision:1,kind:"structure",namespace:"blocksmith",category:"Structures",group:"Settlement Builds",pack:"Wild Frontier",structure:{size:[21,17,17],blocks:tradingPostBlocks}};
+
 const BUILTINS:Project[] = [
+  marshlightTradingPost,
   swampWatchtower,
   marshAlligator,
   hingedChest,
