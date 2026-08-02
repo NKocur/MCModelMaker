@@ -98,6 +98,7 @@ test("Marshlight Trading Post is a detailed current-version structure showcase",
 test("Gilded Briar Manor exercises elaborate connected-house construction", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Gilded Briar Manor"/);
+  assert.match(source, /name:"Gilded Briar Manor"[^\n]+revision:2/);
   assert.match(source, /category:"Structures",group:"Manor Houses",pack:"Wild Frontier"/);
   assert.match(source, /structure:\{size:\[31,21,27\],blocks:briarManorBlocks\}/);
   assert.match(source, /const briarManorBlocks=resolveStructureConnections\(makeBriarManorBlocks\(\)\)/);
@@ -113,6 +114,8 @@ test("Gilded Briar Manor exercises elaborate connected-house construction", asyn
   assert.match(source, /Tall west library tower/);
   assert.match(source, /Glazed east conservatory/);
   assert.match(source, /Hedges, pond, fountain, trees, and lantern-lined approach/);
+  assert.match(source, /name:`\$\{merged\[i\]\.name\} \(Saved edit\)`/);
+  assert.match(source, /name:`\$\{project\.name\} Custom`/);
 
   const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
   for (const block of ["white_stained_glass_pane", "spruce_door", "dark_oak_stairs", "stone_brick_stairs", "dark_oak_trapdoor", "flowering_azalea_leaves"]) {
