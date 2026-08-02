@@ -92,4 +92,9 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /\/vanilla-blocks\/\$\{name\}\.png/);
   assert.match(source, /texture==="oak_log"&&\(face\.faceIndex===4\|\|face\.faceIndex===5\)/);
   assert.match(source, /texture==="grass_block_side"&&face\.faceIndex===4/);
+  assert.match(source, /orbitCenter=minimum\.map/);
+  assert.match(source, /cameraTarget=previewMode==="studio"\?orbitCenter/);
+  assert.match(source, /fitZoom\*\(view\.zoom\/18\)/);
+  assert.match(source, /Math\.min\(90,v\.zoom-e\.deltaY\*\.025\)/);
+  assert.match(source, /structureOccupied\?\.has/);
 });
