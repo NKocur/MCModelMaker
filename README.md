@@ -102,3 +102,6 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 Blocksmith includes local tooling for importing and indexing official client
 assets as structural references without committing or deploying Mojang's
 files. See [docs/vanilla-reference.md](docs/vanilla-reference.md).
+
+Animation rigs use a fixed Minecraft/Paper axis and timing contract documented
+in [docs/animation-coordinate-system.md](docs/animation-coordinate-system.md).

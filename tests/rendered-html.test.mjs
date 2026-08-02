@@ -35,4 +35,15 @@ test("animation authoring follows the Paper display-rig contract", async () => {
   assert.match(source, /interpolation_duration_ticks:1/);
   assert.match(source, /Vanilla Java elements may rotate on only one axis/);
   assert.match(source, /Static Java element angles must be -45, -22\.5, 0, 22\.5, or 45 degrees/);
+  assert.match(source, /rotation_convention:"right-handed positive rotations"/);
+  assert.match(source, /open_10[^\n]+rotation:\[90,0,0\]/);
+
+  // Rear hinge at Z=14, front test point at Z=1. Positive X must lift it in Y.
+  const pivot = [8, 10, 14];
+  const front = [8, 10, 1];
+  const radians = Math.PI / 2;
+  const relativeY = front[1] - pivot[1];
+  const relativeZ = front[2] - pivot[2];
+  const rotatedY = relativeY * Math.cos(radians) - relativeZ * Math.sin(radians);
+  assert.ok(pivot[1] + rotatedY > front[1], "the lid's front edge must move upward");
 });
