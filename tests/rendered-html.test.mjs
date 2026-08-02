@@ -97,4 +97,13 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /fitZoom\*\(view\.zoom\/18\)/);
   assert.match(source, /Math\.min\(90,v\.zoom-e\.deltaY\*\.025\)/);
   assert.match(source, /structureOccupied\?\.has/);
+  assert.match(source, /const structureBlockModel=/);
+  assert.match(source, /block\.state\.startsWith\("minecraft:lantern\["\)/);
+  assert.match(source, /\[\[5,0,5\],\[11,7,11\],\[0,0,0\]\]/);
+  assert.match(source, /block\.state\.startsWith\("minecraft:oak_stairs\["\)/);
+  assert.match(source, /rotateModelBox\(from,to,xRotation,yRotation\)/);
+  assert.match(source, /Hanging Lantern/);
+  assert.match(source, /texture==="lantern"/);
+  assert.match(source, /if\(alpha===0\)return\[0,0,0,0\]/);
+  assert.match(source, /if\(rgb\[3\]===0\)continue/);
 });
