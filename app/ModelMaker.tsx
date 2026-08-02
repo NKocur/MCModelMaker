@@ -243,7 +243,48 @@ const makeTradingPostBlocks=()=>{const placed=new Map<string,StructureBlock>(),p
 const tradingPostBlocks=resolveStructureConnections(makeTradingPostBlocks());
 const marshlightTradingPost:Project={id:"codex_marshlight_trading_post_01",name:"Marshlight Trading Post",description:"A detailed two-level swamp trading post with a framed lodge, steep stair roof, chimney, dock, workshop, loft, lantern rigging, and planted interior.",cubes:structureBlocksToCubes(tradingPostBlocks),source:"codex",revision:1,kind:"structure",namespace:"blocksmith",category:"Structures",group:"Settlement Builds",pack:"Wild Frontier",structure:{size:[21,17,17],blocks:tradingPostBlocks}};
 
+const makeBriarManorBlocks=()=>{const placed=new Map<string,StructureBlock>(),put=(x:number,y:number,z:number,state:string)=>placed.set(`${x},${y},${z}`,{id:`briar_manor_${x}_${y}_${z}`,x,y,z,state}),stairs=(wood:string,facing:string,half="bottom")=>`minecraft:${wood}_stairs[facing=${facing},half=${half},shape=straight,waterlogged=false]`,slab=(wood:string,type="top")=>`minecraft:${wood}_slab[type=${type},waterlogged=false]`,pane="minecraft:white_stained_glass_pane",fence="minecraft:spruce_fence",door=(half:string,hinge:string)=>`minecraft:spruce_door[facing=north,half=${half},hinge=${hinge},open=false,powered=false]`;
+  // Landscaped estate, paths, pond, and a weathered masonry foundation.
+  for(let x=0;x<=30;x++)for(let z=0;z<=26;z++)put(x,0,z,"minecraft:grass_block[snowy=false]");
+  for(let z=0;z<=7;z++)for(let x=13;x<=16;x++)put(x,0,z,(x+z)%3===0?"minecraft:gravel":"minecraft:coarse_dirt");
+  for(let x=5;x<=24;x++)for(let z=7;z<=20;z++)put(x,0,z,(x+z)%11===0?"minecraft:mossy_stone_bricks":"minecraft:stone_bricks");
+  for(let x=2;x<=8;x++)for(let z=11;z<=19;z++)put(x,0,z,"minecraft:stone_bricks");for(let x=23;x<=28;x++)for(let z=10;z<=18;z++)put(x,0,z,"minecraft:polished_andesite");
+  for(let x=6;x<=23;x++)for(let z=8;z<=19;z++)put(x,1,z,"minecraft:spruce_planks");for(let x=3;x<=8;x++)for(let z=12;z<=18;z++)put(x,1,z,"minecraft:spruce_planks");for(let x=24;x<=27;x++)for(let z=11;z<=17;z++)put(x,1,z,"minecraft:polished_andesite");
+  // Main two-storey timber frame with recessed connected-pane windows.
+  const frontWindows=new Set([8,9,20,21]),backWindows=new Set([8,9,13,14,19,20]),sideWindows=new Set([10,11,15,16]);
+  for(let x=6;x<=23;x++)for(let y=2;y<=9;y++){const doorGap=(x===14||x===15)&&y<=3,frontGlass=frontWindows.has(x)&&(y===3||y===4||y===7||y===8),backGlass=backWindows.has(x)&&(y===3||y===4||y===7||y===8);if(!doorGap)put(x,y,8,frontGlass?pane:"minecraft:white_terracotta");put(x,y,19,backGlass?pane:"minecraft:white_terracotta")}
+  for(let z=9;z<=18;z++)for(let y=2;y<=9;y++){const glass=sideWindows.has(z)&&(y===3||y===4||y===7||y===8);put(6,y,z,glass?pane:"minecraft:white_terracotta");put(23,y,z,glass?pane:"minecraft:white_terracotta")}
+  for(const x of [6,11,18,23])for(const z of [8,19])for(let y=2;y<=10;y++)put(x,y,z,"minecraft:stripped_dark_oak_log[axis=y]");for(const z of [8,13,19])for(const x of [6,23])for(let y=2;y<=10;y++)put(x,y,z,"minecraft:stripped_dark_oak_log[axis=y]");
+  for(let x=6;x<=23;x++){put(x,6,8,"minecraft:dark_oak_planks");put(x,6,19,"minecraft:dark_oak_planks")}for(let z=9;z<=18;z++){put(6,6,z,"minecraft:dark_oak_planks");put(23,6,z,"minecraft:dark_oak_planks")}for(let x=7;x<=22;x++)for(let z=9;z<=18;z++)put(x,6,z,"minecraft:spruce_planks");
+  put(14,2,8,door("lower","left"));put(14,3,8,door("upper","left"));put(15,2,8,door("lower","right"));put(15,3,8,door("upper","right"));
+  // Deep entrance porch, connected corner stairs, balcony, shutters, and flower boxes.
+  for(let x=11;x<=18;x++)for(let z=5;z<=7;z++)put(x,1,z,"minecraft:polished_andesite");for(let x=12;x<=17;x++)put(x,1,4,stairs("stone_brick","north"));for(let z=4;z<=7;z++){put(11,1,z,stairs("stone_brick","west"));put(18,1,z,stairs("stone_brick","east"))}
+  for(const x of [11,18])for(let y=2;y<=5;y++)put(x,y,6,"minecraft:stripped_dark_oak_log[axis=y]");for(let x=10;x<=19;x++){put(x,6,5,stairs("dark_oak","north"));put(x,6,6,slab("dark_oak"))}for(let x=12;x<=17;x++)put(x,7,6,fence);put(11,7,6,fence);put(18,7,6,fence);put(11,6,5,"minecraft:lantern[hanging=false,waterlogged=false]");put(18,6,5,"minecraft:lantern[hanging=false,waterlogged=false]");
+  for(const x of [7,10,19,22])for(const y of [3,7])put(x,y,7,"minecraft:dark_oak_trapdoor[facing=north,half=bottom,open=true,powered=false,waterlogged=false]");for(const [x,flower] of [[8,"potted_poppy"],[9,"potted_dandelion"],[20,"potted_blue_orchid"],[21,"potted_poppy"]] as const){put(x,2,7,slab("dark_oak"));put(x,3,7,`minecraft:${flower}`)}
+  // Main steep gable, thick ridge, end infill, and two front dormers.
+  for(let layer=0;layer<7;layer++)for(let x=5;x<=24;x++){put(x,10+layer,7+layer,stairs("dark_oak","south"));put(x,10+layer,20-layer,stairs("dark_oak","north"))}for(let x=5;x<=24;x++){put(x,17,13,slab("dark_oak"));put(x,17,14,slab("dark_oak"))}
+  for(const x of [6,23])for(let z=8;z<=19;z++){const roofHeight=10+Math.min(z-7,20-z);for(let y=10;y<roofHeight;y++)put(x,y,z,z===13&&(y===12||y===13)?pane:"minecraft:dark_oak_planks")}
+  for(const cx of [10,20]){for(const x of [cx-1,cx+1])for(let y=11;y<=13;y++)put(x,y,9,"minecraft:stripped_dark_oak_log[axis=y]");put(cx,12,9,pane);put(cx,13,9,pane);for(let z=8;z<=11;z++){put(cx-2,14,z,stairs("dark_oak","east"));put(cx+2,14,z,stairs("dark_oak","west"));put(cx-1,15,z,stairs("dark_oak","east"));put(cx+1,15,z,stairs("dark_oak","west"));put(cx,16,z,slab("dark_oak"))}}
+  // Tall west library tower with its own crossing roof mass.
+  for(let y=2;y<=12;y++)for(const [x,z] of [[2,11],[8,11],[2,19],[8,19]])put(x,y,z,"minecraft:stripped_dark_oak_log[axis=y]");
+  for(let x=3;x<=7;x++)for(let y=2;y<=12;y++){const glass=(x===4||x===6)&&(y===4||y===5||y===9||y===10);put(x,y,11,glass?pane:"minecraft:white_terracotta");put(x,y,19,glass?pane:"minecraft:white_terracotta")}for(let z=12;z<=18;z++)for(let y=2;y<=12;y++){const glass=(z===14||z===17)&&(y===4||y===5||y===9||y===10);put(2,y,z,glass?pane:"minecraft:white_terracotta")}
+  for(let layer=0;layer<4;layer++)for(let z=10;z<=20;z++){put(1+layer,13+layer,z,stairs("dark_oak","east"));put(9-layer,13+layer,z,stairs("dark_oak","west"))}for(let z=10;z<=20;z++)put(5,17,z,slab("dark_oak"));
+  // Glazed east conservatory with a low framed roof and garden entrance.
+  for(let x=24;x<=27;x++)for(let y=2;y<=6;y++){put(x,y,10,pane);put(x,y,18,pane)}for(let z=11;z<=17;z++)for(let y=2;y<=6;y++)put(28,y,z,pane);for(const [x,z] of [[23,10],[28,10],[23,18],[28,18]])for(let y=2;y<=7;y++)put(x,y,z,"minecraft:stripped_dark_oak_log[axis=y]");
+  for(let layer=0;layer<3;layer++)for(let z=9;z<=19;z++){put(22+layer,7+layer,z,stairs("dark_oak","east"));put(29-layer,7+layer,z,stairs("dark_oak","west"))}for(let z=9;z<=19;z++)put(25,10,z,"minecraft:glass");
+  // Chimneys, rooms, staircase, and functional furnishings.
+  for(let x=18;x<=19;x++)for(let z=15;z<=16;z++)for(let y=2;y<=18;y++)put(x,y,z,"minecraft:bricks");put(18,19,15,"minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]");put(19,19,15,"minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]");
+  for(let y=2;y<=5;y++)put(7,y,17,stairs("spruce","south"));for(let x=8;x<=11;x++)put(x,2,17,"minecraft:bookshelf");put(9,2,16,"minecraft:cartography_table");put(12,2,17,"minecraft:crafting_table");put(21,2,17,"minecraft:smoker[facing=west,lit=true]");put(21,2,16,"minecraft:furnace[facing=west,lit=true]");for(let x=8;x<=12;x++)put(x,2,12,slab("dark_oak"));for(const x of [8,10,12])put(x,2,11,stairs("spruce","south"));for(const [x,z,flower] of [[8,10,"potted_dandelion"],[12,10,"potted_poppy"],[21,10,"potted_blue_orchid"]] as const)put(x,2,z,`minecraft:${flower}`);
+  // Hedges, pond, fountain, trees, and lantern-lined approach.
+  for(let x=1;x<=11;x++)put(x,1,6,"minecraft:flowering_azalea_leaves");for(let x=19;x<=29;x++)put(x,1,6,"minecraft:flowering_azalea_leaves");for(let z=21;z<=25;z++){put(4,1,z,"minecraft:flowering_azalea_leaves");put(25,1,z,"minecraft:flowering_azalea_leaves")}
+  for(let x=25;x<=29;x++)for(let z=1;z<=5;z++)if((x-27)*(x-27)+(z-3)*(z-3)<=6)put(x,0,z,"minecraft:water[level=0]");for(let x=3;x<=7;x++)for(let z=2;z<=5;z++)if(x===3||x===7||z===2||z===5)put(x,1,z,"minecraft:stone_brick_slab[type=bottom,waterlogged=false]");put(5,1,3,"minecraft:stone_bricks");put(5,2,3,"minecraft:water[level=0]");
+  for(const [x,z] of [[11,3],[18,3],[11,0],[18,0]]){put(x,1,z,fence);put(x,2,z,"minecraft:lantern[hanging=false,waterlogged=false]")}for(const [x,z] of [[2,23],[28,23]]){for(let y=1;y<=5;y++)put(x,y,z,"minecraft:oak_log[axis=y]");for(let dx=-2;dx<=2;dx++)for(let dz=-2;dz<=2;dz++)for(let y=5;y<=7;y++)if(Math.abs(dx)+Math.abs(dz)+(y-5)<5)put(x+dx,y,z+dz,"minecraft:oak_leaves")}
+  return[...placed.values()]};
+const briarManorBlocks=resolveStructureConnections(makeBriarManorBlocks());
+const gildedBriarManor:Project={id:"codex_gilded_briar_manor_01",name:"Gilded Briar Manor",description:"An elaborate furnished timber-frame estate with paired doors, connected windows and roofs, dormers, a library tower, glazed conservatory, deep porch, chimneys, gardens, pond, fountain, and lantern approach.",cubes:structureBlocksToCubes(briarManorBlocks),source:"codex",revision:1,kind:"structure",namespace:"blocksmith",category:"Structures",group:"Manor Houses",pack:"Wild Frontier",structure:{size:[31,21,27],blocks:briarManorBlocks}};
+
 const BUILTINS:Project[] = [
+  gildedBriarManor,
   marshlightTradingPost,
   swampWatchtower,
   marshAlligator,

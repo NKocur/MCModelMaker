@@ -95,6 +95,26 @@ test("Marshlight Trading Post is a detailed current-version structure showcase",
   }
 });
 
+test("Gilded Briar Manor exercises elaborate connected-house construction", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Gilded Briar Manor"/);
+  assert.match(source, /category:"Structures",group:"Manor Houses",pack:"Wild Frontier"/);
+  assert.match(source, /structure:\{size:\[31,21,27\],blocks:briarManorBlocks\}/);
+  assert.match(source, /const briarManorBlocks=resolveStructureConnections\(makeBriarManorBlocks\(\)\)/);
+  assert.match(source, /white_stained_glass_pane/);
+  assert.match(source, /spruce_door\[facing=north,half=\$\{half\},hinge=\$\{hinge\}/);
+  assert.match(source, /dark_oak_trapdoor/);
+  assert.match(source, /flowering_azalea_leaves/);
+  assert.match(source, /Tall west library tower/);
+  assert.match(source, /Glazed east conservatory/);
+  assert.match(source, /Hedges, pond, fountain, trees, and lantern-lined approach/);
+
+  const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
+  for (const block of ["white_stained_glass_pane", "spruce_door", "dark_oak_stairs", "stone_brick_stairs", "dark_oak_trapdoor", "flowering_azalea_leaves"]) {
+    assert.ok(catalog.blockstates[block], `${block} must exist in the bundled 26.2 references`);
+  }
+});
+
 test("animation authoring follows the Paper display-rig contract", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /ticks_per_second:20/);
