@@ -225,6 +225,19 @@ test("animation authoring follows the Paper display-rig contract", async () => {
   assert.match(source, /Vanilla ignores this developer data; your mod or Paper plugin can read it directly/);
   assert.match(source, /Export Paper bundle/);
   assert.match(source, /Download test bundle/);
+  assert.match(source, /const ITEM_DISPLAY_SPACE_CONTRACT=/);
+  assert.match(source, /geometry_space:"pivot_local"/);
+  assert.match(source, /local_model_center_pixels:\[8,8,8\]/);
+  assert.match(source, /model_anchor_in_block:\[\.5,\.5,\.5\]/);
+  assert.match(source, /json_model_front:"-Z"/);
+  assert.match(source, /paper_entity_yaw_zero:"\+Z"/);
+  assert.match(source, /child_pivot_rotation_degrees:"180 - entity_yaw"/);
+  assert.match(source, /worldPivot = blockOrigin \+ modelAnchor \+ rotateY\(180 - entityYaw\) \* \(\(pivotPixels - \[8,8,8\]\) \/ 16\)/);
+  assert.match(source, /rotation:"parentRotation \* localAnimationRotation"/);
+  assert.match(source, /rotation_values:"absolute_local"/);
+  assert.match(source, /schema:2,\.\.\.ITEM_DISPLAY_SPACE_CONTRACT/);
+  assert.match(source, /minecraftJson\(project,parts,bone\.pivot\)/);
+  assert.match(source, /modelShift=\(bonePivot\?bonePivot\.map\(value=>8-value\):\[0,0,0\]\)/);
 
   // Rear hinge at Z=14, front test point at Z=1. Positive X must lift it in Y.
   const pivot = [8, 10, 14];
@@ -329,7 +342,7 @@ test("custom furniture exposes and exports multi-block placement footprints", as
   assert.match(source, /hitboxes:cells\.map/);
   assert.match(source, /break_behavior:"remove_entire_object"/);
   assert.match(source, /rotate_offsets_with_facing:true/);
-  assert.match(source, /schema:3/);
+  assert.match(source, /schema:4/);
   assert.match(source, /PLACEMENT FOOTPRINT/);
   assert.match(source, /"WIDTH X","HEIGHT Y","DEPTH Z"/);
   assert.match(source, /FOOTPRINT \{placementFootprint\(project\)\.join/);
