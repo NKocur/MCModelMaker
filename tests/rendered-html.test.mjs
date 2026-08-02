@@ -95,6 +95,19 @@ test("Marsh Alligator is a complete articulated creature rig", async () => {
   assert.match(source, /bite_jaw_4[^\n]+\[-32,0,0\]/);
 });
 
+test("Briarback Goblin Fighter is an original combat-ready humanoid rig", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Briarback Goblin Fighter"/);
+  assert.match(source, /baseEntity:"minecraft:zombie",category:"Creatures",group:"Goblinoids",pack:"Wild Frontier"/);
+  for (const feature of ["Oversized left ear", "Long hooked nose", "Bent scrap buckler", "Knotted club head"]) assert.match(source, new RegExp(feature));
+  assert.match(source, /id:"goblin_jaw",name:"Tusking jaw",parentId:"goblin_head"/);
+  assert.match(source, /id:"goblin_arm_r",name:"Club arm",parentId:"goblin_body"/);
+  for (const clip of ["Idle", "Walk", "Club Attack", "Hurt", "Death"]) assert.match(source, new RegExp(`name:"${clip}"`));
+  assert.match(source, /goblin_attack_arm_4[^\n]+\[-125,0,-18\]/);
+  assert.match(source, /goblin_death_body_24[^\n]+\[88,0,0\]/);
+  assert.match(source, /swampWatchtower,\s+briarbackGoblin,\s+marshAlligator/);
+});
+
 test("fantasy daily loot collection has three rarity tiers and a pirate chest", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   for (const name of ["Wayfarer's Daily Chest", "Runebound Daily Coffer", "Crownvault Daily Reliquary", "Blackwake Pirate Chest"]) assert.match(source, new RegExp(`name:\"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\"`));

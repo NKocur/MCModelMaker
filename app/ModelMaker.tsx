@@ -240,6 +240,63 @@ const rouletteCubes:Cube[]=[
 ];
 const emeraldFortuneRoulette:Project={id:"emerald_fortune_roulette",name:"Emerald Fortune Roulette",description:"A two-block fantasy casino roulette table with carved mahogany, brass rails, an emerald numbered betting layout, stacked chips, and independently animated wheel and ivory ball.",source:"codex",revision:2,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Casino Games",pack:"Fantasy Daily Rewards",placementSize:[2,1,1],cubes:overlapChecked("Emerald Fortune Roulette",rouletteCubes),bones:[{id:"roulette_table",name:"Roulette table",parentId:null,pivot:[16,0,8]},{id:"roulette_wheel",name:"Roulette wheel",parentId:"roulette_table",pivot:[8,14.2,8]},{id:"roulette_ball",name:"Roulette ball orbit",parentId:"roulette_table",pivot:[8,14.2,8]}],animations:[{id:"roulette_spin",name:"Spin wheel & ball",lengthTicks:40,loop:true,keyframes:[frame("roulette_spin_0",0,"roulette_wheel"),frame("roulette_spin_10",10,"roulette_wheel",[0,90,0]),frame("roulette_spin_20",20,"roulette_wheel",[0,180,0]),frame("roulette_spin_30",30,"roulette_wheel",[0,270,0]),frame("roulette_spin_40",40,"roulette_wheel",[0,360,0]),frame("roulette_ball_0",0,"roulette_ball"),frame("roulette_ball_10",10,"roulette_ball",[0,-180,0]),frame("roulette_ball_20",20,"roulette_ball",[0,-360,0]),frame("roulette_ball_30",30,"roulette_ball",[0,-540,0]),frame("roulette_ball_40",40,"roulette_ball",[0,-720,0])]}]};
 
+const briarbackGoblin:Project={
+  id:"briarback_goblin_fighter",name:"Briarback Goblin Fighter",source:"codex",revision:1,description:"An original old-school fantasy goblin enemy with a hunched silhouette, oversized ears and nose, patched gear, scrap shield, crude club, and a combat-ready five-clip Paper rig.",kind:"mob",namespace:"blocksmith",baseItem:"minecraft:paper",baseEntity:"minecraft:zombie",category:"Creatures",group:"Goblinoids",pack:"Wild Frontier",
+  cubes:[
+    {...cube("goblin_torso","Hunched olive tunic",[4.5,10.5,5.5],[11.5,19,10.5],"#596232","patched olive cloth"),boneId:"goblin_body"},
+    {...cube("goblin_belly","Leather belly wrap",[4,11,5],[12,13,11],"#5b3824","cracked brown leather"),boneId:"goblin_body"},
+    {...cube("goblin_belt","Rope and leather belt",[3.8,10.5,4.8],[12.2,11.5,11.2],"#38281d","dark worn leather"),boneId:"goblin_body"},
+    {...cube("goblin_buckle","Dull iron buckle",[7,10.7,4.35],[9,12,4.8],"#71736b","dull scrap metal"),boneId:"goblin_body"},
+    {...cube("goblin_tunic_patch","Crimson tunic patch",[5.2,14,5.1],[7.5,17,5.5],"#7d342d","stitched crimson cloth"),boneId:"goblin_body"},
+    {...cube("goblin_neck","Wiry green neck",[6.5,18.8,6.5],[9.5,21,9.5],"#64843d","goblin skin"),boneId:"goblin_head"},
+    {...cube("goblin_head","Broad goblin head",[4.5,20,4.5],[11.5,27,11.5],"#698b42","mottled goblin skin"),boneId:"goblin_head"},
+    {...cube("goblin_ear_l","Oversized left ear",[1,21.2,6],[4.5,24.5,10],"#62813d","goblin ear"),boneId:"goblin_head"},
+    {...cube("goblin_ear_r","Oversized right ear",[11.5,21.2,6],[15,24.5,10],"#62813d","goblin ear"),boneId:"goblin_head"},
+    {...cube("goblin_ear_inner_l","Left ear notch",[1.5,22,5.6],[4.5,23.7,6],"#8a5c45","scarred inner ear"),boneId:"goblin_head"},
+    {...cube("goblin_ear_inner_r","Right ear notch",[11.5,22,5.6],[14.5,23.7,6],"#8a5c45","scarred inner ear"),boneId:"goblin_head"},
+    {...cube("goblin_nose","Long hooked nose",[6.4,21.5,2.8],[9.6,24.2,4.5],"#739449","mottled goblin skin"),boneId:"goblin_head"},
+    {...cube("goblin_eye_l","Left yellow eye",[5.15,23.5,4],[6.75,25,4.5],"#d4c34b","emissive yellow eye"),boneId:"goblin_head"},
+    {...cube("goblin_eye_r","Right yellow eye",[9.25,23.5,4],[10.85,25,4.5],"#d4c34b","emissive yellow eye"),boneId:"goblin_head"},
+    {...cube("goblin_pupil_l","Left slit pupil",[5.7,23.8,3.7],[6.25,24.8,4],"#15140f","black eye slit"),boneId:"goblin_head"},
+    {...cube("goblin_pupil_r","Right slit pupil",[9.75,23.8,3.7],[10.3,24.8,4],"#15140f","black eye slit"),boneId:"goblin_head"},
+    {...cube("goblin_brow_l","Heavy left brow",[4.9,25,3.9],[7,25.7,4.5],"#314426","coarse dark hair"),boneId:"goblin_head"},
+    {...cube("goblin_brow_r","Heavy right brow",[9,25,3.9],[11.1,25.7,4.5],"#314426","coarse dark hair"),boneId:"goblin_head"},
+    {...cube("goblin_jaw","Protruding lower jaw",[5.2,19.5,4],[10.8,21.5,10.5],"#5f7e3a","goblin jaw"),boneId:"goblin_jaw"},
+    {...cube("goblin_tusk_l","Left lower tusk",[5.7,20.5,3.5],[6.6,22,4],"#d8cfaa","chipped tusk"),boneId:"goblin_jaw"},
+    {...cube("goblin_tusk_r","Right lower tusk",[9.4,20.5,3.5],[10.3,22,4],"#d8cfaa","chipped tusk"),boneId:"goblin_jaw"},
+    {...cube("goblin_hair","Scruffy black hair",[5,27,5],[11,28.3,11],"#293325","coarse dark hair"),boneId:"goblin_head"},
+    {...cube("goblin_hair_tuft","Crooked hair tuft",[7,28.3,6],[9,30,9],"#253021","coarse dark hair"),boneId:"goblin_head"},
+    {...cube("goblin_leg_l","Left wiry leg",[4.5,3,6.2],[7.4,11,9.5],"#647e3e","goblin skin"),boneId:"goblin_leg_l"},
+    {...cube("goblin_boot_l","Left patched boot",[3.8,0,4.8],[7.7,3.5,9.8],"#443024","patched boot leather"),boneId:"goblin_leg_l"},
+    {...cube("goblin_leg_r","Right wiry leg",[8.6,3,6.2],[11.5,11,9.5],"#647e3e","goblin skin"),boneId:"goblin_leg_r"},
+    {...cube("goblin_boot_r","Right patched boot",[8.3,0,4.8],[12.2,3.5,9.8],"#443024","patched boot leather"),boneId:"goblin_leg_r"},
+    {...cube("goblin_arm_l","Left lanky arm",[2,10.5,6],[4.5,18.5,10],"#668541","goblin skin"),boneId:"goblin_arm_l"},
+    {...cube("goblin_hand_l","Left gripping hand",[2.1,8.5,6.1],[4.4,11.2,9.9],"#72934a","goblin skin"),boneId:"goblin_arm_l"},
+    {...cube("goblin_shoulder_l","Left scrap pauldron",[1.5,16.5,5.5],[4.5,19,10.5],"#686a62","dented scrap metal"),boneId:"goblin_arm_l"},
+    {...cube("goblin_shield","Bent scrap buckler",[.5,9,2.8],[5.5,15,4],"#62675f","dented scrap metal"),boneId:"goblin_arm_l"},
+    {...cube("goblin_shield_boss","Rusty shield boss",[2,11,2.2],[4,13,2.8],"#8a633b","rusted iron"),boneId:"goblin_arm_l"},
+    {...cube("goblin_arm_r","Right lanky arm",[11.5,10.5,6],[14,18.5,10],"#668541","goblin skin"),boneId:"goblin_arm_r"},
+    {...cube("goblin_hand_r","Right gripping hand",[11.7,8.5,6.1],[14.3,11.2,9.9],"#72934a","goblin skin"),boneId:"goblin_arm_r"},
+    {...cube("goblin_shoulder_r","Right leather pauldron",[11.5,16.5,5.5],[14.5,19,10.5],"#5a3725","cracked brown leather"),boneId:"goblin_arm_r"},
+    {...cube("goblin_club_handle","Rough club handle",[13,2.5,6.6],[14.2,12.5,8.2],"#68452b","splintered dark wood"),boneId:"goblin_arm_r"},
+    {...cube("goblin_club_head","Knotted club head",[12,1],[15.4,5,9.2],"#563820","splintered dark wood"),boneId:"goblin_arm_r"},
+    {...cube("goblin_club_spike","Hammered iron club spike",[13,0],[14.4,1,8.4],"#6f736e","dull scrap metal"),boneId:"goblin_arm_r"}
+  ],
+  bones:[
+    {id:"goblin_body",name:"Goblin body",parentId:null,pivot:[8,1,8]},{id:"goblin_head",name:"Head and ears",parentId:"goblin_body",pivot:[8,20,8]},{id:"goblin_jaw",name:"Tusking jaw",parentId:"goblin_head",pivot:[8,21,4.5]},
+    {id:"goblin_arm_l",name:"Shield arm",parentId:"goblin_body",pivot:[4,18,8]},{id:"goblin_arm_r",name:"Club arm",parentId:"goblin_body",pivot:[12,18,8]},
+    {id:"goblin_leg_l",name:"Left leg",parentId:"goblin_body",pivot:[6,11,8]},{id:"goblin_leg_r",name:"Right leg",parentId:"goblin_body",pivot:[10,11,8]}
+  ],
+  animations:[
+    {id:"goblin_idle",name:"Idle",lengthTicks:40,loop:true,keyframes:[frame("goblin_idle_body_0",0,"goblin_body"),frame("goblin_idle_body_20",20,"goblin_body",[0,0,0],[0,.3,0]),frame("goblin_idle_body_40",40,"goblin_body"),frame("goblin_idle_head_0",0,"goblin_head"),frame("goblin_idle_head_10",10,"goblin_head",[0,-8,0]),frame("goblin_idle_head_30",30,"goblin_head",[0,8,0]),frame("goblin_idle_head_40",40,"goblin_head"),frame("goblin_idle_jaw_0",0,"goblin_jaw"),frame("goblin_idle_jaw_20",20,"goblin_jaw",[-5,0,0]),frame("goblin_idle_jaw_40",40,"goblin_jaw")]},
+    {id:"goblin_walk",name:"Walk",lengthTicks:20,loop:true,keyframes:[frame("goblin_walk_body_0",0,"goblin_body"),frame("goblin_walk_body_5",5,"goblin_body",[0,0,0],[0,.45,0]),frame("goblin_walk_body_10",10,"goblin_body"),frame("goblin_walk_body_15",15,"goblin_body",[0,0,0],[0,.45,0]),frame("goblin_walk_body_20",20,"goblin_body"),frame("goblin_walk_ll_0",0,"goblin_leg_l",[28,0,0]),frame("goblin_walk_ll_10",10,"goblin_leg_l",[-28,0,0]),frame("goblin_walk_ll_20",20,"goblin_leg_l",[28,0,0]),frame("goblin_walk_lr_0",0,"goblin_leg_r",[-28,0,0]),frame("goblin_walk_lr_10",10,"goblin_leg_r",[28,0,0]),frame("goblin_walk_lr_20",20,"goblin_leg_r",[-28,0,0]),frame("goblin_walk_al_0",0,"goblin_arm_l",[-14,0,-8]),frame("goblin_walk_al_10",10,"goblin_arm_l",[14,0,-8]),frame("goblin_walk_al_20",20,"goblin_arm_l",[-14,0,-8]),frame("goblin_walk_ar_0",0,"goblin_arm_r",[18,0,8]),frame("goblin_walk_ar_10",10,"goblin_arm_r",[-18,0,8]),frame("goblin_walk_ar_20",20,"goblin_arm_r",[18,0,8])]},
+    {id:"goblin_attack",name:"Club Attack",lengthTicks:14,loop:false,keyframes:[frame("goblin_attack_body_0",0,"goblin_body"),frame("goblin_attack_body_4",4,"goblin_body",[0,-18,0]),frame("goblin_attack_body_8",8,"goblin_body",[0,18,0],[0,0,-.8]),frame("goblin_attack_body_14",14,"goblin_body"),frame("goblin_attack_arm_0",0,"goblin_arm_r",[10,0,-10]),frame("goblin_attack_arm_4",4,"goblin_arm_r",[-125,0,-18]),frame("goblin_attack_arm_8",8,"goblin_arm_r",[55,0,12]),frame("goblin_attack_arm_14",14,"goblin_arm_r",[10,0,-10]),frame("goblin_attack_shield_0",0,"goblin_arm_l",[0,0,-12]),frame("goblin_attack_shield_7",7,"goblin_arm_l",[-18,0,-25]),frame("goblin_attack_shield_14",14,"goblin_arm_l",[0,0,-12]),frame("goblin_attack_jaw_0",0,"goblin_jaw"),frame("goblin_attack_jaw_4",4,"goblin_jaw",[-18,0,0]),frame("goblin_attack_jaw_14",14,"goblin_jaw")]},
+    {id:"goblin_hurt",name:"Hurt",lengthTicks:8,loop:false,keyframes:[frame("goblin_hurt_0",0,"goblin_body"),frame("goblin_hurt_3",3,"goblin_body",[-18,0,12],[0,0,1.8]),frame("goblin_hurt_8",8,"goblin_body"),frame("goblin_hurt_head_0",0,"goblin_head"),frame("goblin_hurt_head_3",3,"goblin_head",[12,0,-10]),frame("goblin_hurt_head_8",8,"goblin_head")]},
+    {id:"goblin_death",name:"Death",lengthTicks:24,loop:false,keyframes:[frame("goblin_death_body_0",0,"goblin_body"),frame("goblin_death_body_8",8,"goblin_body",[18,0,0],[0,0,1]),frame("goblin_death_body_24",24,"goblin_body",[88,0,0],[0,-.5,3]),frame("goblin_death_arm_l_0",0,"goblin_arm_l"),frame("goblin_death_arm_l_12",12,"goblin_arm_l",[35,0,-35]),frame("goblin_death_arm_r_0",0,"goblin_arm_r"),frame("goblin_death_arm_r_12",12,"goblin_arm_r",[-20,0,38])]
+    }
+  ]
+};
+
 const marshAlligator:Project={
   id:"codex_marsh_alligator_01",name:"Marsh Alligator",source:"codex",revision:1,description:"A low, broad Minecraft-style alligator with an articulated jaw, diagonal walking gait, and a three-bone swimming tail.",kind:"mob",namespace:"blocksmith",baseItem:"minecraft:paper",baseEntity:"minecraft:turtle",category:"Creatures",group:"Reptiles",pack:"Wild Frontier",
   cubes:[
@@ -410,6 +467,7 @@ const BUILTINS:Project[] = [
   gildedBriarManor,
   marshlightTradingPost,
   swampWatchtower,
+  briarbackGoblin,
   marshAlligator,
   hingedChest,
   {...emberPickaxe,revision:3,pack:"Elemental Arsenal"},
