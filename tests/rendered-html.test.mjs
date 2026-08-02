@@ -96,7 +96,8 @@ test("fantasy daily loot collection has three rarity tiers and a pirate chest", 
   assert.match(source, /glowing mana crystal/);
   assert.match(source, /dragon-forged gold/);
   assert.match(source, /const cubesOverlap=/);
-  assert.match(source, /if\(cubesOverlap\(project\.cubes\[i\],project\.cubes\[j\]\)\)throw new Error/);
+  assert.match(source, /const overlapChecked=/);
+  assert.match(source, /if\(cubesOverlap\(cubes\[i\],cubes\[j\]\)\)throw new Error/);
   assert.match(source, /source:"codex",revision:3,kind:"furniture"/);
   assert.match(source, /common_rear_left_foot[^\n]+\[1,0,10\],\[4,1,14\]/);
   assert.match(source, /common_rear_right_foot[^\n]+\[12,0,10\],\[15,1,14\]/);
@@ -106,6 +107,22 @@ test("fantasy daily loot collection has three rarity tiers and a pirate chest", 
   assert.match(source, /pirate_eye_l[^\n]+skull shadow/);
   assert.match(source, /pirate_gold_tooth[^\n]+pirate gold/);
   assert.match(source, /blackwakePirateChest,\s+crownvaultDailyReliquary,\s+runeboundDailyCoffer,\s+wayfarerDailyChest/);
+});
+
+test("Blackwake Skulljack is an overlap-checked animated pirate slot machine", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Blackwake Skulljack"/);
+  assert.match(source, /category:"Furniture",group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /cubes:overlapChecked\("Blackwake Skulljack",skulljackCubes\)/);
+  assert.match(source, /Skull jackpot plaque/);
+  assert.match(source, /Bone skull reel/);
+  assert.match(source, /Gold doubloon reel/);
+  assert.match(source, /Crimson parrot reel/);
+  assert.match(source, /Ruby lever knob/);
+  assert.match(source, /name:"Pull & Spin",lengthTicks:30,loop:false/);
+  assert.match(source, /slots_lever_4[^\n]+\[0,0,-45\]/);
+  assert.match(source, /slots_reel_1_28[^\n]+\[360,0,0\]/);
+  assert.match(source, /blackwakeSkulljack,\s+blackwakePirateChest/);
 });
 
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
