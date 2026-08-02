@@ -83,9 +83,9 @@ test("Marsh Alligator is a complete articulated creature rig", async () => {
   assert.match(source, /bite_jaw_4[^\n]+\[-32,0,0\]/);
 });
 
-test("fantasy daily loot chest collection has three animated rarity tiers", async () => {
+test("fantasy daily loot collection has three rarity tiers and a pirate chest", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  for (const name of ["Wayfarer's Daily Chest", "Runebound Daily Coffer", "Crownvault Daily Reliquary"]) assert.match(source, new RegExp(`name:\"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\"`));
+  for (const name of ["Wayfarer's Daily Chest", "Runebound Daily Coffer", "Crownvault Daily Reliquary", "Blackwake Pirate Chest"]) assert.match(source, new RegExp(`name:\"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\"`));
   assert.match(source, /group:"Daily Loot Chests",pack:"Fantasy Daily Rewards"/);
   assert.match(source, /Common daily loot chest/);
   assert.match(source, /Rare daily loot chest/);
@@ -102,7 +102,10 @@ test("fantasy daily loot chest collection has three animated rarity tiers", asyn
   assert.match(source, /common_rear_right_foot[^\n]+\[12,0,10\],\[15,1,14\]/);
   assert.match(source, /legendary_horn_l[^\n]+\[-1,15\.5,3\],\[1\.5,18\.5,5\.5\]/);
   assert.match(source, /legendary_horn_r[^\n]+\[14\.5,15\.5,3\],\[17,18\.5,5\.5\]/);
-  assert.match(source, /crownvaultDailyReliquary,\s+runeboundDailyCoffer,\s+wayfarerDailyChest/);
+  assert.match(source, /Blocky bone skull/);
+  assert.match(source, /pirate_eye_l[^\n]+skull shadow/);
+  assert.match(source, /pirate_gold_tooth[^\n]+pirate gold/);
+  assert.match(source, /blackwakePirateChest,\s+crownvaultDailyReliquary,\s+runeboundDailyCoffer,\s+wayfarerDailyChest/);
 });
 
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {

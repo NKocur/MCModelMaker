@@ -158,6 +158,19 @@ const crownvaultDailyReliquary=dailyLootChest({id:"daily_chest_legendary",name:"
   {...cube("legendary_rune_l","Left royal ward",[3.2,3.1,-.75],[4.3,6.5,-.45],"#f3b84d","luminous gold rune"),boneId:"daily_chest_legendary_base"},{...cube("legendary_rune_r","Right royal ward",[11.7,3.1,-.75],[12.8,6.5,-.45],"#f3b84d","luminous gold rune"),boneId:"daily_chest_legendary_base"},
   {...cube("legendary_horn_l","Left crown finial",[-1,15.5,3],[1.5,18.5,5.5],"#c78b28","dragon-forged gold"),boneId:"daily_chest_legendary_lid"},{...cube("legendary_horn_r","Right crown finial",[14.5,15.5,3],[17,18.5,5.5],"#c78b28","dragon-forged gold"),boneId:"daily_chest_legendary_lid"}
 ]});
+const blackwakePirateChest=dailyLootChest({id:"daily_chest_pirate",name:"Blackwake Pirate Chest",description:"Pirate daily loot chest · blackened ship timber, salt-bitten iron, crossed bones, and a block-built skull lock with a stolen gold tooth.",hinge:[8,9.5,14.5],cubes:[
+  {...cube("pirate_body","Blackened ship-timber body",[.75,1,1],[15.25,9.5,15],"#18191c","blackened ship timber"),boneId:"daily_chest_pirate_base"},
+  {...cube("pirate_foot_fl","Front-left iron foot",[.75,0,2],[3.75,1,5],"#34383b","salt-bitten iron"),boneId:"daily_chest_pirate_base"},{...cube("pirate_foot_fr","Front-right iron foot",[12.25,0,2],[15.25,1,5],"#34383b","salt-bitten iron"),boneId:"daily_chest_pirate_base"},{...cube("pirate_foot_rl","Rear-left iron foot",[.75,0,11],[3.75,1,14],"#34383b","salt-bitten iron"),boneId:"daily_chest_pirate_base"},{...cube("pirate_foot_rr","Rear-right iron foot",[12.25,0,11],[15.25,1,14],"#34383b","salt-bitten iron"),boneId:"daily_chest_pirate_base"},
+  {...cube("pirate_front_panel","Tarred front panel",[2,2,.4],[14,6.7,1],"#25262b","tarred plank grain"),boneId:"daily_chest_pirate_base"},{...cube("pirate_base_band","Salt-iron belly band",[.4,7,.55],[15.6,8.3,1],"#454b4e","salt-bitten iron"),boneId:"daily_chest_pirate_base"},
+  {...cube("pirate_corner_l","Left iron corner",[.35,1,.45],[.75,6.7,2],"#3d4245","salt-bitten iron"),boneId:"daily_chest_pirate_base"},{...cube("pirate_corner_r","Right iron corner",[15.25,1,.45],[15.65,6.7,2],"#3d4245","salt-bitten iron"),boneId:"daily_chest_pirate_base"},
+  {...cube("pirate_lid","Black ship-timber lid",[.75,9.5,1],[15.25,13.5,15],"#202126","blackened ship timber"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_lid_step","Raised tarred lid",[1.5,13.5,2],[14.5,15,14],"#292a30","tarred plank grain"),boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_lid_band","Salt-iron lid band",[.4,10.8,.55],[15.6,12,1],"#50565a","salt-bitten iron"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_top_strap","Iron crown strap",[7.2,15,2],[8.8,15.3,14],"#454b4e","salt-bitten iron"),boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_lock_plate","Skull-lock backplate",[5.2,8.2,.35],[10.8,10.8,.55],"#4a4f52","salt-bitten iron"),boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_bone_lu","Upper-left crossbone",[4.1,10.8,.1],[6.5,11.5,.35],"#c7c1a8","weathered bone"),rotation:[0,0,-22.5],boneId:"daily_chest_pirate_lid"},{...cube("pirate_bone_ru","Upper-right crossbone",[9.5,10.8,.1],[11.9,11.5,.35],"#c7c1a8","weathered bone"),rotation:[0,0,22.5],boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_bone_ld","Lower-left crossbone",[4.1,7.5,.1],[6.5,8.2,.35],"#c7c1a8","weathered bone"),rotation:[0,0,22.5],boneId:"daily_chest_pirate_lid"},{...cube("pirate_bone_rd","Lower-right crossbone",[9.5,7.5,.1],[11.9,8.2,.35],"#c7c1a8","weathered bone"),rotation:[0,0,-22.5],boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_skull","Blocky bone skull",[6.2,8.4,-.3],[9.8,11.6,.1],"#d0cab0","weathered bone"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_jaw","Squared skull jaw",[7,7.2,-.3],[9,8.4,.1],"#bcb69e","weathered bone"),boneId:"daily_chest_pirate_lid"},
+  {...cube("pirate_eye_l","Left hollow eye",[6.8,9.7,-.5],[7.7,10.6,-.3],"#090a0c","skull shadow"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_eye_r","Right hollow eye",[8.3,9.7,-.5],[9.2,10.6,-.3],"#090a0c","skull shadow"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_nose","Triangular nose shadow",[7.65,8.75,-.5],[8.35,9.45,-.3],"#090a0c","skull shadow"),boneId:"daily_chest_pirate_lid"},{...cube("pirate_gold_tooth","Stolen gold tooth",[8.35,7.55,-.5],[8.85,8.15,-.3],"#d7a43d","pirate gold"),boneId:"daily_chest_pirate_lid"}
+]});
 
 const marshAlligator:Project={
   id:"codex_marsh_alligator_01",name:"Marsh Alligator",source:"codex",revision:1,description:"A low, broad Minecraft-style alligator with an articulated jaw, diagonal walking gait, and a three-bone swimming tail.",kind:"mob",namespace:"blocksmith",baseItem:"minecraft:paper",baseEntity:"minecraft:turtle",category:"Creatures",group:"Reptiles",pack:"Wild Frontier",
@@ -318,6 +331,7 @@ const briarManorBlocks=resolveStructureConnections(makeBriarManorBlocks());
 const gildedBriarManor:Project={id:"codex_gilded_briar_manor_01",name:"Gilded Briar Manor",description:"An elaborate furnished timber-frame estate with paired doors, connected windows and roofs, dormers, a library tower, glazed conservatory, deep porch, chimneys, gardens, pond, fountain, and lantern approach.",cubes:structureBlocksToCubes(briarManorBlocks),source:"codex",revision:3,kind:"structure",namespace:"blocksmith",category:"Structures",group:"Manor Houses",pack:"Wild Frontier",structure:{size:[31,21,27],blocks:briarManorBlocks}};
 
 const BUILTINS:Project[] = [
+  blackwakePirateChest,
   crownvaultDailyReliquary,
   runeboundDailyCoffer,
   wayfarerDailyChest,
