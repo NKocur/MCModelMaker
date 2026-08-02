@@ -37,7 +37,12 @@ yarn-error.log*
 
 # typescript
 next-env.d.ts
+*.tsbuildinfo
 /dist/
 /.wrangler/
 /outputs/
 /work/
+
+# Local Minecraft client references. These contain Mojang assets and must never
+# be committed or included in a Sites deployment.
+/.vanilla-reference/

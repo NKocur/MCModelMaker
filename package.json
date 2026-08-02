@@ -11,7 +11,10 @@
     "start": "node node_modules/vinext/dist/cli.js start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "vanilla:index": "node scripts/build-vanilla-index.mjs",
+    "vanilla:import": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/import-vanilla-reference.ps1",
+    "vanilla:lookup": "node scripts/lookup-vanilla-reference.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",
