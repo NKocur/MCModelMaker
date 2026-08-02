@@ -275,3 +275,25 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.ok(catalog.models.flower_pot?.elements?.length || catalog.models.flower_pot?.parent);
   assert.equal(catalog.models.glass_pane_post.textures.pane.sprite, "minecraft:block/glass");
 });
+
+test("custom furniture exposes and exports multi-block placement footprints", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /placementSize\?:Vec3/);
+  assert.match(source, /placementSize:\[1,2,1\]/);
+  assert.match(source, /const placementFootprint=/);
+  assert.match(source, /const placementCells=/);
+  assert.match(source, /"multiblock_solid":"multiblock_display"/);
+  assert.match(source, /occupied_cells:cells/);
+  assert.match(source, /hitboxes:cells\.map/);
+  assert.match(source, /break_behavior:"remove_entire_object"/);
+  assert.match(source, /rotate_offsets_with_facing:true/);
+  assert.match(source, /schema:3/);
+  assert.match(source, /PLACEMENT FOOTPRINT/);
+  assert.match(source, /"WIDTH X","HEIGHT Y","DEPTH Z"/);
+  assert.match(source, /FOOTPRINT \{placementFootprint\(project\)\.join/);
+  assert.match(source, /className="library-footprint"/);
+  assert.match(styles, /\.placement-size/);
+  assert.match(styles, /\.footprint-chip/);
+  assert.match(styles, /\.library-footprint/);
+});
