@@ -20,6 +20,7 @@ Use this reference when creating houses and settlement structures for Blocksmith
 - Extend eaves 1–2 blocks beyond walls and give gable edges visible thickness with upside-down stairs, slabs, or fascia blocks.
 - Use multiple roof sections on large buildings. Add believable joins, ridges, dormers, chimneys, drainage, and roof-access spaces rather than one oversized gable.
 - Let stair connection logic form inner and outer corners; do not hard-code every roof stair as `shape=straight`.
+- A roof stair ascends toward its `facing` direction. Generate each slope from low eave toward high ridge, use top-half stairs under exposed eaves, back decorative slopes with blocks at roof intersections, and use bottom-half slabs for caps placed above the final stair course.
 
 ## Materials and detail
 

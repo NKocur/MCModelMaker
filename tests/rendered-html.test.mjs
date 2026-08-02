@@ -105,6 +105,11 @@ test("Gilded Briar Manor exercises elaborate connected-house construction", asyn
   assert.match(source, /spruce_door\[facing=north,half=\$\{half\},hinge=\$\{hinge\}/);
   assert.match(source, /dark_oak_trapdoor/);
   assert.match(source, /flowering_azalea_leaves/);
+  assert.match(source, /roofStep=\(wood:string,x:number,y:number,z:number,facing:string,eave=false\)/);
+  assert.match(source, /eave\?stairs\(wood,facing,"top"\)/);
+  assert.match(source, /roofRidge=\(wood:string,x:number,y:number,z:number\)=>put\(x,y,z,slab\(wood,"bottom"\)\)/);
+  assert.match(source, /roofStep\("dark_oak",x,10\+layer,7\+layer,"south",layer===0\)/);
+  assert.match(source, /roofStep\("dark_oak",x,10\+layer,20-layer,"north",layer===0\)/);
   assert.match(source, /Tall west library tower/);
   assert.match(source, /Glazed east conservatory/);
   assert.match(source, /Hedges, pond, fountain, trees, and lantern-lined approach/);
@@ -206,6 +211,8 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.ok(catalog.blockstates.glass_pane.multipart.some(part => part.when?.north === "true"));
   assert.ok(catalog.blockstates.spruce_stairs.variants["facing=north,half=bottom,shape=inner_left"]);
   assert.ok(catalog.blockstates.spruce_stairs.variants["facing=north,half=bottom,shape=outer_right"]);
+  assert.ok(catalog.blockstates.dark_oak_stairs.variants["facing=south,half=top,shape=straight"]);
+  assert.ok(catalog.blockstates.dark_oak_slab.variants["type=bottom"]);
   assert.ok(catalog.models.template_lantern?.elements?.length >= 4);
   assert.ok(catalog.models.flower_pot?.elements?.length || catalog.models.flower_pot?.parent);
   assert.equal(catalog.models.glass_pane_post.textures.pane.sprite, "minecraft:block/glass");
