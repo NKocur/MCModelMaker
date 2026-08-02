@@ -23,7 +23,14 @@ test("server-renders the Blocksmith model studio", async () => {
   assert.match(html, />Library</);
   assert.match(html, />Animate</);
   assert.match(html, />Export</);
+  assert.match(html, /href="\/favicon\.svg"/);
   assert.doesNotMatch(html, /codex-preview|Building your site/);
+});
+
+test("the studio page opts out of stale release caching", async () => {
+  const source = await readFile(new URL("../app/page.tsx", import.meta.url), "utf8");
+  assert.match(source, /export const dynamic = "force-dynamic"/);
+  assert.match(source, /export const revalidate = 0/);
 });
 
 test("library supports mod packs, categories, collections, search, and accessible dismissal", async () => {

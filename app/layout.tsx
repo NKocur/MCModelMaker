@@ -8,6 +8,7 @@ const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Blocksmith — AI Minecraft Model Studio",
   description: "Create and export Minecraft Java block and item models with an AI-assisted cube editor.",
+  icons: { icon: "/favicon.svg" },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
