@@ -145,9 +145,11 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /Two-block mahogany tabletop/);
   assert.match(source, /Emerald betting felt/);
   assert.match(source, /Array\.from\(\{length:18\}/);
-  assert.match(source, /Ivory roulette ball/);
-  assert.match(source, /name:"Spin wheel",lengthTicks:40,loop:true/);
+  assert.match(source, /Ivory roulette ball[^\n]+boneId:"roulette_ball"/);
+  assert.match(source, /id:"roulette_ball",name:"Roulette ball orbit",parentId:"roulette_table",pivot:\[8,14\.2,8\]/);
+  assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
+  assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
   assert.match(source, /emeraldFortuneRoulette,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
 });
 
