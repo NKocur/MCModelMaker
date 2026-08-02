@@ -206,6 +206,9 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /const inheritedModel=/);
   assert.match(source, /const inheritedModelCaches=new WeakMap/);
   assert.match(source, /const catalogBlockModel=/);
+  assert.match(source, /const connectedPaneModel=/);
+  assert.match(source, /if\(west\|\|east\)parts\.push\(\[\[west\?0:7,0,7\],\[east\?16:9,16,9\],"horizontal"\]\)/);
+  assert.match(source, /if\(parsed\.id\.endsWith\("_pane"\)\)return connectedPaneModel\(block,parsed\)/);
   assert.match(source, /const textureSprite=/);
   assert.match(source, /typeof \(value as \{sprite\?:unknown\}\)\.sprite==="string"/);
   assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
