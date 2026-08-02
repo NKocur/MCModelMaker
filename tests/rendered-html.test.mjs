@@ -95,6 +95,9 @@ test("fantasy daily loot chest collection has three animated rarity tiers", asyn
   assert.match(source, /weathered fantasy oak/);
   assert.match(source, /glowing mana crystal/);
   assert.match(source, /dragon-forged gold/);
+  assert.match(source, /const cubesOverlap=/);
+  assert.match(source, /if\(cubesOverlap\(project\.cubes\[i\],project\.cubes\[j\]\)\)throw new Error/);
+  assert.match(source, /source:"codex",revision:2,kind:"furniture"/);
   assert.match(source, /crownvaultDailyReliquary,\s+runeboundDailyCoffer,\s+wayfarerDailyChest/);
 });
 
