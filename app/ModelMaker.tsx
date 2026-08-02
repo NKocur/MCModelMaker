@@ -12,6 +12,7 @@ const COLORS = ["#78c84f", "#293239", "#2bc8d3", "#949da1", "#d5a642", "#bd5a4d"
 const CATEGORY_OPTIONS=["Tools & Weapons","Blocks","Furniture","Creatures","Miscellaneous"];
 const cube = (id: string, name: string, from: Vec3, to: Vec3, color: string, material = "painted metal"): Cube => ({ id, name, from, to, rotation: [0,0,0], color, material });
 const makeSwordSprite=(colors:{blade:string;edge:string;grip:string;guard:string;glow:string})=>{const pixels:(string|null)[]=Array(256).fill(null),set=(x:number,y:number,color:string)=>{if(x>=0&&x<16&&y>=0&&y<16)pixels[y*16+x]=color};set(0,15,colors.guard);set(1,14,colors.guard);set(2,14,colors.grip);set(2,13,colors.grip);set(3,13,colors.grip);set(3,12,colors.grip);[[3,10],[4,10],[4,11],[5,11],[5,12],[6,12]].forEach(([x,y])=>set(x,y,colors.guard));for(let i=0;i<8;i++){const x=5+i,y=10-i;set(x,y,colors.edge);set(x+1,y,colors.blade);set(x+1,y-1,i%3===0?colors.glow:colors.blade)}set(13,1,colors.edge);set(14,1,colors.edge);set(14,2,colors.blade);set(5,10,colors.glow);return pixels};
+const makePickaxeSprite=(colors:{head:string;edge:string;grip:string;binding:string;glow:string})=>{const pixels:(string|null)[]=Array(256).fill(null),set=(x:number,y:number,color:string)=>{if(x>=0&&x<16&&y>=0&&y<16)pixels[y*16+x]=color};[[2,14],[3,13],[4,12],[5,11],[6,10],[7,9],[8,8]].forEach(([x,y],i)=>{set(x,y,i%2?colors.binding:colors.grip);set(x+1,y,colors.grip)});[[4,5],[5,4],[6,3],[7,3],[8,3],[9,3],[10,3],[11,4],[12,4],[13,5]].forEach(([x,y])=>set(x,y,colors.edge));[[4,6],[5,5],[6,4],[7,4],[8,4],[9,4],[10,4],[11,5],[12,5],[13,6]].forEach(([x,y],i)=>set(x,y,i===5?colors.glow:colors.head));set(7,5,colors.binding);set(8,5,colors.binding);set(1,15,colors.binding);return pixels};
 
 const atm: Project = {
   id: "codex_atm_01", name: "Weathered ATM", source: "codex", revision: 2,
@@ -63,6 +64,11 @@ const verdantSword:Project={id:"codex_verdant_sentinel_01",name:"Verdant Sentine
 const tideglassCutlass:Project={id:"codex_tideglass_cutlass_01",name:"Tideglass Cutlass",source:"codex",revision:2,description:"A vanilla-style sailor's sword sprite made from bright tideglass and weathered brass.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:diamond_sword",sprite:makeSwordSprite({blade:"#39b9c7",edge:"#c4f4ed",grip:"#245b62",guard:"#d5a642",glow:"#e0f2e9"}),cubes:[
   cube("pommel","Brass pommel",[6.8,.2,6.8],[9.2,1.6,9.2],"#d5a642","weathered brass"),cube("grip","Sea leather grip",[7,1.3,7],[9,5.1,9],"#245b62","sea leather"),cube("grip_band_1","Lower brass band",[6.7,2,6.7],[9.3,2.55,9.3],"#d5a642","weathered brass"),cube("grip_band_2","Upper brass band",[6.7,4,6.7],[9.3,4.55,9.3],"#d5a642","weathered brass"),cube("guard","Shell guard",[4.7,4.65,6.35],[10.2,6.05,9.65],"#c3943d","weathered brass"),cube("knuckle_low","Knuckle bow lower",[9.7,3.1,6.6],[11,5.2,9.4],"#c3943d","weathered brass"),cube("knuckle_high","Knuckle bow upper",[10.5,4.7,6.6],[11.7,7.3,9.4],"#c3943d","weathered brass"),cube("blade_base","Tideglass blade base",[6.3,5.7,6.65],[9.7,9.5,9.35],"#2bc8d3","tide glass"),cube("blade_mid","Curved blade middle",[6.7,9.1,6.65],[10.1,12.8,9.35],"#39b9c7","tide glass"),cube("blade_upper","Curved blade upper",[7.2,12.4,6.65],[10.6,14.8,9.35],"#62d4d5","tide glass"),cube("blade_tip","Hooked point",[8,14.35,7],[10.7,15.9,9],"#9ce9e5","tide glass"),cube("edge_low","Lower foam edge",[5.85,6,7],[6.5,9.6,9],"#c4f4ed","sharpened tideglass"),cube("edge_mid","Middle foam edge",[6.25,9.3,7],[6.9,12.9,9],"#c4f4ed","sharpened tideglass"),cube("edge_high","Upper foam edge",[6.75,12.6,7],[7.4,14.9,9],"#c4f4ed","sharpened tideglass"),cube("pearl","Guard pearl",[5.4,5,5.9],[6.6,6.2,6.6],"#e0f2e9","pearl") ]};
 
+const emberPickaxe:Project={id:"codex_emberglass_pickaxe_01",name:"Emberglass Pickaxe",source:"codex",revision:1,description:"A vanilla-generated volcanic pickaxe paired with the Emberglass Greatsword.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:netherite_pickaxe",sprite:makePickaxeSprite({head:"#d65732",edge:"#ffd06a",grip:"#593421",binding:"#293239",glow:"#fff08a"}),cubes:[],category:"Tools & Weapons",group:"Pickaxe Collection"};
+const moonsteelPickaxe:Project={id:"codex_moonsteel_pickaxe_01",name:"Moonsteel Pickaxe",source:"codex",revision:1,description:"A vanilla-generated moonsteel pickaxe paired with the Moonsteel Longsword.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:diamond_pickaxe",sprite:makePickaxeSprite({head:"#a9c8d4",edge:"#e8f4f2",grip:"#26354b",binding:"#6d8996",glow:"#2bc8d3"}),cubes:[],category:"Tools & Weapons",group:"Pickaxe Collection"};
+const verdantPickaxe:Project={id:"codex_verdant_pickaxe_01",name:"Verdant Pickaxe",source:"codex",revision:1,description:"A vanilla-generated jade pickaxe paired with the Verdant Sentinel.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:diamond_pickaxe",sprite:makePickaxeSprite({head:"#58b96c",edge:"#b6d89a",grip:"#70472d",binding:"#4d913c",glow:"#b8ee59"}),cubes:[],category:"Tools & Weapons",group:"Pickaxe Collection"};
+const tideglassPickaxe:Project={id:"codex_tideglass_pickaxe_01",name:"Tideglass Pickaxe",source:"codex",revision:1,description:"A vanilla-generated tideglass pickaxe paired with the Tideglass Cutlass.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:diamond_pickaxe",sprite:makePickaxeSprite({head:"#39b9c7",edge:"#c4f4ed",grip:"#245b62",binding:"#d5a642",glow:"#e0f2e9"}),cubes:[],category:"Tools & Weapons",group:"Pickaxe Collection"};
+
 const pickaxe: Project = {
   id:"codex_voidforge_pickaxe_01", name:"Voidforge Pickaxe", source:"codex", revision:1,
   description:"An enchanted deep-mining pickaxe with a wrapped dark-oak grip, reinforced metal head and luminous amethyst core.",
@@ -93,14 +99,18 @@ const pickaxe: Project = {
 };
 
 const BUILTINS:Project[] = [
+  emberPickaxe,
+  moonsteelPickaxe,
+  verdantPickaxe,
+  tideglassPickaxe,
   {...emberGreatsword,revision:3,category:"Tools & Weapons",group:"Sword Collection"},
   {...moonsteelSword,revision:3,category:"Tools & Weapons",group:"Sword Collection"},
   {...verdantSword,revision:3,category:"Tools & Weapons",group:"Sword Collection"},
   {...tideglassCutlass,revision:3,category:"Tools & Weapons",group:"Sword Collection"},
-  {...pickaxe,revision:2,category:"Tools & Weapons",group:"Voidforge Tools"},
   {...atm,revision:3,category:"Furniture",group:"Street Props"},
   {...totem,revision:2,category:"Blocks",group:"Ancient Blocks"},
 ];
+const RETIRED_BUILTIN_IDS=new Set(["codex_voidforge_pickaxe_01"]);
 const clone = <T,>(value:T):T => JSON.parse(JSON.stringify(value));
 const uid = (prefix="cube") => `${prefix}_${Math.random().toString(36).slice(2,9)}`;
 const slug = (value:string) => value.toLowerCase().trim().replace(/[^a-z0-9_.-]+/g,"_").replace(/^_+|_+$/g,"")||"model";
@@ -244,7 +254,7 @@ export default function ModelMaker(){
   const visibleGroups=useMemo(()=>{const groups=new Map<string,Project[]>();library.filter(model=>libraryFilter==="All"||projectCategory(model)===libraryFilter).forEach(model=>{const group=projectGroup(model);groups.set(group,[...(groups.get(group)||[]),model])});return[...groups.entries()]},[library,libraryFilter]);
   const copyTestCommand=async()=>{await navigator.clipboard.writeText(giveCommand(project));setCopied(true);setTimeout(()=>setCopied(false),1600)};
 
-  useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=[...saved];BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});const builtInIds=new Set(BUILTINS.map(b=>b.id)),ordered=[...BUILTINS.map(b=>clone(merged.find(p=>p.id===b.id)||b)),...merged.filter(p=>!builtInIds.has(p.id))];if(ordered.length){setLibrary(ordered);setProject(clone(ordered[0]));setSelected(ordered[0].sprite?null:ordered[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
+  useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem("blocksmith-library-v2")||"[]") as Project[];const merged=saved.filter(project=>!RETIRED_BUILTIN_IDS.has(project.id));BUILTINS.forEach(b=>{const i=merged.findIndex(p=>p.id===b.id);if(i<0)merged.push(clone(b));else if((merged[i].revision||0)<b.revision)merged[i]=clone(b)});const builtInIds=new Set(BUILTINS.map(b=>b.id)),ordered=[...BUILTINS.map(b=>clone(merged.find(p=>p.id===b.id)||b)),...merged.filter(p=>!builtInIds.has(p.id))];if(ordered.length){setLibrary(ordered);setProject(clone(ordered[0]));setSelected(ordered[0].sprite?null:ordered[0].cubes[0]?.id||null)}}catch{}setHydrated(true)},[]);
   useEffect(()=>{if(hydrated)localStorage.setItem("blocksmith-library-v2",JSON.stringify(library))},[library,hydrated]);
   const commit=(next:Project)=>{setHistory(h=>[...h.slice(-39),clone(project)]);setFuture([]);setProject(next)};
   const updateCube=(patch:Partial<Cube>)=>selectedCube&&commit({...project,cubes:project.cubes.map(c=>c.id===selectedCube.id?{...c,...patch}:c)});
