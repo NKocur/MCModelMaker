@@ -143,7 +143,7 @@ test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async ()
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const makePirateCoinSprite=/);
   assert.match(source, /name:"Blackwake Gold Doubloon"/);
-  assert.match(source, /revision:2,description:"A worn fantasy pirate coin with a bright gold rim and a large high-contrast skull-and-crossbones emblem/);
+  assert.match(source, /revision:3,description:"A worn fantasy pirate coin with a bright gold rim and a simplified high-contrast skull emblem/);
   assert.match(source, /baseItem:"minecraft:gold_nugget",spriteParent:"generated"/);
   assert.match(source, /group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
   assert.match(source, /sprite:makePirateCoinSprite\(\)/);
@@ -152,11 +152,12 @@ test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async ()
   assert.match(source, /transform_profile:kind==="item"\?spriteModelParent\(project\)/);
   assert.match(source, /FLAT INVENTORY ITEM/);
   assert.match(source, /GENERATED ITEM/);
-  assert.match(source, /const skullOutline=/);
-  assert.match(source, /const skullFill=/);
+  assert.match(source, /const simpleSkull=/);
   assert.match(source, /const eyeSockets=/);
   assert.match(source, /nose=\[\[7,8\],\[8,8\]\]/);
-  assert.match(source, /teeth=\[\[7,9\],\[8,10\]\]/);
+  assert.match(source, /jawGaps=\[\[7,10\],\[9,10\]\]/);
+  assert.doesNotMatch(source, /const crossbones=/);
+  assert.doesNotMatch(source, /const skullOutline=/);
 });
 
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
