@@ -105,7 +105,18 @@ test("Briarback Goblin Fighter is an original combat-ready humanoid rig", async 
   for (const clip of ["Idle", "Walk", "Club Attack", "Hurt", "Death"]) assert.match(source, new RegExp(`name:"${clip}"`));
   assert.match(source, /goblin_attack_arm_4[^\n]+\[-125,0,-18\]/);
   assert.match(source, /goblin_death_body_24[^\n]+\[88,0,0\]/);
+  assert.match(source, /goblin_club_spike[^\n]+\[13,0,6\.5\],\[14\.4,1,8\.4\]/);
   assert.match(source, /swampWatchtower,\s+briarbackGoblin,\s+marshAlligator/);
+});
+
+test("malformed cube coordinates cannot blank the entire model viewport", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const validVec3=/);
+  assert.match(source, /const validCubeGeometry=/);
+  assert.match(source, /const drawableParts=useMemo\(\(\)=>viewportParts\.filter\(validCubeGeometry\)/);
+  assert.match(source, /const coordinates=drawableParts\.flatMap/);
+  assert.match(source, /project\.cubes\.filter\(validCubeGeometry\):drawableParts/);
+  assert.match(source, /Every cube must have three finite FROM, TO, and rotation coordinates/);
 });
 
 test("fantasy daily loot collection has three rarity tiers and a pirate chest", async () => {
@@ -337,7 +348,7 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
   assert.match(source, /pixelBudget=interacting\?/);
   assert.doesNotMatch(source, /Math\.min\(view\.zoom,fitZoom\)\)\*quality/);
-  assert.match(source, /interacting&&project\.structure\?project\.cubes:viewportParts/);
+  assert.match(source, /interacting&&project\.structure\?project\.cubes\.filter\(validCubeGeometry\):drawableParts/);
   assert.match(source, /setTimeout\(\(\)=>setInteracting\(false\),140\)/);
   assert.match(source, /faceDefinition=part\.faceData\?\.\[faceIndex\]/);
   const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
