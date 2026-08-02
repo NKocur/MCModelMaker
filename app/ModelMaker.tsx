@@ -75,6 +75,8 @@ const catalogBlockIsFullOccluder=(block:StructureBlock,catalog:VanillaCatalog,cu
 const structureBlocksFromCatalog=(blocks:StructureBlock[],catalog:VanillaCatalog)=>{const solid=resolveStructureConnections(blocks),models=new Map(solid.map(block=>[block.id,catalogBlockModel(block,catalog)])),occluders=new Set(solid.filter(block=>catalogBlockIsFullOccluder(block,catalog,models.get(block.id)||[])).map(block=>`${block.x},${block.y},${block.z}`)),visible=solid.filter(block=>FACE_OFFSETS.some(([x,y,z])=>!occluders.has(`${block.x+x},${block.y+y},${block.z+z}`)));return visible.flatMap(block=>models.get(block.id)||[])};
 const structureBlockModel=(block:StructureBlock):Cube[]=>{const style=BLOCK_OPTIONS.find(option=>option.state===block.state)||{label:block.state.replace("minecraft:",""),color:"#8b8f8b",material:"stone"};if(block.state.startsWith("minecraft:water["))return[blockModelCube(block,"Water surface",[0,0,0],[16,14,16],"#3575b9","vanilla:water_still")];if(block.state.startsWith("minecraft:lantern[")){const hanging=block.state.includes("hanging=true"),elements=hanging?[[[5,1,5],[11,8,11],[0,0,0]],[[6,8,6],[10,10,10],[0,0,0]],[[6.5,11,8],[9.5,15,8],[0,45,0]],[[8,10,6.5],[8,16,9.5],[0,45,0]]]:[[[5,0,5],[11,7,11],[0,0,0]],[[6,7,6],[10,9,10],[0,0,0]],[[6.5,9,8],[9.5,11,8],[0,45,0]],[[8,9,6.5],[8,11,9.5],[0,45,0]]];return elements.map((element,index)=>blockModelCube(block,`${style.label} ${index+1}`,element[0] as Vec3,element[1] as Vec3,style.color,style.material,element[2] as Vec3))}if(block.state.startsWith("minecraft:oak_stairs[")){const facing=/facing=(north|south|east|west)/.exec(block.state)?.[1]||"east",half=/half=(top|bottom)/.exec(block.state)?.[1]||"bottom",yRotation=({east:0,south:90,west:180,north:270} as Record<string,number>)[facing],xRotation=half==="top"?180:0,elements:[Vec3,Vec3][]= [[[0,0,0],[16,8,16]],[[8,8,0],[16,16,16]]];return elements.map(([from,to],index)=>{const [rotatedFrom,rotatedTo]=rotateModelBox(from,to,xRotation,yRotation);return blockModelCube(block,`${style.label} ${index+1}`,rotatedFrom,rotatedTo,style.color,style.material)})}return[blockModelCube(block,style.label,[0,0,0],[16,16,16],style.color,style.material)]};
 const structureBlocksToCubes=(blocks:StructureBlock[]):Cube[]=>{const solid=resolveStructureConnections(blocks),occluders=new Set(solid.filter(block=>isFullOccluder(block.state)).map(block=>`${block.x},${block.y},${block.z}`)),visible=solid.filter(block=>[[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]].some(([x,y,z])=>!occluders.has(`${block.x+x},${block.y+y},${block.z+z}`)));return visible.flatMap(structureBlockModel)};
+const cubesOverlap=(a:Cube,b:Cube)=>a.from.every((value,axis)=>Math.min(a.to[axis],b.to[axis])-Math.max(value,b.from[axis])>1e-6);
+const overlapChecked=(name:string,cubes:Cube[])=>{for(let i=0;i<cubes.length;i++)for(let j=i+1;j<cubes.length;j++)if(cubesOverlap(cubes[i],cubes[j]))throw new Error(`${name}: ${cubes[i].name} overlaps ${cubes[j].name}`);return cubes};
 
 const atm: Project = {
   id: "codex_atm_01", name: "Weathered ATM", source: "codex", revision: 2,
@@ -103,6 +105,36 @@ const atm: Project = {
   ],
 };
 
+const runebankAtmCubes:Cube[]=[
+  cube("runebank_plinth","Fortress-stone plinth",[1,0,3],[15,2,14],"#66655d","weathered fortress stone"),
+  cube("runebank_body","Rune-carved dark oak cabinet",[2,2,4],[14,17,13],"#493526","rune-carved dark oak"),
+  cube("runebank_rear","Deep reliquary housing",[3,2,13],[13,17,14.5],"#35271f","iron-bound dark oak"),
+  cube("runebank_crown","Aged-bronze crown",[.5,17,2.5],[15.5,19,14],"#75633b","aged dwarven bronze"),
+  cube("runebank_gable","Carved teller gable",[3,19,4],[13,21,12],"#625137","carved bank-stone"),
+  cube("runebank_column_l","Left rune pillar",[1.2,2,3.3],[2,17,5],"#8c7855","carved runestone"),
+  cube("runebank_column_r","Right rune pillar",[14,2,3.3],[14.8,17,5],"#8c7855","carved runestone"),
+  cube("runebank_crystal_l","Left ward crystal",[.4,13,3.7],[1.2,15,5],"#63d2b1","emissive ward crystal"),
+  cube("runebank_crystal_r","Right ward crystal",[14.8,13,3.7],[15.6,15,5],"#63d2b1","emissive ward crystal"),
+  cube("runebank_screen_bezel","Brass scrying-frame",[4,11,3.3],[12,16,4],"#a87c2d","engraved dwarven brass"),
+  cube("runebank_screen","Scrying crystal display",[4.8,12,2.9],[11.2,15,3.3],"#3eae93","glowing scrying crystal"),
+  cube("runebank_screen_rune","Central balance rune",[7.5,12.4,2.6],[8.5,14.6,2.9],"#d8f3c4","emissive balance rune"),
+  cube("runebank_header","Guild treasury plaque",[4,16,3.3],[12,17,4],"#97702a","engraved treasury brass"),
+  cube("runebank_header_gem","Treasury seal",[7,16.2,2.9],[9,16.8,3.3],"#b84b3e","garnet guild seal"),
+  cube("runebank_console","Sloped oak writing shelf",[3,8,2.8],[13,10.5,4],"#68462c","polished dark oak"),
+  cube("runebank_keybed","Rune-key tablet",[4,8.3,2.4],[8.5,10.2,2.8],"#34332f","polished blackstone tablet"),
+  ...Array.from({length:12},(_,index)=>cube(`runebank_key_${index+1}`,`Etched rune key ${index+1}`,[4.3+(index%3)*1.15,8.5+Math.floor(index/3)*.42,2.1],[5.1+(index%3)*1.15,8.8+Math.floor(index/3)*.42,2.4],index===11?"#64c899":index===9?"#b85b4b":"#d9c994","etched bone rune key")),
+  cube("runebank_token_reader","Guild-sigil reader",[9.3,8.4,2.3],[12,10.1,2.8],"#8c6a2b","engraved token reader"),
+  cube("runebank_token_slot","Coin and sigil slot",[9.8,9,2],[11.5,9.45,2.3],"#181510","shadowed coin slot"),
+  cube("runebank_receipt_bezel","Scroll receipt frame",[9,6.5,3.3],[12,7.3,4],"#9f7832","aged brass scroll frame"),
+  cube("runebank_receipt","Protruding account scroll",[9.5,6.7,2.7],[11.5,7.1,3.3],"#d9c99d","inscribed parchment"),
+  cube("runebank_cash_bezel","Coin-vault payout frame",[4,3,3.1],[12,5.7,4],"#8d692b","hammered dwarven brass"),
+  cube("runebank_cash_opening","Shadowed payout vault",[5,3.8,2.7],[11,5,3.1],"#17120e","deep vault shadow"),
+  cube("runebank_cash_lip","Coin-catching tray",[4.5,3.2,2.5],[11.5,3.8,3.1],"#a47b31","hammered dwarven brass"),
+  cube("runebank_belly_band","Protective rune band",[2,5.7,3.4],[14,6.4,4],"#7d612f","engraved bronze ward"),
+  cube("runebank_kickplate","Ironbound lower ward",[3,.2,2.6],[13,1.6,3],"#3c403d","blackened wrought iron")
+];
+const runebankTellerShrine:Project={id:"runebank_teller_shrine",name:"Runebank Teller Shrine",source:"codex",revision:1,description:"A recognizable fantasy ATM reimagined as an ancient treasury shrine with a scrying-crystal screen, rune keypad, guild-sigil reader, account scroll, and coin-vault payout drawer.",kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Fantasy Street Props",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Runebank Teller Shrine",runebankAtmCubes)};
+
 const totem: Project = {
   id:"codex_totem_01", name:"Mossy Totem", source:"codex", revision:1,
   description:"The original small block model, kept as a second library example.",
@@ -127,8 +159,6 @@ const hingedChest:Project={
   animations:[{id:"open",name:"Open",lengthTicks:10,loop:false,keyframes:[{id:"open_0",tick:0,boneId:"chest_lid",rotation:[0,0,0],position:[0,0,0],interpolation:"linear"},{id:"open_10",tick:10,boneId:"chest_lid",rotation:[90,0,0],position:[0,0,0],interpolation:"linear"}]}]
 };
 
-const cubesOverlap=(a:Cube,b:Cube)=>a.from.every((value,axis)=>Math.min(a.to[axis],b.to[axis])-Math.max(value,b.from[axis])>1e-6);
-const overlapChecked=(name:string,cubes:Cube[])=>{for(let i=0;i<cubes.length;i++)for(let j=i+1;j<cubes.length;j++)if(cubesOverlap(cubes[i],cubes[j]))throw new Error(`${name}: ${cubes[i].name} overlaps ${cubes[j].name}`);return cubes};
 const dailyLootChest=({hinge,...project}:Omit<Project,"source"|"revision"|"kind"|"namespace"|"baseItem"|"category"|"group"|"pack"|"bones"|"animations">&{hinge:Vec3}):Project=>({...project,cubes:overlapChecked(project.name,project.cubes),source:"codex",revision:3,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Daily Loot Chests",pack:"Fantasy Daily Rewards",bones:[{id:`${project.id}_base`,name:"Chest base",parentId:null,pivot:[8,0,8]},{id:`${project.id}_lid`,name:"Hinged lid",parentId:`${project.id}_base`,pivot:hinge}],animations:[{id:`${project.id}_open`,name:"Open",lengthTicks:10,loop:false,keyframes:[frame(`${project.id}_open_0`,0,`${project.id}_lid`),frame(`${project.id}_open_10`,10,`${project.id}_lid`,[90,0,0])]}]});
 const wayfarerDailyChest=dailyLootChest({id:"daily_chest_common",name:"Wayfarer's Daily Chest",description:"Common daily loot chest · a sturdy oak adventurer's cache with iron corners, leather straps, a leaf seal, and a proper rear-hinged lid.",hinge:[8,9,14],cubes:[
   {...cube("common_body","Oak cache body",[1,1,1],[15,9,15],"#85582f","weathered fantasy oak"),boneId:"daily_chest_common_base"},
@@ -390,6 +420,7 @@ const BUILTINS:Project[] = [
   {...moonsteelSword,revision:4,category:"Tools & Weapons",group:"Sword Collection",pack:"Elemental Arsenal"},
   {...verdantSword,revision:4,category:"Tools & Weapons",group:"Sword Collection",pack:"Elemental Arsenal"},
   {...tideglassCutlass,revision:4,category:"Tools & Weapons",group:"Sword Collection",pack:"Elemental Arsenal"},
+  runebankTellerShrine,
   {...atm,revision:4,category:"Furniture",group:"Street Props",pack:"Blocksmith Examples"},
   {...totem,revision:3,category:"Blocks",group:"Ancient Blocks",pack:"Blocksmith Examples"},
 ];

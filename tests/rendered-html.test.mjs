@@ -70,6 +70,18 @@ test("library supports mod packs, categories, collections, search, and accessibl
   assert.doesNotMatch(source, /className="library-model-art procedural-art"/);
 });
 
+test("Runebank Teller Shrine is a recognizable fantasy ATM variant", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Runebank Teller Shrine"/);
+  assert.match(source, /group:"Fantasy Street Props",pack:"Fantasy Daily Rewards",placementSize:\[1,2,1\]/);
+  assert.match(source, /cubes:overlapChecked\("Runebank Teller Shrine",runebankAtmCubes\)/);
+  for (const feature of ["Scrying crystal display", "Rune-key tablet", "Guild-sigil reader", "Protruding account scroll", "Coin-vault payout frame"]) {
+    assert.match(source, new RegExp(feature));
+  }
+  assert.match(source, /Array\.from\(\{length:12\}[^\n]+Etched rune key/);
+  assert.match(source, /runebankTellerShrine,\s+\{\.\.\.atm/);
+});
+
 test("Marsh Alligator is a complete articulated creature rig", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Marsh Alligator"/);
