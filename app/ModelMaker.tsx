@@ -14,6 +14,7 @@ type Project = { id: string; name: string; description: string; cubes: Cube[]; s
 const COLORS = ["#78c84f", "#293239", "#2bc8d3", "#949da1", "#d5a642", "#bd5a4d", "#725392"];
 const CATEGORY_OPTIONS=["Tools & Weapons","Blocks","Furniture","Creatures","Miscellaneous"];
 const cube = (id: string, name: string, from: Vec3, to: Vec3, color: string, material = "painted metal"): Cube => ({ id, name, from, to, rotation: [0,0,0], color, material });
+const frame=(id:string,tick:number,boneId:string,rotation:Vec3=[0,0,0],position:Vec3=[0,0,0],interpolation:"linear"|"step"="linear"):Keyframe=>({id,tick,boneId,rotation,position,interpolation});
 const makeSwordSprite=(colors:{blade:string;edge:string;grip:string;guard:string;glow:string})=>{const pixels:(string|null)[]=Array(256).fill(null),set=(x:number,y:number,color:string)=>{if(x>=0&&x<16&&y>=0&&y<16)pixels[y*16+x]=color};set(0,15,colors.guard);set(1,14,colors.guard);set(2,14,colors.grip);set(2,13,colors.grip);set(3,13,colors.grip);set(3,12,colors.grip);[[3,10],[4,10],[4,11],[5,11],[5,12],[6,12]].forEach(([x,y])=>set(x,y,colors.guard));for(let i=0;i<8;i++){const x=5+i,y=10-i;set(x,y,colors.edge);set(x+1,y,colors.blade);set(x+1,y-1,i%3===0?colors.glow:colors.blade)}set(13,1,colors.edge);set(14,1,colors.edge);set(14,2,colors.blade);set(5,10,colors.glow);return pixels};
 const makePickaxeSprite=(colors:{head:string;edge:string;grip:string;binding:string;glow:string})=>{const mask=["................","................","......#####.....",".....#########..","......########..","..........####..",".........######.","........###.###.",".......###..###.","......###...###.",".....###....###.","....###......#..","...###..........","..###...........","..##............","................"],pixels:(string|null)[]=Array(256).fill(null),solid=(x:number,y:number)=>mask[y]?.[x]==="#";for(let y=0;y<16;y++)for(let x=0;x<16;x++){if(!solid(x,y))continue;const handle=y>=6&&Math.abs(x-(16-y))<=1;if(handle){pixels[y*16+x]=(y===6||y%4===1)?colors.binding:colors.grip;continue}const edge=!solid(x-1,y)||!solid(x+1,y)||!solid(x,y-1)||!solid(x,y+1);pixels[y*16+x]=edge?colors.edge:colors.head}pixels[3*16+9]=colors.glow;pixels[6*16+10]=colors.glow;return pixels};
 
@@ -68,6 +69,53 @@ const hingedChest:Project={
   animations:[{id:"open",name:"Open",lengthTicks:10,loop:false,keyframes:[{id:"open_0",tick:0,boneId:"chest_lid",rotation:[0,0,0],position:[0,0,0],interpolation:"linear"},{id:"open_10",tick:10,boneId:"chest_lid",rotation:[90,0,0],position:[0,0,0],interpolation:"linear"}]}]
 };
 
+const marshAlligator:Project={
+  id:"codex_marsh_alligator_01",name:"Marsh Alligator",source:"codex",revision:1,description:"A low, broad Minecraft-style alligator with an articulated jaw, diagonal walking gait, and a three-bone swimming tail.",kind:"mob",namespace:"blocksmith",baseItem:"minecraft:paper",baseEntity:"minecraft:turtle",category:"Creatures",group:"Reptiles",pack:"Wild Frontier",
+  cubes:[
+    {...cube("gator_body","Armored body",[2,4,4],[14,10,19],"#3f6335","alligator scales"),boneId:"gator_body"},
+    {...cube("gator_belly","Pale belly",[3,3.4,5],[13,5,18],"#82936a","belly scales"),boneId:"gator_body"},
+    {...cube("gator_back_1","Front dorsal scutes",[3,9.6,6],[6,11,10],"#2d4929","raised scutes"),boneId:"gator_body"},
+    {...cube("gator_back_2","Middle dorsal scutes",[6.5,9.8,7],[9.5,11.3,13],"#294426","raised scutes"),boneId:"gator_body"},
+    {...cube("gator_back_3","Rear dorsal scutes",[10,9.6,11],[13,11,17],"#2d4929","raised scutes"),boneId:"gator_body"},
+    {...cube("gator_head","Broad skull",[3,4,-2],[13,9,6],"#456c38","alligator scales"),boneId:"gator_head"},
+    {...cube("gator_snout","Long snout",[4,4,-8],[12,8,0],"#4a733c","snout scales"),boneId:"gator_head"},
+    {...cube("gator_brow_l","Left brow",[3.4,8.3,-1],[6.3,10,2],"#2d4929","heavy scutes"),boneId:"gator_head"},
+    {...cube("gator_brow_r","Right brow",[9.7,8.3,-1],[12.6,10,2],"#2d4929","heavy scutes"),boneId:"gator_head"},
+    {...cube("gator_eye_l","Left amber eye",[3.05,8.2,-.4],[3.65,9.2,.8],"#d9b64c","emissive eye"),boneId:"gator_head"},
+    {...cube("gator_eye_r","Right amber eye",[12.35,8.2,-.4],[12.95,9.2,.8],"#d9b64c","emissive eye"),boneId:"gator_head"},
+    {...cube("gator_nose_l","Left nostril",[5,7.8,-8.3],[6,8.3,-7.5],"#18251a","dark scale"),boneId:"gator_head"},
+    {...cube("gator_nose_r","Right nostril",[10,7.8,-8.3],[11,8.3,-7.5],"#18251a","dark scale"),boneId:"gator_head"},
+    {...cube("gator_jaw","Lower jaw",[4.4,3.1,-7.6],[11.6,4.5,.5],"#385b31","jaw scales"),boneId:"gator_jaw"},
+    {...cube("gator_mouth","Mouth lining",[4.8,4.25,-7.2],[11.2,4.65,-.2],"#5b2928","mouth"),boneId:"gator_jaw"},
+    {...cube("gator_teeth_l","Left tooth row",[4.5,3.8,-6.8],[5.1,5,-.8],"#ded6ae","teeth"),boneId:"gator_jaw"},
+    {...cube("gator_teeth_r","Right tooth row",[10.9,3.8,-6.8],[11.5,5,-.8],"#ded6ae","teeth"),boneId:"gator_jaw"},
+    {...cube("gator_tail_1","Tail base",[3,5,18],[13,9,24],"#3b6033","tail scales"),boneId:"gator_tail_1"},
+    {...cube("gator_tail_scute_1","Tail base scutes",[6,8.7,19],[10,10.3,24],"#294426","raised scutes"),boneId:"gator_tail_1"},
+    {...cube("gator_tail_2","Tail middle",[4,5.5,23],[12,8.5,29],"#36582f","tail scales"),boneId:"gator_tail_2"},
+    {...cube("gator_tail_scute_2","Tail middle scutes",[6.5,8.2,24],[9.5,9.5,29],"#294426","raised scutes"),boneId:"gator_tail_2"},
+    {...cube("gator_tail_3","Tail tip",[5,6,28],[11,8,32],"#304e2b","tail scales"),boneId:"gator_tail_3"},
+    {...cube("gator_fl_leg","Front left leg",[-1,2.5,5.5],[3.5,5.5,10],"#456c38","leg scales"),boneId:"gator_fl"},
+    {...cube("gator_fl_foot","Front left foot",[-2,1.8,4],[3,3.2,10],"#385b31","clawed foot"),boneId:"gator_fl"},
+    {...cube("gator_fr_leg","Front right leg",[12.5,2.5,5.5],[17,5.5,10],"#456c38","leg scales"),boneId:"gator_fr"},
+    {...cube("gator_fr_foot","Front right foot",[13,1.8,4],[18,3.2,10],"#385b31","clawed foot"),boneId:"gator_fr"},
+    {...cube("gator_bl_leg","Back left leg",[-1,2.5,13],[3.5,5.5,17.5],"#456c38","leg scales"),boneId:"gator_bl"},
+    {...cube("gator_bl_foot","Back left foot",[-2,1.8,12],[3,3.2,18],"#385b31","clawed foot"),boneId:"gator_bl"},
+    {...cube("gator_br_leg","Back right leg",[12.5,2.5,13],[17,5.5,17.5],"#456c38","leg scales"),boneId:"gator_br"},
+    {...cube("gator_br_foot","Back right foot",[13,1.8,12],[18,3.2,18],"#385b31","clawed foot"),boneId:"gator_br"}
+  ],
+  bones:[
+    {id:"gator_body",name:"Body",parentId:null,pivot:[8,6.5,11]},{id:"gator_head",name:"Head",parentId:"gator_body",pivot:[8,6,4]},{id:"gator_jaw",name:"Lower jaw",parentId:"gator_head",pivot:[8,4.2,.5]},
+    {id:"gator_tail_1",name:"Tail base",parentId:"gator_body",pivot:[8,7,19]},{id:"gator_tail_2",name:"Tail middle",parentId:"gator_tail_1",pivot:[8,7,24]},{id:"gator_tail_3",name:"Tail tip",parentId:"gator_tail_2",pivot:[8,7,29]},
+    {id:"gator_fl",name:"Front left leg",parentId:"gator_body",pivot:[3,5,7]},{id:"gator_fr",name:"Front right leg",parentId:"gator_body",pivot:[13,5,7]},{id:"gator_bl",name:"Back left leg",parentId:"gator_body",pivot:[3,5,15]},{id:"gator_br",name:"Back right leg",parentId:"gator_body",pivot:[13,5,15]}
+  ],
+  animations:[
+    {id:"idle",name:"Idle",lengthTicks:40,loop:true,keyframes:[frame("idle_t1_0",0,"gator_tail_1"),frame("idle_t1_20",20,"gator_tail_1",[0,5,0]),frame("idle_t1_40",40,"gator_tail_1"),frame("idle_t2_0",0,"gator_tail_2"),frame("idle_t2_20",20,"gator_tail_2",[0,-7,0]),frame("idle_t2_40",40,"gator_tail_2"),frame("idle_h_0",0,"gator_head"),frame("idle_h_20",20,"gator_head",[2,0,0]),frame("idle_h_40",40,"gator_head")]},
+    {id:"walk",name:"Walk",lengthTicks:20,loop:true,keyframes:[frame("walk_fl_0",0,"gator_fl",[-24,0,0]),frame("walk_fl_10",10,"gator_fl",[24,0,0]),frame("walk_fl_20",20,"gator_fl",[-24,0,0]),frame("walk_br_0",0,"gator_br",[-24,0,0]),frame("walk_br_10",10,"gator_br",[24,0,0]),frame("walk_br_20",20,"gator_br",[-24,0,0]),frame("walk_fr_0",0,"gator_fr",[24,0,0]),frame("walk_fr_10",10,"gator_fr",[-24,0,0]),frame("walk_fr_20",20,"gator_fr",[24,0,0]),frame("walk_bl_0",0,"gator_bl",[24,0,0]),frame("walk_bl_10",10,"gator_bl",[-24,0,0]),frame("walk_bl_20",20,"gator_bl",[24,0,0]),frame("walk_body_0",0,"gator_body"),frame("walk_body_5",5,"gator_body",[0,0,0],[0,.35,0]),frame("walk_body_10",10,"gator_body"),frame("walk_body_15",15,"gator_body",[0,0,0],[0,.35,0]),frame("walk_body_20",20,"gator_body"),frame("walk_tail_0",0,"gator_tail_1",[0,-8,0]),frame("walk_tail_10",10,"gator_tail_1",[0,8,0]),frame("walk_tail_20",20,"gator_tail_1",[0,-8,0])]},
+    {id:"swim",name:"Swim",lengthTicks:30,loop:true,keyframes:[frame("swim_t1_0",0,"gator_tail_1",[0,-16,0]),frame("swim_t1_15",15,"gator_tail_1",[0,16,0]),frame("swim_t1_30",30,"gator_tail_1",[0,-16,0]),frame("swim_t2_0",0,"gator_tail_2",[0,-22,0]),frame("swim_t2_8",8,"gator_tail_2",[0,18,0]),frame("swim_t2_23",23,"gator_tail_2",[0,-18,0]),frame("swim_t2_30",30,"gator_tail_2",[0,-22,0]),frame("swim_t3_0",0,"gator_tail_3",[0,-28,0]),frame("swim_t3_8",8,"gator_tail_3",[0,24,0]),frame("swim_t3_23",23,"gator_tail_3",[0,-24,0]),frame("swim_t3_30",30,"gator_tail_3",[0,-28,0]),frame("swim_fl",0,"gator_fl",[0,0,-22]),frame("swim_fr",0,"gator_fr",[0,0,22]),frame("swim_bl",0,"gator_bl",[0,0,-22]),frame("swim_br",0,"gator_br",[0,0,22])]},
+    {id:"bite",name:"Bite",lengthTicks:12,loop:false,keyframes:[frame("bite_jaw_0",0,"gator_jaw"),frame("bite_jaw_4",4,"gator_jaw",[-32,0,0]),frame("bite_jaw_7",7,"gator_jaw",[-32,0,0],undefined,"step"),frame("bite_jaw_9",9,"gator_jaw",[5,0,0]),frame("bite_jaw_12",12,"gator_jaw"),frame("bite_head_0",0,"gator_head"),frame("bite_head_4",4,"gator_head",[4,0,0],[0,0,-1]),frame("bite_head_12",12,"gator_head")]}
+  ]
+};
+
 const emberGreatsword:Project={id:"codex_emberglass_greatsword_01",name:"Emberglass Greatsword",source:"codex",revision:2,description:"A vanilla-style volcanic sword sprite with a blackened hilt and molten glass blade.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:netherite_sword",sprite:makeSwordSprite({blade:"#d65732",edge:"#ffd06a",grip:"#593421",guard:"#293239",glow:"#fff08a"}),cubes:[
   cube("pommel","Coal pommel",[6.7,.1,6.7],[9.3,1.6,9.3],"#20272c","black metal"),cube("ember_pommel","Pommel ember",[7.3,-.4,7.3],[8.7,.5,8.7],"#e56534","emissive ember"),cube("grip","Charred grip",[7,1.4,7],[9,5.2,9],"#593421","charred wood"),cube("wrap_low","Lower copper wrap",[6.7,2,6.7],[9.3,2.65,9.3],"#bd5a4d","hammered copper"),cube("wrap_high","Upper copper wrap",[6.7,3.7,6.7],[9.3,4.35,9.3],"#bd5a4d","hammered copper"),cube("guard_core","Guard core",[6.1,4.8,6.2],[9.9,6.2,9.8],"#293239","black metal"),cube("guard_left","Left flame guard",[3.5,4.35,6.6],[6.3,5.75,9.4],"#7a3429","scorched metal"),cube("guard_left_tip","Left guard tip",[2.6,3.9,7.05],[4.1,5,8.95],"#d65732","hot metal"),cube("guard_right","Right flame guard",[9.7,4.35,6.6],[12.5,5.75,9.4],"#7a3429","scorched metal"),cube("guard_right_tip","Right guard tip",[11.9,3.9,7.05],[13.4,5,8.95],"#d65732","hot metal"),cube("blade_frame","Blade frame",[6.15,5.7,6.55],[9.85,15.1,9.45],"#293239","black metal"),cube("blade_glass","Molten blade core",[6.75,6.1,6.05],[9.25,14.8,6.7],"#ec6a32","emissive emberglass"),cube("edge_left","Left bright edge",[5.75,6.2,6.9],[6.45,14.45,9.1],"#d5a642","hot sharpened metal"),cube("edge_right","Right bright edge",[9.55,6.2,6.9],[10.25,14.45,9.1],"#d5a642","hot sharpened metal"),cube("tip","Forked blade tip",[6.85,14.8,7],[9.15,16.35,9],"#e9a34d","emissive emberglass"),cube("rune","Forge rune",[7.4,8.1,5.7],[8.6,10.2,6.2],"#ffe06b","emissive rune") ]};
 
@@ -115,6 +163,7 @@ const pickaxe: Project = {
 };
 
 const BUILTINS:Project[] = [
+  marshAlligator,
   hingedChest,
   {...emberPickaxe,revision:3,pack:"Elemental Arsenal"},
   {...moonsteelPickaxe,revision:3,pack:"Elemental Arsenal"},
@@ -252,7 +301,7 @@ function Viewport({project,selected,onSelect,previewMode,animationClip,animation
     else if(previewMode==="ground"){const floor=ctx.createLinearGradient(0,0,0,height);floor.addColorStop(0,"#26302a");floor.addColorStop(.52,"#26302a");floor.addColorStop(.53,"#4f6340");floor.addColorStop(1,"#263620");ctx.fillStyle=floor;ctx.fillRect(0,0,width,height);ctx.fillStyle="#0b0e0b77";ctx.beginPath();ctx.ellipse(width/2,height*.68,55*q,13*q,0,0,Math.PI*2);ctx.fill()}
     const center={x:previewMode==="firstperson"?width*.67:previewMode==="thirdperson"?width*.58:width/2,y:previewMode==="ground"?height*.63:previewMode==="gui"?height*.52:height*.58};
     const transformPoint=(point:Vec3):Vec3=>{if(previewMode==="studio")return point;const t=DISPLAY_TRANSFORMS[previewMode],rad=t.rotation.map(v=>v*Math.PI/180) as Vec3;let x=(point[0]-8)*t.scale[0],y=(point[1]-8)*t.scale[1],z=(point[2]-8)*t.scale[2];let c=Math.cos(rad[0]),s=Math.sin(rad[0]);[y,z]=[y*c-z*s,y*s+z*c];c=Math.cos(rad[1]);s=Math.sin(rad[1]);[x,z]=[x*c+z*s,-x*s+z*c];c=Math.cos(rad[2]);s=Math.sin(rad[2]);[x,y]=[x*c-y*s,x*s+y*c];return[x+8+t.translation[0],y+8+t.translation[1],z+8+t.translation[2]]};
-    const renderZoom=view.zoom*quality,projectPoint=(source:Vec3):[number,number,number]=>{const p=transformPoint(source),x=p[0]-8,y=p[1]-8,z=p[2]-8,cy=Math.cos(view.yaw),sy=Math.sin(view.yaw),cp=Math.cos(view.pitch),sp=Math.sin(view.pitch),rx=x*cy-z*sy,rz=x*sy+z*cy;return[center.x+rx*renderZoom,center.y-(y*cp-rz*sp)*renderZoom,y*sp+rz*cp]};
+    const coordinates=project.cubes.flatMap(part=>[part.from,part.to]),modelSpan=coordinates.length?Math.max(...([0,1,2].map(axis=>Math.max(...coordinates.map(point=>point[axis]))-Math.min(...coordinates.map(point=>point[axis]))))):16,renderZoom=Math.min(view.zoom,Math.min(width,height)*.72/Math.max(16,modelSpan))*quality,projectPoint=(source:Vec3):[number,number,number]=>{const p=transformPoint(source),x=p[0]-8,y=p[1]-8,z=p[2]-8,cy=Math.cos(view.yaw),sy=Math.sin(view.yaw),cp=Math.cos(view.pitch),sp=Math.sin(view.pitch),rx=x*cy-z*sy,rz=x*sy+z*cy;return[center.x+rx*renderZoom,center.y-(y*cp-rz*sp)*renderZoom,y*sp+rz*cp]};
     const bones=bonesFor(project),boneMap=new Map(bones.map(bone=>[bone.id,bone]));
     const rotate=(point:Vec3,pivot:Vec3,degrees:Vec3):Vec3=>{let x=point[0]-pivot[0],y=point[1]-pivot[1],z=point[2]-pivot[2];const radians=degrees.map(value=>value*Math.PI/180) as Vec3;let c=Math.cos(radians[0]),s=Math.sin(radians[0]);[y,z]=[y*c-z*s,y*s+z*c];c=Math.cos(radians[1]);s=Math.sin(radians[1]);[x,z]=[x*c+z*s,-x*s+z*c];c=Math.cos(radians[2]);s=Math.sin(radians[2]);[x,y]=[x*c-y*s,x*s+y*c];return[x+pivot[0],y+pivot[1],z+pivot[2]]};
     const animatePoint=(part:Cube,source:Vec3):Vec3=>{let point=part.rotation.some(Boolean)?rotate(source,part.from.map((v,i)=>(v+part.to[i])/2) as Vec3,part.rotation):source;let boneId=part.boneId||part.id,guard=0;while(boneId&&guard++<64){const bone=boneMap.get(boneId);if(!bone)break;const track=sampleTrack(animationClip,bone.id,animationTick);point=rotate(point,bone.pivot,track.rotation).map((value,i)=>value+track.position[i]) as Vec3;boneId=bone.parentId||""}return point};

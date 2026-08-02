@@ -37,6 +37,19 @@ test("library supports mod packs, categories, collections, search, and accessibl
   assert.match(source, /COLLECTION/);
 });
 
+test("Marsh Alligator is a complete articulated creature rig", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Marsh Alligator"/);
+  assert.match(source, /category:"Creatures",group:"Reptiles",pack:"Wild Frontier"/);
+  assert.match(source, /baseEntity:"minecraft:turtle"/);
+  assert.match(source, /id:"gator_jaw",name:"Lower jaw",parentId:"gator_head"/);
+  assert.match(source, /id:"gator_tail_3",name:"Tail tip",parentId:"gator_tail_2"/);
+  for (const clip of ["Idle", "Walk", "Swim", "Bite"]) {
+    assert.match(source, new RegExp(`name:"${clip}"`));
+  }
+  assert.match(source, /bite_jaw_4[^\n]+\[-32,0,0\]/);
+});
+
 test("animation authoring follows the Paper display-rig contract", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /ticks_per_second:20/);
