@@ -106,4 +106,7 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /texture==="lantern"/);
   assert.match(source, /if\(alpha===0\)return\[0,0,0,0\]/);
   assert.match(source, /if\(rgb\[3\]===0\)continue/);
+  assert.match(source, /const isFullOccluder=/);
+  assert.match(source, /solid\.filter\(block=>isFullOccluder\(block\.state\)\)/);
+  assert.match(source, /normalizeStructureBlocks\(project\.structure\.blocks\)\.filter\(block=>isFullOccluder\(block\.state\)\)/);
 });
