@@ -1,6 +1,8 @@
 "use client";
 
-import { ChangeEvent, PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from "react";
+import { ChangeEvent, PointerEvent as ReactPointerEvent, Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+
+const StructureWebGLViewport=lazy(()=>import("./StructureWebGLViewport"));
 
 type Vec3 = [number, number, number];
 type Vec4 = [number,number,number,number];
@@ -368,7 +370,7 @@ const DISPLAY_TRANSFORMS:Record<Exclude<PreviewMode,"studio">,{rotation:Vec3;tra
   ground:{rotation:[0,0,0],translation:[0,3,0],scale:[.25,.25,.25]},
 };
 
-function Viewport({project,selected,onSelect,previewMode,animationClip,animationTick}:{project:Project;selected:string|null;onSelect:(id:string)=>void;previewMode:PreviewMode;animationClip?:AnimationClip;animationTick:number}) {
+function CanvasViewport({project,selected,onSelect,previewMode,animationClip,animationTick}:{project:Project;selected:string|null;onSelect:(id:string)=>void;previewMode:PreviewMode;animationClip?:AnimationClip;animationTick:number}) {
   const canvas=useRef<HTMLCanvasElement>(null);
   const [vanillaTextures,setVanillaTextures]=useState<Record<string,Uint8ClampedArray>>({});
   const [vanillaCatalog,setVanillaCatalog]=useState<VanillaCatalog|null>(null);
@@ -423,6 +425,8 @@ function Viewport({project,selected,onSelect,previewMode,animationClip,animation
   const up=(e:ReactPointerEvent<HTMLCanvasElement>)=>{const active=drag.current;if(active&&!active.moved){const r=e.currentTarget.getBoundingClientRect(),scaleX=e.currentTarget.width/r.width,scaleY=e.currentTarget.height/r.height,x=(e.clientX-r.left)*scaleX,y=(e.clientY-r.top)*scaleY;const inside=(poly:[number,number][])=>poly.reduce((hit,p,i)=>{const q=poly[(i+poly.length-1)%poly.length];return((p[1]>y)!==(q[1]>y))&&(x<(q[0]-p[0])*(y-p[1])/(q[1]-p[1])+p[0])?!hit:hit},false);const hit=projected.current.find(p=>inside(p.poly));if(hit)onSelect(hit.id)}drag.current=null;finishInteraction()};
   return <canvas ref={canvas} className={`viewport ${previewMode==="studio"?"interactive":"fixed"}`} aria-label={previewMode==="studio"?"Interactive 3D model viewport":`Fixed Minecraft ${previewMode} transform preview`} onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={()=>{drag.current=null;finishInteraction()}} onDoubleClick={()=>{if(previewMode==="studio")setView(PREVIEW_PRESETS.studio)}} onWheel={e=>{if(previewMode==="studio"){e.preventDefault();beginInteraction();setView(v=>({...v,zoom:Math.max(3,Math.min(90,v.zoom-e.deltaY*.025))}));finishInteraction()}}}/>;
 }
+
+function Viewport(props:{project:Project;selected:string|null;onSelect:(id:string)=>void;previewMode:PreviewMode;animationClip?:AnimationClip;animationTick:number}){const{project,previewMode}=props,[catalog,setCatalog]=useState<VanillaCatalog|null>(null);useEffect(()=>{if(!project.structure||previewMode!=="studio")return;let cancelled=false;fetch("/vanilla-26.2/catalog.json").then(response=>response.json()).then(data=>{if(!cancelled)setCatalog(data)}).catch(()=>{});return()=>{cancelled=true}},[project.structure,previewMode]);const parts=useMemo(()=>project.structure&&catalog?structureBlocksFromCatalog(project.structure.blocks,catalog):project.cubes,[project,catalog]),occluders=useMemo(()=>new Set(project.structure?normalizeStructureBlocks(project.structure.blocks).filter(block=>catalog?catalogBlockIsFullOccluder(block,catalog):isFullOccluder(block.state)).map(block=>`${block.x},${block.y},${block.z}`):[]),[project.structure,catalog]);if(project.structure&&previewMode==="studio")return <Suspense fallback={<canvas className="viewport interactive" aria-label="Loading GPU-accelerated structure viewport"/>}><StructureWebGLViewport projectId={`${project.id}:${project.revision}:${catalog?.version||"loading"}`} parts={parts} size={project.structure.size} occluders={occluders} selected={props.selected} onSelect={props.onSelect}/></Suspense>;return <CanvasViewport {...props}/>}
 
 function StructureEditor({project,layer,brush,onLayer,onBrush,onPaint,onFill,onResize}:{project:Project;layer:number;brush:string;onLayer:(value:number)=>void;onBrush:(value:string)=>void;onPaint:(x:number,z:number)=>void;onFill:()=>void;onResize:(size:Vec3)=>void}){
   const structure=project.structure!;

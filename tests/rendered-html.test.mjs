@@ -33,6 +33,23 @@ test("the studio page opts out of stale release caching", async () => {
   assert.match(source, /export const revalidate = 0/);
 });
 
+test("large structures use a GPU-accelerated merged WebGL viewport", async () => {
+  const source = await readFile(new URL("../app/StructureWebGLViewport.tsx", import.meta.url), "utf8");
+  assert.match(source, /new THREE\.WebGLRenderer/);
+  assert.match(source, /powerPreference:"high-performance"/);
+  assert.match(source, /new THREE\.BufferGeometry/);
+  assert.match(source, /new THREE\.CanvasTexture/);
+  assert.match(source, /THREE\.NearestFilter/);
+  assert.match(source, /new THREE\.OrthographicCamera/);
+  assert.match(source, /new THREE\.Raycaster/);
+  assert.match(source, /new ResizeObserver/);
+  assert.match(source, /alphaTest:\.1/);
+  assert.doesNotMatch(source, /getImageData|putImageData/);
+
+  const modelMaker = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(modelMaker, /lazy\(\(\)=>import\("\.\/StructureWebGLViewport"\)\)/);
+});
+
 test("library supports mod packs, categories, collections, search, and accessible dismissal", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /pack:"Elemental Arsenal"/);
@@ -124,6 +141,7 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /Math\.min\(90,v\.zoom-e\.deltaY\*\.025\)/);
   assert.match(source, /structureOccupied\?\.has/);
   assert.match(source, /const structureBlockModel=/);
+  assert.match(source, /StructureWebGLViewport/);
   assert.match(source, /block\.state\.startsWith\("minecraft:lantern\["\)/);
   assert.match(source, /\[\[5,0,5\],\[11,7,11\],\[0,0,0\]\]/);
   assert.match(source, /block\.state\.startsWith\("minecraft:oak_stairs\["\)/);
