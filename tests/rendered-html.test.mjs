@@ -87,4 +87,9 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /for\(let y=0;y<height;y\+\+\)for\(let z=0;z<length;z\+\+\)for\(let x=0;x<width;x\+\+\)/);
   assert.match(source, /New structure/);
   assert.match(source, /Click cells to paint real Java block states/);
+  assert.match(source, /normalizeStructureBlocks/);
+  assert.match(source, /new Map\(blocks\.filter\(block=>block\.state!=="minecraft:air"\)/);
+  assert.match(source, /\/vanilla-blocks\/\$\{name\}\.png/);
+  assert.match(source, /texture==="oak_log"&&\(face\.faceIndex===4\|\|face\.faceIndex===5\)/);
+  assert.match(source, /texture==="grass_block_side"&&face\.faceIndex===4/);
 });
