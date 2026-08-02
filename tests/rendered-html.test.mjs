@@ -20,10 +20,21 @@ test("server-renders the Blocksmith model studio", async () => {
   const html = await response.text();
   assert.match(html, /<title>Blocksmith — AI Minecraft Model Studio<\/title>/i);
   assert.match(html, /CODEX MODEL WORKBENCH/);
+  assert.match(html, />Library</);
   assert.match(html, />Animate</);
-  assert.match(html, /Hinged Supply Chest/);
-  assert.match(html, /Export Paper Pack/);
+  assert.match(html, />Export</);
   assert.doesNotMatch(html, /codex-preview|Building your site/);
+});
+
+test("library supports mod packs, categories, collections, search, and accessible dismissal", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /pack:"Elemental Arsenal"/);
+  assert.match(source, /pack:"Blocksmith Examples"/);
+  assert.match(source, /role="dialog" aria-modal="true" aria-labelledby="library-heading"/);
+  assert.match(source, /event\.key==="Escape"/);
+  assert.match(source, /placeholder="Search models, packs, or collections…"/);
+  assert.match(source, /MOD PACK/);
+  assert.match(source, /COLLECTION/);
 });
 
 test("animation authoring follows the Paper display-rig contract", async () => {
