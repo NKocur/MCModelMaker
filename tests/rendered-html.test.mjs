@@ -44,6 +44,10 @@ test("large structures use a GPU-accelerated merged WebGL viewport", async () =>
   assert.match(source, /new THREE\.Raycaster/);
   assert.match(source, /new ResizeObserver/);
   assert.match(source, /alphaTest:\.1/);
+  assert.match(source, /const renderClass=.*includes\("water"\).*includes\("glass"\)/);
+  assert.match(source, /geometry\.addGroup/);
+  assert.match(source, /transparent:true,opacity:\.58,depthWrite:false/);
+  assert.match(source, /transparent:true,opacity:\.72,depthWrite:false/);
   assert.doesNotMatch(source, /getImageData|putImageData/);
 
   const modelMaker = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
@@ -98,7 +102,7 @@ test("Marshlight Trading Post is a detailed current-version structure showcase",
 test("Gilded Briar Manor exercises elaborate connected-house construction", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Gilded Briar Manor"/);
-  assert.match(source, /name:"Gilded Briar Manor"[^\n]+revision:2/);
+  assert.match(source, /name:"Gilded Briar Manor"[^\n]+revision:3/);
   assert.match(source, /category:"Structures",group:"Manor Houses",pack:"Wild Frontier"/);
   assert.match(source, /structure:\{size:\[31,21,27\],blocks:briarManorBlocks\}/);
   assert.match(source, /const briarManorBlocks=resolveStructureConnections\(makeBriarManorBlocks\(\)\)/);
@@ -113,6 +117,8 @@ test("Gilded Briar Manor exercises elaborate connected-house construction", asyn
   assert.match(source, /roofStep\("dark_oak",x,10\+layer,20-layer,"north",layer===0\)/);
   assert.match(source, /Tall west library tower/);
   assert.match(source, /Glazed east conservatory/);
+  assert.match(source, /roofStep\("dark_oak",28-layer,7\+layer,z,"west",layer===0\)/);
+  assert.match(source, /roofRidge\("dark_oak",23,12,z\)/);
   assert.match(source, /Hedges, pond, fountain, trees, and lantern-lined approach/);
   assert.match(source, /name:`\$\{merged\[i\]\.name\} \(Saved edit\)`/);
   assert.match(source, /name:`\$\{project\.name\} Custom`/);
@@ -181,6 +187,8 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /structureOccupied\?\.has/);
   assert.match(source, /const structureBlockModel=/);
   assert.match(source, /StructureWebGLViewport/);
+  assert.match(source, /block\.state\.startsWith\("minecraft:water\["\)/);
+  assert.match(source, /\[16,14,16\],"#3575b9","vanilla:water_still"/);
   assert.match(source, /block\.state\.startsWith\("minecraft:lantern\["\)/);
   assert.match(source, /\[\[5,0,5\],\[11,7,11\],\[0,0,0\]\]/);
   assert.match(source, /block\.state\.startsWith\("minecraft:oak_stairs\["\)/);
