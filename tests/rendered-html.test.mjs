@@ -74,3 +74,17 @@ test("animation authoring follows the Paper display-rig contract", async () => {
   const rotatedY = relativeY * Math.cos(radians) - relativeZ * Math.sin(radians);
   assert.ok(pivot[1] + rotatedY > front[1], "the lid's front edge must move upward");
 });
+
+test("structure mode exports current Java Sponge v3 schematics", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /type ModelKind = [^;]+"structure"/);
+  assert.match(source, /name:"Swamp Watchtower"/);
+  assert.match(source, /category:"Structures",group:"Swamp Builds",pack:"Wild Frontier"/);
+  assert.match(source, /nbtNamed\(3,"Version",nbtInt\(3\)\)/);
+  assert.match(source, /nbtNamed\(3,"DataVersion",nbtInt\(4903\)\)/);
+  assert.match(source, /pipeThrough\(new CompressionStream\("gzip"\)\)/);
+  assert.match(source, /a\.download=`\$\{slug\(project\.name\)\}\.schem`/);
+  assert.match(source, /for\(let y=0;y<height;y\+\+\)for\(let z=0;z<length;z\+\+\)for\(let x=0;x<width;x\+\+\)/);
+  assert.match(source, /New structure/);
+  assert.match(source, /Click cells to paint real Java block states/);
+});
