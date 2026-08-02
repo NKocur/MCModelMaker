@@ -131,6 +131,9 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.match(source, /const modelApplications=/);
   assert.match(source, /const inheritedModel=/);
   assert.match(source, /const catalogBlockModel=/);
+  assert.match(source, /const textureSprite=/);
+  assert.match(source, /typeof \(value as \{sprite\?:unknown\}\)\.sprite==="string"/);
+  assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
   assert.match(source, /faceDefinition=part\.faceData\?\.\[faceIndex\]/);
   const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
   assert.equal(catalog.version, "26.2");
@@ -139,4 +142,5 @@ test("structure mode exports current Java Sponge v3 schematics", async () => {
   assert.ok(catalog.blockstates.potted_dandelion);
   assert.ok(catalog.models.template_lantern?.elements?.length >= 4);
   assert.ok(catalog.models.flower_pot?.elements?.length || catalog.models.flower_pot?.parent);
+  assert.equal(catalog.models.glass_pane_post.textures.pane.sprite, "minecraft:block/glass");
 });
