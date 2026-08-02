@@ -136,7 +136,21 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /Ivory roulette ball/);
   assert.match(source, /name:"Spin wheel",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeSkulljack/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+});
+
+test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const makePirateCoinSprite=/);
+  assert.match(source, /name:"Blackwake Gold Doubloon"/);
+  assert.match(source, /baseItem:"minecraft:gold_nugget",spriteParent:"generated"/);
+  assert.match(source, /group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /sprite:makePirateCoinSprite\(\)/);
+  assert.match(source, /const spriteModelParent=/);
+  assert.match(source, /parent:spriteModelParent\(project\)/);
+  assert.match(source, /transform_profile:kind==="item"\?spriteModelParent\(project\)/);
+  assert.match(source, /FLAT INVENTORY ITEM/);
+  assert.match(source, /GENERATED ITEM/);
 });
 
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
