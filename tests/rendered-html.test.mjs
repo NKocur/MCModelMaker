@@ -22,7 +22,7 @@ test("server-renders the Blocksmith model studio", async () => {
   assert.match(html, /CODEX MODEL WORKBENCH/);
   assert.match(html, />Library</);
   assert.match(html, />Animate</);
-  assert.match(html, />Export</);
+  assert.match(html, />Export Paper bundle</);
   assert.match(html, /href="\/favicon\.svg"/);
   assert.doesNotMatch(html, /codex-preview|Building your site/);
 });
@@ -219,6 +219,12 @@ test("animation authoring follows the Paper display-rig contract", async () => {
   assert.match(source, /Static Java element angles must be -45, -22\.5, 0, 22\.5, or 45 degrees/);
   assert.match(source, /rotation_convention:"right-handed positive rotations"/);
   assert.match(source, /open_10[^\n]+rotation:\[90,0,0\]/);
+  assert.match(source, /const animationExportData=/);
+  assert.match(source, /blocksmith\/animations\/\$\{ns\}\/\$\{id\}\.animation\.json/);
+  assert.match(source, /Per-bone item models are included under assets\/\$\{ns\}\/models\/item\/\$\{id\}\/bone/);
+  assert.match(source, /Vanilla ignores this developer data; your mod or Paper plugin can read it directly/);
+  assert.match(source, /Export Paper bundle/);
+  assert.match(source, /Download test bundle/);
 
   // Rear hinge at Z=14, front test point at Z=1. Positive X must lift it in Y.
   const pivot = [8, 10, 14];
