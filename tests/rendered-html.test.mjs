@@ -46,8 +46,10 @@ test("large structures use a GPU-accelerated merged WebGL viewport", async () =>
   assert.match(source, /alphaTest:\.1/);
   assert.match(source, /const renderClass=.*includes\("water"\).*includes\("glass"\)/);
   assert.match(source, /geometry\.addGroup/);
-  assert.match(source, /transparent:true,opacity:\.58,depthWrite:false/);
+  assert.match(source, /transparent:true,opacity:1,depthWrite:true,side:THREE\.FrontSide/);
   assert.match(source, /transparent:true,opacity:\.72,depthWrite:false/);
+  assert.match(source, /indices:\[0,3,2,1\]/);
+  assert.doesNotMatch(source, /THREE\.DoubleSide/);
   assert.doesNotMatch(source, /getImageData|putImageData/);
 
   const modelMaker = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
