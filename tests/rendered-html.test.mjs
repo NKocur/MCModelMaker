@@ -83,6 +83,21 @@ test("Marsh Alligator is a complete articulated creature rig", async () => {
   assert.match(source, /bite_jaw_4[^\n]+\[-32,0,0\]/);
 });
 
+test("fantasy daily loot chest collection has three animated rarity tiers", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  for (const name of ["Wayfarer's Daily Chest", "Runebound Daily Coffer", "Crownvault Daily Reliquary"]) assert.match(source, new RegExp(`name:\"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}\"`));
+  assert.match(source, /group:"Daily Loot Chests",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /Common daily loot chest/);
+  assert.match(source, /Rare daily loot chest/);
+  assert.match(source, /Legendary daily loot chest/);
+  assert.match(source, /name:"Open",lengthTicks:10,loop:false/);
+  assert.match(source, /frame\(`\$\{project\.id\}_open_10`,10,`\$\{project\.id\}_lid`,\[90,0,0\]\)/);
+  assert.match(source, /weathered fantasy oak/);
+  assert.match(source, /glowing mana crystal/);
+  assert.match(source, /dragon-forged gold/);
+  assert.match(source, /crownvaultDailyReliquary,\s+runeboundDailyCoffer,\s+wayfarerDailyChest/);
+});
+
 test("Marshlight Trading Post is a detailed current-version structure showcase", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Marshlight Trading Post"/);
