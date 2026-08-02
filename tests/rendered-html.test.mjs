@@ -35,6 +35,9 @@ test("library supports mod packs, categories, collections, search, and accessibl
   assert.match(source, /placeholder="Search models, packs, or collections…"/);
   assert.match(source, /MOD PACK/);
   assert.match(source, /COLLECTION/);
+  assert.match(source, /function ModelThumbnail\(\{model\}/);
+  assert.match(source, /<ModelThumbnail model=\{model\}\/>/);
+  assert.doesNotMatch(source, /className="library-model-art procedural-art"/);
 });
 
 test("Marsh Alligator is a complete articulated creature rig", async () => {
