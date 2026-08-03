@@ -105,6 +105,7 @@ test("Briarback Goblin Fighter is an original combat-ready humanoid rig", async 
   for (const clip of ["Idle", "Walk", "Club Attack", "Hurt", "Death"]) assert.match(source, new RegExp(`name:"${clip}"`));
   assert.match(source, /goblin_attack_arm_4[^\n]+\[-125,0,-18\]/);
   assert.match(source, /goblin_death_body_24[^\n]+\[88,0,0\]/);
+  assert.match(source, /goblin_club_head[^\n]+\[12,1,5\.6\],\[15\.4,5,9\.2\]/);
   assert.match(source, /goblin_club_spike[^\n]+\[13,0,6\.5\],\[14\.4,1,8\.4\]/);
   assert.match(source, /swampWatchtower,\s+briarbackGoblin,\s+marshAlligator/);
 });
@@ -174,7 +175,19 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+});
+
+test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Blackwake Blackjack Table"/);
+  assert.match(source, /group:"Casino Games",pack:"Fantasy Daily Rewards",placementSize:\[2,1,1\]/);
+  for (const feature of ["Deep emerald blackjack felt", "Blackwake card shoe", "Bone skull felt inlay", "Dealer face-down hole card", "Blackwake twenty-one nameplate"]) assert.match(source, new RegExp(feature));
+  assert.match(source, /\[5,12,20,27\]\.flatMap/);
+  assert.match(source, /id:"blackjack_card_p1",name:"Player ace",parentId:"blackjack_table"/);
+  assert.match(source, /name:"Deal Opening Hand",lengthTicks:20,loop:false/);
+  assert.match(source, /blackjack_d2_12[^\n]+\[-18\.5,\.8,4\][^\n]+blackjack_d2_16/);
+  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeGoldDoubloon/);
 });
 
 test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
