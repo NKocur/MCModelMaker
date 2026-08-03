@@ -227,6 +227,16 @@ test("Blackwake playing cards contain a complete readable 52-card generated deck
   assert.match(source, /group:"Blackwake Playing Cards",pack:"Fantasy Daily Rewards"/);
 });
 
+test("Blackwake pirate weapons form a five-item handheld collection", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const blackwakePirateWeapons:Project\[]=\[/);
+  for (const name of ["Blackwake Buccaneer Cutlass", "Blackwake Boarding Axe", "Blackwake Flintlock", "Blackwake Marlinspike Dagger", "Blackwake Captain's Saber"]) assert.match(source, new RegExp(`name:"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}"`));
+  for (const sprite of ["cutlass", "axe", "flintlock", "dagger", "saber"]) assert.match(source, new RegExp(`sprite:PIRATE_WEAPON_SPRITES\\.${sprite}`));
+  assert.match(source, /spriteParent:"handheld" as const/);
+  assert.match(source, /category:"Tools & Weapons",group:"Blackwake Pirate Weapons",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /\.\.\.blackwakePirateWeapons/);
+});
+
 test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const makePirateCoinSprite=/);
