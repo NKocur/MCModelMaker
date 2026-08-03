@@ -175,7 +175,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeAceOfSpades,\s+blackwakeTenOfHearts,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
@@ -187,16 +187,23 @@ test("Blackwake Blackjack Table is a two-block animated pirate casino table", as
   assert.match(source, /id:"blackjack_card_p1",name:"Player ace",parentId:"blackjack_table"/);
   assert.match(source, /name:"Deal Opening Hand",lengthTicks:20,loop:false/);
   assert.match(source, /blackjack_d2_12[^\n]+\[-18\.5,\.8,4\][^\n]+blackjack_d2_16/);
-  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeAceOfSpades,\s+blackwakeTenOfHearts/);
+  assert.match(source, /blackwakeBlackjackTable,\s+\.\.\.blackwakePlayingCards/);
 });
 
-test("Blackwake playing-card prototypes are readable generated inventory items", async () => {
+test("Blackwake playing cards contain a complete readable 52-card generated deck", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const CARD_RANKS=\["A","2","3","4","5","6","7","8","9","10","J","Q","K"\]/);
+  assert.match(source, /CARD_SUITS=\["spades","hearts","clubs","diamonds"\]/);
   assert.match(source, /const CARD_GLYPHS:Record<string,string\[]>/);
-  assert.match(source, /const makePlayingCardSprite=\(rank:"A"\|"10",suit:"spade"\|"heart"\)/);
-  assert.match(source, /suit==="heart"\?\["\.##\.##\."/);
-  assert.match(source, /name:"Blackwake Ace of Spades"[^\n]+baseItem:"minecraft:paper",spriteParent:"generated",sprite:makePlayingCardSprite\("A","spade"\)/);
-  assert.match(source, /name:"Blackwake Ten of Hearts"[^\n]+baseItem:"minecraft:paper",spriteParent:"generated",sprite:makePlayingCardSprite\("10","heart"\)/);
+  assert.match(source, /const CARD_SUIT_MASKS:Record<CardSuit,string\[]>/);
+  assert.match(source, /spades:\["\.\.\.#\.\.\."/);
+  assert.match(source, /hearts:\["\.##\.##\."/);
+  assert.match(source, /clubs:\["\.\.###\.\."/);
+  assert.match(source, /diamonds:\["\.\.\.#\.\.\."/);
+  assert.match(source, /const makePlayingCardSprite=\(rank:CardRank,suit:CardSuit\)/);
+  assert.match(source, /const blackwakePlayingCards:Project\[]=CARD_SUITS\.flatMap\(suit=>CARD_RANKS\.map/);
+  assert.match(source, /id:`blackwake_\$\{rank\.toLowerCase\(\)\}_of_\$\{suit\}`/);
+  assert.match(source, /baseItem:"minecraft:paper",spriteParent:"generated",sprite:makePlayingCardSprite\(rank,suit\)/);
   assert.match(source, /group:"Blackwake Playing Cards",pack:"Fantasy Daily Rewards"/);
 });
 
