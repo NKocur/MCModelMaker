@@ -822,7 +822,7 @@ function SpriteEditor({sprite,onBegin,onChange,onCenter,onClear}:{sprite:(string
     <div className="pixel-grid" aria-label="16 by 16 sprite canvas">{pixels.map((pixel,index)=><button type="button" key={index} aria-label={`Pixel ${index%16+1}, ${Math.floor(index/16)+1}${pixel?`, ${pixel}`:", transparent"}`} style={{backgroundColor:pixel||"transparent"}} onPointerDown={event=>begin(event,index)} onPointerEnter={()=>{if(drawing.current)paint(index,eraseStroke.current)}}/>)}</div>
     <div className="sprite-color-row"><label>COLOR<input type="color" value={color} onChange={event=>{setColor(event.target.value);setTool("paint")}}/></label><input className="sprite-hex" aria-label="Selected color hex value" value={color.toUpperCase()} onChange={event=>{if(/^#[0-9a-f]{6}$/i.test(event.target.value)){setColor(event.target.value);setTool("paint")}}}/></div>
     <div className="sprite-swatches" aria-label="Pixel color swatches">{SPRITE_EDITOR_SWATCHES.map(swatch=><button type="button" key={swatch} aria-label={`Use ${swatch}`} className={color.toLowerCase()===swatch?"chosen":""} style={{background:swatch}} onClick={()=>{setColor(swatch);setTool("paint")}}/>)}</div>
-    <p className="sprite-help">Drag to paint · right-click to erase · transparent pixels define the item silhouette.</p>
+    <p className="sprite-help">Drag to paint · right-click to erase · red guides mark the exact center between pixels 8 and 9.</p>
   </section>;
 }
 

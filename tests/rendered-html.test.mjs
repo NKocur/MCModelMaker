@@ -510,5 +510,8 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(source, />Center</);
   assert.match(styles, /\.pixel-grid\{display:grid;grid-template-columns:repeat\(16,1fr\)/);
   assert.match(styles, /grid-template-columns:repeat\(16,15px\)/);
+  assert.match(styles, /\.pixel-grid:before,\.pixel-grid:after/);
+  assert.match(styles, /background:#ef3f3f/);
+  assert.match(source, /red guides mark the exact center between pixels 8 and 9/);
   assert.match(styles, /image-rendering:pixelated/);
 });
