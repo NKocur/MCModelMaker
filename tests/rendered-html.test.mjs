@@ -70,6 +70,22 @@ test("library supports mod packs, categories, collections, search, and accessibl
   assert.doesNotMatch(source, /className="library-model-art procedural-art"/);
 });
 
+test("library collections export one combined ZIP with all supported content", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /async function exportCollectionBundle\(projects:Project\[],packName:string,collectionName:string\)/);
+  assert.match(source, /new Set\(identities\)\.size!==identities\.length/);
+  assert.match(source, /resource-pack\/pack\.mcmeta/);
+  assert.match(source, /paper\/collections\/\$\{slug\(packName\)\}_\$\{slug\(collectionName\)\}\.json/);
+  assert.match(source, /structures\/\$\{id\}\.schem/);
+  assert.match(source, /models:manifest/);
+  assert.match(source, /a\.download=`\$\{slug\(packName\)\}-\$\{slug\(collectionName\)\}-collection\.zip`/);
+  assert.match(source, />Export collection ZIP<\/button>/);
+  assert.match(source, /collectionModels=library\.filter\(model=>projectPack\(model\)===pack&&projectGroup\(model\)===collection\)/);
+  assert.match(source, /exportCollectionBundle\(collectionModels,pack,collection\)/);
+  assert.match(styles, /\.library-section-actions/);
+});
+
 test("Runebank Teller Shrine is a recognizable fantasy ATM variant", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Runebank Teller Shrine"/);
