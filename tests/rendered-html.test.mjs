@@ -533,3 +533,22 @@ test("saving overwrites the current library model and models can be permanently 
   assert.match(source, /className="top-delete-model"/);
   assert.match(styles, /\.top-delete-model\{/);
 });
+
+test("the complete licensed RPGIAB pack and a curated CorporateCraft GUI set are available", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const data = await readFile(new URL("../app/rpgiabIconData.ts", import.meta.url), "utf8");
+  const icons = [...data.matchAll(/^  \["([^"]+)","([0-9a-f]+)"\],$/gm)];
+  assert.equal(icons.length, 400);
+  assert.ok(icons.every(([, , encoded]) => encoded.length === 512));
+  assert.match(data, /Justin Arnold/);
+  assert.match(data, /CC BY 4\.0/);
+  assert.match(source, /\.\.\.rpgiabIconItems/);
+  assert.match(source, /\.\.\.corporateCraftGuiItems/);
+  assert.match(source, /pack:"RPGIAB Complete Icon Pack"/);
+  assert.match(source, /group:"Grand Exchange & Plugin GUI",pack:"CorporateCraft"/);
+  assert.match(source, /\["ge_home","Grand Exchange Home","main_menu"\]/);
+  assert.match(source, /\["buy_offer","Create Buy Offer","arrow_in"\]/);
+  assert.match(source, /\["price_chart","Price Chart","progress_bar"\]/);
+  assert.match(source, /if\(project\.attribution\)add\("CREDITS\.txt"/);
+  assert.match(source, /const attributions=\[\.\.\.new Set/);
+});
