@@ -505,6 +505,10 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(source, /onContextMenu=/);
   assert.match(source, /Create 16×16 sprite/);
   assert.match(source, /sprite:Array\(256\)\.fill\(null\)/);
+  assert.match(source, /const centerSpritePixels=/);
+  assert.match(source, /sprite:centerSpritePixels/);
+  assert.match(source, />Center</);
   assert.match(styles, /\.pixel-grid\{display:grid;grid-template-columns:repeat\(16,1fr\)/);
+  assert.match(styles, /grid-template-columns:repeat\(16,15px\)/);
   assert.match(styles, /image-rendering:pixelated/);
 });
