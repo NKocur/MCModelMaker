@@ -250,6 +250,9 @@ test("core GUI icons export as a reusable Minecraft item collection", async () =
   assert.match(source, /category:"GUI Items",group:"Core GUI Items",pack:"Blocksmith GUI Kit"/);
   assert.match(source, /\.\.\.coreGuiItems/);
   assert.match(source, /makeGuiItemSprite\(icon\.mask,icon\.tone\)/);
+  assert.match(source, /const GUI_ICON_TONES=\{green:\["#27623b","#56b85d","#a7e889"\]/);
+  assert.match(source, /highlighted=!solid\(x-1,y\)\|\|!solid\(x,y-1\),shadowed=/);
+  assert.doesNotMatch(source, /const makeGuiItemSprite[^\n]+tile=/);
 });
 
 test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
