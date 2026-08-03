@@ -255,6 +255,9 @@ test("core GUI icons export as a reusable Minecraft item collection", async () =
   assert.match(source, /highlighted=y<4&&!solid\(x,y-1\),shaded=y>4&&!solid\(x,y\+1\)/);
   assert.doesNotMatch(source, /set\(x\+5,y\+5,"#30383a"\)/);
   assert.doesNotMatch(source, /const makeGuiItemSprite[^\n]+tile=/);
+  assert.match(source, /const OBJECT_GUI_ICON_ROWS:Record<string,readonly string\[]>/);
+  for (const id of ["locked", "unlocked", "warning", "settings", "refresh", "shop", "wallet", "rewards", "profile", "menu"]) assert.match(source, new RegExp(`${id}:\\[`));
+  assert.match(source, /OBJECT_GUI_ICON_ROWS\[icon\.id\]\?makeObjectGuiItemSprite\(OBJECT_GUI_ICON_ROWS\[icon\.id\]\):makeGuiItemSprite/);
 });
 
 test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
