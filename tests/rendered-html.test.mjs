@@ -74,7 +74,11 @@ test("library collections export one combined ZIP with all supported content", a
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
   assert.match(source, /async function exportCollectionBundle\(projects:Project\[],packName:string,collectionName:string\)/);
-  assert.match(source, /new Set\(identities\)\.size!==identities\.length/);
+  assert.match(source, /const usedIdentities=new Set<string>\(\),targets=projects\.map/);
+  assert.match(source, /while\(usedIdentities\.has\(`\$\{ns\}:\$\{id\}`\)\)id=`\$\{baseId\}_\$\{suffix\}_\$\{attempt\+\+\}`/);
+  assert.match(source, /for\(const\{project,ns,id\}of targets\)/);
+  assert.match(source, /paperContentData\(project,ns,id\)/);
+  assert.doesNotMatch(source, /Every model in a collection must have a unique namespace and name/);
   assert.match(source, /resource-pack\/pack\.mcmeta/);
   assert.match(source, /paper\/collections\/\$\{slug\(packName\)\}_\$\{slug\(collectionName\)\}\.json/);
   assert.match(source, /structures\/\$\{id\}\.schem/);
