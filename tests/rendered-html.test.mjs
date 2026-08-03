@@ -322,8 +322,8 @@ test("Gilded Briar Manor exercises elaborate connected-house construction", asyn
   assert.match(source, /roofStep\("dark_oak",28-layer,7\+layer,z,"west",layer===0\)/);
   assert.match(source, /roofRidge\("dark_oak",23,12,z\)/);
   assert.match(source, /Hedges, pond, fountain, trees, and lantern-lined approach/);
-  assert.match(source, /name:`\$\{merged\[i\]\.name\} \(Saved edit\)`/);
-  assert.match(source, /name:`\$\{project\.name\} Custom`/);
+  assert.match(source, /merged\[i\]\.source!=="local"/);
+  assert.doesNotMatch(source, /\(Saved edit\)/);
 
   const catalog = JSON.parse(await readFile(new URL("../public/vanilla-26.2/catalog.json", import.meta.url), "utf8"));
   for (const block of ["white_stained_glass_pane", "spruce_door", "dark_oak_stairs", "stone_brick_stairs", "dark_oak_trapdoor", "flowering_azalea_leaves"]) {
@@ -514,4 +514,16 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(styles, /background:#ef3f3f/);
   assert.match(source, /red guides mark the exact center between pixels 8 and 9/);
   assert.match(styles, /image-rendering:pixelated/);
+});
+
+test("saving overwrites the current library model and models can be permanently deleted", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /const saved=\{\.\.\.clone\(project\),source:"local" as const/);
+  assert.doesNotMatch(source, /id:uid\("saved_builtin"\)/);
+  assert.match(source, /blocksmith-deleted-models-v1/);
+  assert.match(source, /setDeletedIds\(ids=>ids\.includes\(project\.id\)/);
+  assert.match(source, /confirm\(`Delete “\$\{project\.name\}” from your library\?/);
+  assert.match(source, /className="top-delete-model"/);
+  assert.match(styles, /\.top-delete-model\{/);
 });
