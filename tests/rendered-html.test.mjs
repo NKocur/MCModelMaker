@@ -240,6 +240,18 @@ test("Blackwake pirate weapons form a five-item handheld collection", async () =
   assert.match(source, /\.\.\.blackwakePirateWeapons/);
 });
 
+test("core GUI icons export as a reusable Minecraft item collection", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /"Tools & Weapons","GUI Items","Blocks"/);
+  assert.match(source, /const CORE_GUI_ICONS=\[/);
+  for (const id of ["confirm", "cancel", "previous_page", "next_page", "locked", "unlocked", "information", "warning", "settings", "refresh", "search", "shop", "wallet", "rewards", "home", "profile", "filter", "menu"]) assert.match(source, new RegExp(`id:"${id}"`));
+  assert.match(source, /const coreGuiItems:Project\[]=CORE_GUI_ICONS\.map/);
+  assert.match(source, /baseItem:"minecraft:paper",spriteParent:"generated"/);
+  assert.match(source, /category:"GUI Items",group:"Core GUI Items",pack:"Blocksmith GUI Kit"/);
+  assert.match(source, /\.\.\.coreGuiItems/);
+  assert.match(source, /makeGuiItemSprite\(icon\.mask,icon\.tone\)/);
+});
+
 test("Blackwake Gold Doubloon is a vanilla generated pirate coin item", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const makePirateCoinSprite=/);
