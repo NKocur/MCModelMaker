@@ -491,3 +491,20 @@ test("preview and exported models share explicit non-stretching UVs", async () =
   assert.match(source, /texture_mapping:UV_SPACE_CONTRACT/);
   assert.match(source, /oversized_elements:"split_into_max_16_pixel_segments"/);
 });
+
+test("flat items include an editable 16 by 16 pixel canvas", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /function SpriteEditor/);
+  assert.match(source, /type="color"/);
+  assert.match(source, />Pencil</);
+  assert.match(source, />Eraser</);
+  assert.match(source, /right-click to erase/);
+  assert.match(source, /if\(mirror\)next\[y\*16\+\(15-x\)\]=value/);
+  assert.match(source, /onPointerEnter/);
+  assert.match(source, /onContextMenu=/);
+  assert.match(source, /Create 16×16 sprite/);
+  assert.match(source, /sprite:Array\(256\)\.fill\(null\)/);
+  assert.match(styles, /\.pixel-grid\{display:grid;grid-template-columns:repeat\(16,1fr\)/);
+  assert.match(styles, /image-rendering:pixelated/);
+});
