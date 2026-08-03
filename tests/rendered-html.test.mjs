@@ -513,6 +513,12 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(styles, /\.pixel-grid:before,\.pixel-grid:after/);
   assert.match(styles, /background:#ef3f3f/);
   assert.match(source, /red guides mark the exact center between pixels 8 and 9/);
+  assert.match(source, />Import PNG</);
+  assert.match(source, /accept="\.png,image\/png"/);
+  assert.match(source, /image\.naturalWidth!==16\|\|image\.naturalHeight!==16/);
+  assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
+  assert.match(source, /rgba\[offset\+3\]===0/);
+  assert.match(source, /URL\.revokeObjectURL\(url\)/);
   assert.match(styles, /image-rendering:pixelated/);
 });
 
