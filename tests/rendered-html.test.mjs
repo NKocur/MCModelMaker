@@ -232,6 +232,9 @@ test("Blackwake pirate weapons form a five-item handheld collection", async () =
   assert.match(source, /const blackwakePirateWeapons:Project\[]=\[/);
   for (const name of ["Blackwake Buccaneer Cutlass", "Blackwake Boarding Axe", "Blackwake Flintlock", "Blackwake Marlinspike Dagger", "Blackwake Captain's Saber"]) assert.match(source, new RegExp(`name:"${name.replace(/[.*+?^${}()|[\\]\\]/g, "\\$&")}"`));
   for (const sprite of ["cutlass", "axe", "flintlock", "dagger", "saber"]) assert.match(source, new RegExp(`sprite:PIRATE_WEAPON_SPRITES\\.${sprite}`));
+  assert.match(source, /edgeTone=\(x:number,y:number\)=>/);
+  for (const edge of ["#465256", "#4d351f", "#512a2d", "#805a2a"]) assert.match(source, new RegExp(edge));
+  assert.doesNotMatch(source, /PIRATE_WEAPON_COLORS[^\n]+#171a1c/);
   assert.match(source, /spriteParent:"handheld" as const/);
   assert.match(source, /category:"Tools & Weapons",group:"Blackwake Pirate Weapons",pack:"Fantasy Daily Rewards"/);
   assert.match(source, /\.\.\.blackwakePirateWeapons/);
