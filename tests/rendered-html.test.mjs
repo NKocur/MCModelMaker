@@ -560,6 +560,8 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
   for (const ore of ["tin", "silver", "mithril", "adamantite", "runite", "luminite", "orichalcite", "drakolith", "necrite", "phasmatite", "banite", "light_animica", "dark_animica"]) {
     assert.match(oreTable, new RegExp(`id:"${ore}"`));
   }
+  assert.match(oreTable, /id:"mithril",name:"Mithril",era:"Classic",colors:\{dark:"#4d2c67",base:"#8352a3",light:"#c298da"\}/);
+  assert.match(oreTable, /id:"runite",name:"Runite",era:"Classic",colors:\{dark:"#263e74",base:"#496db1",light:"#8fabe0"\}/);
   assert.match(source, /RUNESMITH_ORES\.flatMap\(ore=>\[oreBlockProject\(ore,"ore"\),oreBlockProject\(ore,"deepslate_ore"\),oreItemProject\(ore,"raw"\),oreBlockProject\(ore,"raw_block"\),oreItemProject\(ore,"ingot"\),oreBlockProject\(ore,"metal_block"\),oreItemProject\(ore,"nugget"\)\]\)/);
   assert.match(source, /pack:"RuneSmith Ore Families"/);
   assert.match(source, /material\.match\(\/\^ore:/);

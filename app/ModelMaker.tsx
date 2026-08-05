@@ -441,7 +441,7 @@ type OrePalette={dark:string;base:string;light:string};
 const RUNESMITH_ORES=[
   {id:"tin",name:"Tin",era:"Classic",colors:{dark:"#68777a",base:"#a7b5b7",light:"#e0e8e7"}},
   {id:"silver",name:"Silver",era:"Classic",colors:{dark:"#7f9298",base:"#c4d4d7",light:"#f1fbfa"}},
-  {id:"mithril",name:"Mithril",era:"Classic",colors:{dark:"#286477",base:"#55a7bd",light:"#a6e3e6"}},
+  {id:"mithril",name:"Mithril",era:"Classic",colors:{dark:"#4d2c67",base:"#8352a3",light:"#c298da"}},
   {id:"adamantite",name:"Adamantite",era:"Classic",colors:{dark:"#285c3d",base:"#4c9660",light:"#91cf88"}},
   {id:"runite",name:"Runite",era:"Classic",colors:{dark:"#263e74",base:"#496db1",light:"#8fabe0"}},
   {id:"luminite",name:"Luminite",era:"RS3",colors:{dark:"#7c702e",base:"#c5b84e",light:"#f2e58a"}},
