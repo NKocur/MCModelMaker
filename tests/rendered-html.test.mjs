@@ -561,14 +561,15 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
     assert.match(oreTable, new RegExp(`id:"${ore}"`));
   }
   assert.match(oreTable, /id:"mithril",name:"Mithril",era:"Classic",colors:\{dark:"#39466f",base:"#6575ae",light:"#a9b4dd"\}/);
-  assert.match(oreTable, /id:"runite",name:"Runite",era:"Classic",colors:\{dark:"#263e74",base:"#496db1",light:"#8fabe0"\}/);
+  assert.match(oreTable, /id:"runite",name:"Runite",era:"Classic",colors:\{dark:"#245966",base:"#3f93a3",light:"#86d3d8"\}/);
   assert.match(source, /RUNESMITH_ORES\.flatMap\(ore=>\[oreBlockProject\(ore,"ore"\),oreBlockProject\(ore,"deepslate_ore"\),oreItemProject\(ore,"raw"\),oreBlockProject\(ore,"raw_block"\),oreItemProject\(ore,"ingot"\),oreBlockProject\(ore,"metal_block"\),oreItemProject\(ore,"nugget"\)\]\)/);
   assert.match(source, /pack:"RuneSmith Ore Families"/);
   assert.equal([...source.matchAll(/source:"codex",revision:3,kind:/g)].length >= 2, true);
   assert.match(source, /const VANILLA_INGOT_ROWS=\["\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\."/);
   assert.match(source, /if\(form==="ingot"\)return makeVanillaIngotSprite\(colors\)/);
   assert.match(source, /shadow=mix\("#080a10",colors\.dark,\.72\),highlight=mix\(colors\.light,"#ffffff",\.62\)/);
-  assert.match(source, /revision:form==="ingot"\?5:3/);
+  assert.match(source, /revision:ore\.id==="runite"\?6:3/);
+  assert.match(source, /revision:ore\.id==="runite"\?6:form==="ingot"\?5:3/);
   assert.match(source, /material\.match\(\/\^ore:/);
   assert.match(source, /oreCenters=\[\[3,3\],\[11,2\],\[7,7\],\[13,9\],\[3,12\],\[10,14\]\]/);
   assert.match(source, /stonePalette=ore\?\.\[1\]===\"deepslate\"\?\[\"#303136\",\"#393a3f\",\"#46474b\"\]:\[\"#6e6e69\",\"#7c7c78\",\"#898984\"\]/);
