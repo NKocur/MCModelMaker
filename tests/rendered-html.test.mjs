@@ -552,3 +552,18 @@ test("the complete licensed RPGIAB pack and a curated CorporateCraft GUI set are
   assert.match(source, /if\(project\.attribution\)add\("CREDITS\.txt"/);
   assert.match(source, /const attributions=\[\.\.\.new Set/);
 });
+
+test("RuneSmith provides complete Minecraft-style families for classic and RS3 ores", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const oreTable = source.slice(source.indexOf("const RUNESMITH_ORES=["), source.indexOf("] as const;", source.indexOf("const RUNESMITH_ORES=[")));
+  assert.equal([...oreTable.matchAll(/\{id:"[^"]+",name:"[^"]+",era:"(?:Classic|RS3)"/g)].length, 13);
+  for (const ore of ["tin", "silver", "mithril", "adamantite", "runite", "luminite", "orichalcite", "drakolith", "necrite", "phasmatite", "banite", "light_animica", "dark_animica"]) {
+    assert.match(oreTable, new RegExp(`id:"${ore}"`));
+  }
+  assert.match(source, /RUNESMITH_ORES\.flatMap\(ore=>\[oreBlockProject\(ore,"ore"\),oreBlockProject\(ore,"deepslate_ore"\),oreItemProject\(ore,"raw"\),oreBlockProject\(ore,"raw_block"\),oreItemProject\(ore,"ingot"\),oreBlockProject\(ore,"metal_block"\),oreItemProject\(ore,"nugget"\)\]\)/);
+  assert.match(source, /pack:"RuneSmith Ore Families"/);
+  assert.match(source, /material\.match\(\/\^ore:/);
+  assert.match(source, /oreCenters=\[\[3,3\],\[11,2\],\[7,7\],\[13,9\],\[3,12\],\[10,14\]\]/);
+  assert.match(source, /material\.includes\("raw ore block"\)/);
+  assert.match(source, /\.\.\.runeSmithOreFamilies/);
+});
