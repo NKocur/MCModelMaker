@@ -566,6 +566,9 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
   assert.match(source, /oreCenters=\[\[3,3\],\[11,2\],\[7,7\],\[13,9\],\[3,12\],\[10,14\]\]/);
   assert.match(source, /stonePalette=ore\?\.\[1\]===\"deepslate\"\?\[\"#303136\",\"#393a3f\",\"#46474b\"\]:\[\"#6e6e69\",\"#7c7c78\",\"#898984\"\]/);
   assert.match(source, /base=orePixel\?rgb\(ore!\[2\]\):ore\?rgb\(stoneTone\):rgb\(color\)/);
-  assert.match(source, /material\.includes\("raw ore block"\)/);
+  assert.match(source, /form==="raw_block"\?"vanilla-recolor:raw_iron_block":"vanilla-recolor:iron_block"/);
+  assert.match(source, /return ore\?`\$\{ore\[1\]===\"deepslate\"\?\"deepslate_\":\"\"\}diamond_ore`/);
+  assert.match(source, /recoloredVanillaPixel\(part\.material,part\.color,sourcePixels,sourceAt\)/);
+  assert.match(source, /recoloredVanillaPixel\(face\.material,face\.color,pixels,at\)/);
   assert.match(source, /\.\.\.runeSmithOreFamilies/);
 });
