@@ -645,3 +645,28 @@ test("Blackwake Wall Derby is a flat 17 by 7 side-view race game", async () => {
   assert.match(source, /Wall derby element outside Java -16\.\.32 range/);
   assert.match(source, /\.\.\.blackwakeWallDerby/);
 });
+
+test("character designer uses the standard Minecraft 64 by 64 skin workflow", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /skin\?: \(string\|null\)\[\]/);
+  assert.match(source, /skinModel\?:"classic"\|"slim"/);
+  assert.match(source, /const characterCubes=/);
+  assert.match(source, /const defaultSkin=/);
+  assert.match(source, /Array\(4096\)\.fill\(null\)/);
+  assert.match(source, /function CharacterDesigner/);
+  assert.match(source, /64 by 64 Minecraft skin editor/);
+  assert.match(source, /Classic \/ Steve/);
+  assert.match(source, /Slim \/ Alex/);
+  assert.match(source, /Import skin PNG/);
+  assert.match(source, /Minecraft skins must be exactly 64×64 pixels/);
+  assert.match(source, /outer-layer pixels/);
+  assert.match(source, /const newCharacter=/);
+  assert.match(source, /onClick=\{newCharacter\}>New character/);
+  assert.match(source, /async function skinPng/);
+  assert.match(source, /textures\/entity\/\$\{id\}\.png/);
+  assert.match(source, /type:"minecraft_player_skin"/);
+  assert.match(source, /standard_uv_layout:true,outer_layer:true/);
+  assert.match(styles, /\.character-designer\{/);
+  assert.match(styles, /image-rendering:pixelated/);
+});
