@@ -169,7 +169,7 @@ test("fantasy daily loot collection has three rarity tiers and a pirate chest", 
 test("Blackwake Skulljack is an overlap-checked animated pirate slot machine", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Blackwake Skulljack"/);
-  assert.match(source, /category:"Furniture",group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards"/);
   assert.match(source, /cubes:overlapChecked\("Blackwake Skulljack",skulljackCubes\)/);
   assert.match(source, /Skull jackpot plaque/);
   assert.match(source, /Bone skull reel/);
@@ -179,7 +179,19 @@ test("Blackwake Skulljack is an overlap-checked animated pirate slot machine", a
   assert.match(source, /name:"Pull & Spin",lengthTicks:30,loop:false/);
   assert.match(source, /slots_lever_4[^\n]+\[0,0,-45\]/);
   assert.match(source, /slots_reel_1_28[^\n]+\[360,0,0\]/);
-  assert.match(source, /blackwakeSkulljack,\s+blackwakePirateChest/);
+  assert.match(source, /deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot,\s+blackwakePirateChest/);
+});
+
+test("pirate slot machines have common, rare, and legendary tiers", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Deckhand's Lucky Bones".*Common-tier pirate slot machine/);
+  assert.match(source, /name:"Blackwake Skulljack".*Rare-tier pirate slot machine/);
+  assert.match(source, /name:"Dread Admiral's Kraken Jackpot".*Legendary-tier pirate slot machine/);
+  for (const feature of ["Weathered Lucky Bones sign", "Bolted cabinet repair patch", "Dread Admiral gilded crown", "Left gilded kraken tentacle", "Cursed aqua crown jewel", "Legendary payout gold rim"]) assert.match(source, new RegExp(feature));
+  assert.match(source, /group:"Pirate Slot Machines"/);
+  assert.match(source, /name:"Pull & Spin — Common"/);
+  assert.match(source, /name:"Dread Admiral Jackpot Spin"/);
+  assert.match(source, /placementSize:\[1,2,1\]/);
 });
 
 test("Emerald Fortune Roulette is a two-block animated casino table", async () => {
@@ -195,7 +207,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
