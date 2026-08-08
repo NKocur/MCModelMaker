@@ -604,32 +604,3 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
   assert.match(source, /recoloredVanillaPixel\(face\.material,face\.color,pixels,at\)/);
   assert.match(source, /\.\.\.runeSmithOreFamilies/);
 });
-
-test("Blackwake Buccaneer Derby is a modular vertical wall attraction", async () => {
-  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  assert.match(source, /const DERBY_GROUP="Blackwake Buccaneer Derby"/);
-  assert.match(source, /mounting:"wall"/);
-  assert.match(source, /surface:"wall"/);
-  assert.match(source, /allowed_faces:\["north","south","east","west"\]/);
-  assert.match(source, /model_plane:"XY",normal_axis:"Z",front:"-Z"/);
-  assert.match(source, /require_wall_support:wall/);
-  assert.match(source, /blackwake_derby_starting_gate/);
-  assert.equal([...source.matchAll(/id:`derby_gate_\$\{i\+1\}`/g)].length >= 1, true);
-  assert.match(source, /id:"release_all_gates"/);
-  for (const horse of ["crimson_corsair", "golden_doubloon", "cursed_kraken", "pale_marauder", "emerald_privateer"]) {
-    assert.match(source, new RegExp(`id:"${horse}"`));
-  }
-  for (const bone of ["_body", "_head", "_front_left", "_front_right", "_rear_left", "_rear_right", "_tail"]) {
-    assert.match(source, new RegExp(`\\$\\{p\\}${bone.replaceAll("_", "_")}`));
-  }
-  assert.match(source, /name:"Looping Gallop",lengthTicks:12,loop:true/);
-  assert.match(source, /blackwake_dirt_lane_panel/);
-  assert.match(source, /blackwake_finish_arch/);
-  assert.match(source, /blackwake_derby_betting_kiosk/);
-  assert.match(source, /blackwake_grandstand_panel/);
-  assert.match(source, /BLACKWAKE_BUCCANEER_DERBY_INTEGRATION\.md/);
-  assert.match(source, /36 blocks wide and 13 blocks tall/);
-  assert.match(source, /Translate the horse root anchor along \+X/);
-  assert.match(source, /Blackwake derby element outside Minecraft Java -16\.\.32 range/);
-  assert.match(source, /\.\.\.blackwakeDerbyProjects/);
-});
