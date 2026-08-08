@@ -625,6 +625,8 @@ test("Blackwake Wall Derby is a flat 17 by 7 side-view race game", async () => {
   assert.match(source, /17-block-wide by 7-block-high wall cabinet/);
   assert.match(source, /translate only the body root along \+X for 14 blocks/);
   assert.match(source, /do not animate Z/);
+  assert.match(source, /overlapChecked\(project\.name,project\.cubes\)/);
+  assert.match(source, /cubes:overlapChecked\(theme\.name,parts\)/);
   assert.match(source, /Wall derby element outside Java -16\.\.32 range/);
   assert.match(source, /\.\.\.blackwakeWallDerby/);
 });
