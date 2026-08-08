@@ -661,6 +661,12 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(source, /Import skin PNG/);
   assert.match(source, /Minecraft skins must be exactly 64×64 pixels/);
   assert.match(source, /outer-layer pixels/);
+  assert.match(source, /Character3DViewport/);
+  const characterViewport = await readFile(new URL("../app/Character3DViewport.tsx", import.meta.url), "utf8");
+  assert.match(characterViewport, /Interactive 3D Minecraft character preview/);
+  assert.match(characterViewport, /new THREE\.WebGLRenderer/);
+  assert.match(characterViewport, /DRAG TO ORBIT · SCROLL TO ZOOM/);
+  assert.match(characterViewport, /standardFaces\(model,true\)/);
   assert.match(source, /const newCharacter=/);
   assert.match(source, /onClick=\{newCharacter\}>New character/);
   assert.match(source, /async function skinPng/);
