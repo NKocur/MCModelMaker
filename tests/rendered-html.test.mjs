@@ -195,7 +195,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakeSkulljack/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
@@ -207,7 +207,19 @@ test("Blackwake Blackjack Table is a two-block animated pirate casino table", as
   assert.match(source, /id:"blackjack_card_p1",name:"Player ace",parentId:"blackjack_table"/);
   assert.match(source, /name:"Deal Opening Hand",lengthTicks:20,loop:false/);
   assert.match(source, /blackjack_d2_12[^\n]+\[-18\.5,\.8,4\][^\n]+blackjack_d2_16/);
-  assert.match(source, /blackwakeBlackjackTable,\s+\.\.\.blackwakePlayingCards/);
+  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards/);
+});
+
+test("Blackwake Casino War Table is a two-block animated head-to-head game", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Blackwake Casino War Table"/);
+  assert.match(source, /group:"Casino Games",pack:"Fantasy Daily Rewards",placementSize:\[2,1,1\]/);
+  for (const feature of ["WAR wager lane", "TIE wager lane", "Left crossed-cutlass inlay", "Blackwake battle card shoe", "Dealer doubloon tray", "Blackwake Casino War nameplate"]) assert.match(source, new RegExp(feature));
+  assert.match(source, /\[6,16,26\]\.flatMap/);
+  assert.match(source, /id:"war_player_card",name:"Player battle card",parentId:"war_table"/);
+  assert.match(source, /name:"Deal Opening Battle",lengthTicks:12,loop:false/);
+  assert.match(source, /name:"Deal Tie-Break War",lengthTicks:16,loop:false/);
+  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards/);
 });
 
 test("Blackwake playing cards contain a complete readable 52-card generated deck", async () => {
