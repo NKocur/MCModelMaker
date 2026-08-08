@@ -667,6 +667,7 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(characterViewport, /new THREE\.WebGLRenderer/);
   assert.match(characterViewport, /DRAG TO ORBIT · SCROLL TO ZOOM/);
   assert.match(characterViewport, /standardFaces\(model,true\)/);
+  assert.match(characterViewport, /\[\[u0,v1\],\[u1,v1\],\[u0,v0\],\[u1,v0\]\]/);
   assert.match(source, /const newCharacter=/);
   assert.match(source, /onClick=\{newCharacter\}>New character/);
   assert.match(source, /async function skinPng/);
