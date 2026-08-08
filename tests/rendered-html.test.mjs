@@ -671,6 +671,11 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(source, /const newCharacter=/);
   assert.match(source, /onClick=\{newCharacter\}>New character/);
   assert.match(source, /async function skinPng/);
+  assert.match(source, /async function downloadCharacterSkin/);
+  assert.match(source, /async function exportCharacterBundle/);
+  assert.match(source, /Download skin PNG/);
+  assert.match(source, /Export character ZIP/);
+  assert.match(source, /character\.json/);
   assert.match(source, /textures\/entity\/\$\{id\}\.png/);
   assert.match(source, /type:"minecraft_player_skin"/);
   assert.match(source, /standard_uv_layout:true,outer_layer:true/);
