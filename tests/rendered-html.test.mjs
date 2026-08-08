@@ -667,6 +667,9 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(source, /textures\/entity\/\$\{id\}\.png/);
   assert.match(source, /type:"minecraft_player_skin"/);
   assert.match(source, /standard_uv_layout:true,outer_layer:true/);
+  assert.match(source, /const pirateBarkeeperSkin=/);
+  assert.match(source, /id:"blackwake_pirate_barkeeper"/);
+  assert.match(source, /pirateBarkeeper,/);
   assert.match(styles, /\.character-designer\{/);
   assert.match(styles, /image-rendering:pixelated/);
 });
