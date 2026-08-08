@@ -207,7 +207,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakePirateGrog,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
@@ -613,6 +613,12 @@ test("Blackwake Pirate Grog is a native frothing tankard item", async () => {
   assert.match(source, /baseItem:"minecraft:honey_bottle"/);
   assert.match(source, /sprite:makePirateGrogSprite\(\)/);
   assert.match(source, /blackwakePirateGrog,/);
+  assert.match(source, /const makeEmptyPirateGrogSprite=/);
+  assert.match(source, /id:"empty_blackwake_grog_tankard"/);
+  assert.match(source, /name:"Empty Blackwake Grog Tankard"/);
+  assert.match(source, /baseItem:"minecraft:glass_bottle"/);
+  assert.match(source, /sprite:makeEmptyPirateGrogSprite\(\)/);
+  assert.match(source, /blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,/);
 });
 
 test("Blackwake Wall Derby is a flat 17 by 7 side-view race game", async () => {
