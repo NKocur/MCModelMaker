@@ -629,9 +629,11 @@ test("Blackwake Rock Paper Scissors is a three-outcome animated pirate casino ma
   assert.match(source, /Iron cannonball choice/);
   assert.match(source, /Rolled treasure-map choice/);
   assert.match(source, /Left cutlass blade choice/);
-  assert.match(source, /name:"Machine Chooses Rock"/);
-  assert.match(source, /name:"Machine Chooses Paper"/);
-  assert.match(source, /name:"Machine Chooses Scissors"/);
+  assert.match(source, /Gold player-choice marker/);
+  assert.match(source, /id:"rps_player_marker",name:"Gold player-choice marker"/);
+  assert.match(source, /animations:rpsChoices\.flatMap\(player=>rpsChoices\.map\(machine/);
+  assert.match(source, /name:`Player \$\{rpsChoiceLabel\(player\)\} vs Machine \$\{rpsChoiceLabel\(machine\)\}`/);
+  assert.match(source, /rockPaperScissorsFrames\(player,machine\)/);
   assert.match(source, /id:"rps_selector",name:"Machine choice selector"/);
   assert.match(source, /blackwakeRockPaperScissors,/);
 });
