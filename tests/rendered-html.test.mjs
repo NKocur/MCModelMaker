@@ -207,7 +207,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+blackwakeRockPaperScissors,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
@@ -219,7 +219,7 @@ test("Blackwake Blackjack Table is a two-block animated pirate casino table", as
   assert.match(source, /id:"blackjack_card_p1",name:"Player ace",parentId:"blackjack_table"/);
   assert.match(source, /name:"Deal Opening Hand",lengthTicks:20,loop:false/);
   assert.match(source, /blackjack_d2_12[^\n]+\[-18\.5,\.8,4\][^\n]+blackjack_d2_16/);
-  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+\.\.\.blackwakePlayingCards/);
+  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+blackwakeRockPaperScissors,\s+\.\.\.blackwakePlayingCards/);
 });
 
 test("Blackwake Casino War Table is a two-block animated head-to-head game", async () => {
@@ -231,7 +231,7 @@ test("Blackwake Casino War Table is a two-block animated head-to-head game", asy
   assert.match(source, /id:"war_player_card",name:"Player battle card",parentId:"war_table"/);
   assert.match(source, /name:"Deal Opening Battle",lengthTicks:12,loop:false/);
   assert.match(source, /name:"Deal Tie-Break War",lengthTicks:16,loop:false/);
-  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+\.\.\.blackwakePlayingCards/);
+  assert.match(source, /blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+blackwakeRockPaperScissors,\s+\.\.\.blackwakePlayingCards/);
 });
 
 test("Blackwake playing cards contain a complete readable 52-card generated deck", async () => {
@@ -619,6 +619,21 @@ test("Blackwake Corsair Coin Toss is a two-outcome animated pirate casino machin
   assert.match(source, /name:"Toss — Tails"/);
   assert.match(source, /result==="heads"\?720:900/);
   assert.match(source, /blackwakeCorsairCoinToss,/);
+});
+
+test("Blackwake Rock Paper Scissors is a three-outcome animated pirate casino machine", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Blackwake Rock Paper Scissors"/);
+  assert.match(source, /placementSize:\[1,2,1\]/);
+  assert.match(source, /cubes:overlapChecked\("Blackwake Rock Paper Scissors",rockPaperScissorsCubes\)/);
+  assert.match(source, /Iron cannonball choice/);
+  assert.match(source, /Rolled treasure-map choice/);
+  assert.match(source, /Left cutlass blade choice/);
+  assert.match(source, /name:"Machine Chooses Rock"/);
+  assert.match(source, /name:"Machine Chooses Paper"/);
+  assert.match(source, /name:"Machine Chooses Scissors"/);
+  assert.match(source, /id:"rps_selector",name:"Machine choice selector"/);
+  assert.match(source, /blackwakeRockPaperScissors,/);
 });
 
 test("Blackwake Pirate Grog is a native frothing tankard item", async () => {
