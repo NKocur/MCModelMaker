@@ -642,7 +642,7 @@ test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, 
   assert.match(source, /\.\.\.magicTreeBlocks,/);
 });
 
-test("RuneSmith lobster fishing includes a detailed 3D pot and a flat raw catch", async () => {
+test("RuneSmith lobster fishing includes a detailed 3D pot and a faceted flat catch", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const overlapFreeLobsterPotCubes=\(\)=>/);
   assert.match(source, /const assertNoCubeVolumeOverlaps=\(parts:Cube\[\]\)=>/);
@@ -654,10 +654,14 @@ test("RuneSmith lobster fishing includes a detailed 3D pot and a flat raw catch"
   assert.match(source, /"Dark binding hoop"/);
   assert.match(source, /"Narrow neck front"/);
   assert.match(source, /"Rope handle"/);
-  assert.match(source, /const makeRawLobsterSprite=\(\)=>/);
+  assert.match(source, /const makeRuneScapeLobsterSprite=\(\)=>/);
+  assert.match(source, /colors:Record<string,string>=\{D:"#28170d",O:"#a94d0d",L:"#e47718"\}/);
+  const lobsterRows = JSON.parse(source.match(/const makeRuneScapeLobsterSprite=\(\)=>\{const rows=(\[[^;]+?\]),colors/)?.[1] || "[]");
+  assert.equal(lobsterRows.length, 16);
+  assert.ok(lobsterRows.every(row => row.length === 16));
   assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"[\s\S]*?cubes:overlapFreeLobsterPotCubes\(\),source:"codex",revision:2/);
-  assert.match(source, /id:"runesmith_raw_lobster",name:"RuneSmith Raw Lobster"/);
-  assert.match(source, /spriteParent:"generated",sprite:makeRawLobsterSprite\(\)/);
+  assert.match(source, /id:"runesmith_lobster",name:"RuneSmith Lobster"/);
+  assert.match(source, /spriteParent:"generated",sprite:makeRuneScapeLobsterSprite\(\)/);
   assert.match(source, /group:"Lobster Fishing",pack:"RuneSmith Fishing"/);
   assert.match(source, /\.\.\.runeSmithLobsterFishing/);
 });
