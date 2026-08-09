@@ -508,7 +508,7 @@ test("preview and exported models share explicit non-stretching UVs", async () =
   assert.match(source, /const splitPartForExport=/);
   assert.match(source, /start\+=16/);
   assert.match(source, /parts\.flatMap\(part=>/);
-  assert.match(source, /uv:faceUvForBox\(segment\.from,segment\.to,faceIndex\)/);
+  assert.match(source, /uv:definition\?\.uv\|\|faceUvForBox\(segment\.from,segment\.to,faceIndex\)/);
   assert.match(source, /unsplitParts\.flatMap\(part=>splitPartForExport/);
   assert.match(source, /textureUv:faceDefinition\?\.uv\|\|faceUvForBox\(part\.from,part\.to,faceIndex\)/);
   assert.match(source, /proceduralPixel\(face\.id,face\.material,face\.color,sampleX,sampleY\)/);
@@ -603,6 +603,26 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
   assert.match(source, /recoloredVanillaPixel\(part\.material,part\.color,sourcePixels,sourceAt\)/);
   assert.match(source, /recoloredVanillaPixel\(face\.material,face\.color,pixels,at\)/);
   assert.match(source, /\.\.\.runeSmithOreFamilies/);
+});
+
+test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, and transparent leaves", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const magicTreeBlocks:Project\[\]=\[/);
+  assert.match(source, /id:"runesmith_magic_log",name:"Magic Tree Log"/);
+  assert.match(source, /id:"runesmith_magic_planks",name:"Magic Tree Planks"/);
+  assert.match(source, /id:"runesmith_magic_leaves",name:"Magic Tree Leaves"/);
+  assert.match(source, /group:"Magic Tree Blocks",pack:"RuneSmith Magic Wood"/);
+  assert.match(source, /faceData:\{4:magicTreeFace\("magic-tree:end"\),5:magicTreeFace\("magic-tree:end"\)\}/);
+  assert.match(source, /material==="magic-tree:bark"/);
+  assert.match(source, /material==="magic-tree:end"/);
+  assert.match(source, /material==="magic-tree:planks"/);
+  assert.match(source, /material==="magic-tree:leaves"/);
+  assert.match(source, /const proceduralAlpha=/);
+  assert.match(source, /raw\[at\+3\]=proceduralAlpha\(part\.material,x,y\)/);
+  assert.match(source, /definition\?\.uv\|\|faceUvForBox/);
+  assert.match(source, /async function addProjectBlockTextures/);
+  assert.match(source, /_face_\$\{face\}\.png/);
+  assert.match(source, /\.\.\.magicTreeBlocks,/);
 });
 
 test("Blackwake Corsair Coin Toss is a two-outcome animated pirate casino machine", async () => {
