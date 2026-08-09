@@ -1,0 +1,12 @@
+rootProject.name = 'CrownlandsSharedResourcePack'
+
+def configuredPluginsRoot = providers.gradleProperty('pluginsRoot').orElse('../../MinecraftPlugins').get()
+def pluginsRoot = new File(configuredPluginsRoot)
+if (!pluginsRoot.isAbsolute()) pluginsRoot = new File(settingsDir, configuredPluginsRoot)
+
+includeBuild(new File(pluginsRoot, 'Bank')) {
+    name = 'bank-atm-source'
+}
+includeBuild(new File(pluginsRoot, 'Casino')) {
+    name = 'blackwake-casino-source'
+}

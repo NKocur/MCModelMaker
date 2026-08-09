@@ -165,6 +165,10 @@ Exit condition: no retired feature is discoverable through commands, permissions
 - Add asset-collision and missing-runtime-ID verification.
 - Keep compatibility aliases for old font/model IDs.
 
+Implementation status (2026-08-09): complete. `shared-pack/` is now the authoritative neutral assembler and `npm run pack:build` produces `Crownlands-Shared-Resource-Pack.zip`. It consumes the pinned CorporateCraft base, BankATM's prepared model, all nine GE icon collections, Casino's prepared/generated Blocksmith assets, and optional Blocksmith exports without renaming IDs. The build fails on current-producer collisions, invalid JSON, missing custom model/texture/parent references, coordinates outside `-16..32`, or any missing runtime item-model. Its runtime inventory currently verifies 634 exact IDs across 2,971 source files. The first successful reproducible ZIP contained 3,084 entries. Legacy combined tasks remain available temporarily, but are no longer the recommended server-pack path.
+
+Implementation status (2026-08-09): complete. `shared-pack/` is now the authoritative neutral assembler and `npm run pack:build` produces `Crownlands-Shared-Resource-Pack.zip`. It consumes the pinned CorporateCraft base, BankATM's prepared model, all nine GE icon collections, Casino's prepared/generated Blocksmith assets, and optional Blocksmith exports without renaming IDs. The build fails on current-producer collisions, invalid JSON, missing custom model/texture/parent references, coordinates outside `-16..32`, or any missing runtime item-model. Its runtime inventory currently verifies 634 exact IDs across 2,971 source files. The first successful reproducible ZIP contained 3,084 entries. Legacy combined tasks remain available temporarily, but are no longer the recommended server-pack path.
+
 Exit condition: one pack builds reproducibly and every Crownlands/Casino runtime model ID resolves.
 
 ### Phase 4 - Build and verify the clean Crownlands database

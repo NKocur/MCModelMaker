@@ -1,0 +1,256 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.security.MessageDigest
+
+plugins {
+    id 'base'
+}
+
+def pluginsRoot = file(providers.gradleProperty('pluginsRoot').orElse('../../MinecraftPlugins').get())
+def corporateCraftProject = new File(pluginsRoot, 'CorporateCraft')
+def bankProject = new File(pluginsRoot, 'Bank')
+def casinoProject = new File(pluginsRoot, 'Casino')
+def basePack = new File(bankProject, 'build/pack-input/CorporateCraft-GE-BankATM-Casino-Pack.zip')
+def bankAssets = new File(bankProject, 'build/generated/resource-pack')
+def casinoAssets = new File(casinoProject, 'build/generated/casino-pack')
+def iconPacks = fileTree(new File(corporateCraftProject, 'resources')) {
+    include 'rpgiab_complete_icon_pack-*-collection.zip'
+}
+def importsDirectory = layout.projectDirectory.dir('imports')
+def preparedPack = layout.buildDirectory.dir('generated/crownlands-resource-pack')
+
+def filesBelow = { File root ->
+    if (!root.exists()) return [] as Set
+    def paths = [] as Set
+    root.eachFileRecurse(groovy.io.FileType.FILES) { file ->
+        paths.add(root.toPath().relativize(file.toPath()).toString().replace('\\', '/'))
+    }
+    paths
+}
+
+def rpgiabModels = [
+        'rpgiab_arrow_blue_left', 'rpgiab_exit', 'rpgiab_accept', 'rpgiab_stop',
+        'rpgiab_magnifier', 'rpgiab_clear', 'rpgiab_arrow_blue_right', 'rpgiab_loading_screen',
+        'rpgiab_checkmark', 'rpgiab_warning', 'rpgiab_missing', 'rpgiab_information',
+        'rpgiab_checkbox', 'rpgiab_checkbox_off', 'rpgiab_map', 'rpgiab_inventory_show',
+        'rpgiab_clipboard', 'rpgiab_chest_checkmark', 'rpgiab_clock', 'rpgiab_tools',
+        'rpgiab_inventory', 'rpgiab_item_add', 'rpgiab_item_drop', 'rpgiab_number',
+        'rpgiab_coins', 'rpgiab_arrow_refresh', 'rpgiab_chest_delete', 'rpgiab_chest_item',
+        'rpgiab_text_line_numbers', 'rpgiab_arrow_raise', 'rpgiab_arrow_lower', 'rpgiab_yield',
+        'rpgiab_star', 'rpgiab_dialogue_page', 'rpgiab_exclamation', 'rpgiab_eye',
+        'rpgiab_map_start', 'rpgiab_group', 'rpgiab_group_add', 'rpgiab_pencil',
+        'rpgiab_group_delete', 'rpgiab_character', 'rpgiab_credits', 'rpgiab_hourglass',
+        'rpgiab_properties', 'rpgiab_lock', 'rpgiab_script_text_checkmark',
+        'rpgiab_location_hand', 'rpgiab_settings_gear', 'rpgiab_widget_show', 'rpgiab_widget_hide'
+].unique().collect { "rpgiab:${it}" }
+
+def requiredItemModels = {
+    def ids = new LinkedHashSet<String>()
+    ids.addAll(rpgiabModels)
+    ids.addAll([
+            'blocksmith:runebank_teller_shrine',
+            'blocksmith:blackwake_gold_doubloon', 'blocksmith:blackwake_card_back',
+            'blocksmith:blackwake_exchange_clerk', 'blocksmith:blackwake_boatman',
+            'blocksmith:emerald_fortune_roulette', 'blocksmith:blackwake_blackjack_table',
+            'blocksmith:blackwake_casino_war_table', 'blocksmith:blackwake_corsair_coin_toss',
+            'blocksmith:wall_derby_control_panel', 'blocksmith:wall_derby_lane_panel',
+            'blocksmith:wall_derby_lane_end_panel', 'blocksmith:wall_derby_marquee_panel',
+            'blocksmith:wall_derby_start_marker', 'blocksmith:wall_derby_finish_marker'
+    ])
+    ['deckhand_s_lucky_bones', 'blackwake_skulljack', 'dread_admiral_s_kraken_jackpot'].each { machine ->
+        ids.add("blocksmith:${machine}" as String)
+        ['cabinet', 'skull_reel', 'doubloon_reel', 'parrot_reel', 'pull_lever'].each { bone ->
+            ids.add("blocksmith:${machine}/bone/${bone}" as String)
+        }
+    }
+    [
+            emerald_fortune_roulette: ['roulette_table', 'roulette_wheel', 'roulette_ball_orbit'],
+            blackwake_blackjack_table: ['blackjack_table', 'player_ace', 'player_king', 'dealer_face-up_card', 'dealer_hole_card'],
+            blackwake_casino_war_table: ['casino_war_table', 'player_battle_card', 'dealer_battle_card', 'player_war_card', 'dealer_war_card'],
+            blackwake_corsair_coin_toss: ['coin_toss_cabinet', 'two-sided_toss_coin', 'place_bet_lever']
+    ].each { model, bones -> bones.each { bone -> ids.add("blocksmith:${model}/bone/${bone}" as String) } }
+
+    def ranks = ['ace','two','three','four','five','six','seven','eight','nine','ten','jack','queen','king']
+    def suits = ['spades','hearts','clubs','diamonds']
+    def blackjackBones = ['player_ace','player_king','dealer_face-up_card','dealer_hole_card']
+    def warBones = ['player_battle_card','dealer_battle_card','player_war_card','dealer_war_card']
+    suits.each { suit -> ranks.each { rank ->
+        def card = "blackwake_${rank}_of_${suit}"
+        ids.add("blocksmith:${card}" as String)
+        blackjackBones.each { bone -> ids.add("blocksmith:blackwake_blackjack_table/cards/${bone}/${card}" as String) }
+        warBones.each { bone -> ids.add("blocksmith:blackwake_casino_war_table/cards/${bone}/${card}" as String) }
+    }}
+    ids.add('blocksmith:blackwake_blackjack_table/cards/dealer_hole_card/blackwake_card_back')
+
+    ['crimson_corsair','golden_doubloon','cursed_kraken','pale_marauder','emerald_privateer'].each { horse ->
+        ids.add("blocksmith:${horse}/idle" as String)
+        (0..<12).each { frame -> ids.add(String.format('blocksmith:%s/frame_%02d', horse, frame)) }
+    }
+    ids
+}
+
+def itemFile = { File root, String id ->
+    def parts = id.split(':', 2)
+    new File(root, "assets/${parts[0]}/items/${parts[1]}.json")
+}
+
+def referencedModels
+referencedModels = { Object value, Set<String> result ->
+    if (value instanceof Map) {
+        if (value.type == 'minecraft:model' && value.model instanceof String) result.add(value.model)
+        value.values().each { referencedModels(it, result) }
+    } else if (value instanceof Collection) {
+        value.each { referencedModels(it, result) }
+    }
+}
+
+def validatePack = { File root ->
+    def parser = new JsonSlurper()
+    def errors = []
+    def jsonFiles = fileTree(root) { include '**/*.json' }.files.sort { it.path }
+    def parsed = [:]
+    jsonFiles.each { file ->
+        try { parsed[file] = parser.parse(file) }
+        catch (Exception exception) { errors.add("Invalid JSON ${root.toPath().relativize(file.toPath())}: ${exception.message}") }
+    }
+
+    def required = requiredItemModels()
+    required.each { String id ->
+        File requiredFile = itemFile.call(root, id)
+        if (!requiredFile.isFile()) {
+            errors.add("Missing runtime item model ${id}")
+        }
+    }
+
+    parsed.each { file, json ->
+        def relative = root.toPath().relativize(file.toPath()).toString().replace('\\', '/')
+        if (relative.matches('assets/[^/]+/items/.+\\.json')) {
+            def refs = [] as Set
+            referencedModels(json, refs)
+            refs.each { ref ->
+                def parts = ref.contains(':') ? ref.split(':', 2) : [relative.split('/')[1], ref]
+                def modelFile = new File(root, "assets/${parts[0]}/models/${parts[1]}.json")
+                if (!modelFile.isFile()) errors.add("${relative} references missing model ${ref}")
+            }
+        }
+        if (relative.matches('assets/[^/]+/models/.+\\.json') && json instanceof Map) {
+            def namespace = relative.split('/')[1]
+            if (json.parent instanceof String && !json.parent.startsWith('minecraft:')
+                    && !json.parent.startsWith('builtin/')) {
+                def parentParts = json.parent.contains(':') ? json.parent.split(':', 2) : [namespace, json.parent]
+                if (!new File(root, "assets/${parentParts[0]}/models/${parentParts[1]}.json").isFile())
+                    errors.add("${relative} references missing parent ${json.parent}")
+            }
+            if (json.textures instanceof Map) json.textures.values().findAll { it instanceof String }.each { texture ->
+                if (texture.startsWith('#')) return
+                def textureParts = texture.contains(':') ? texture.split(':', 2) : [namespace, texture]
+                if (textureParts[0] == 'minecraft') return
+                if (!new File(root, "assets/${textureParts[0]}/textures/${textureParts[1]}.png").isFile())
+                    errors.add("${relative} references missing texture ${texture}")
+            }
+            if (json.elements instanceof Collection) json.elements.each { element ->
+                [element.from, element.to, element.rotation?.origin].findAll { it instanceof Collection }.each { point ->
+                    point.each { coordinate ->
+                        if (!(coordinate instanceof Number) || coordinate < -16.0 || coordinate > 32.0)
+                            errors.add("${relative} has coordinate outside -16..32: ${point}")
+                    }
+                }
+            }
+        }
+    }
+
+    if (!errors.isEmpty()) throw new GradleException(
+            "Crownlands resource-pack validation failed (${errors.size()} errors):\n - " + errors.take(100).join('\n - '))
+    def report = [
+            format: 1,
+            files: root.exists() ? fileTree(root).files.size() : 0,
+            json_files: jsonFiles.size(),
+            required_runtime_item_models: required.size(),
+            validated_at_utc: java.time.Instant.now().toString()
+    ]
+    def reportFile = layout.buildDirectory.file('reports/crownlands-pack-validation.json').get().asFile
+    reportFile.parentFile.mkdirs()
+    reportFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(report)) + System.lineSeparator()
+}
+
+tasks.register('prepareCrownlandsResourcePack', Sync) {
+    dependsOn gradle.includedBuild('bank-atm-source').task(':fetchCorporateCraftPack')
+    dependsOn gradle.includedBuild('bank-atm-source').task(':prepareResourcePack')
+    dependsOn gradle.includedBuild('blackwake-casino-source').task(':prepareCasinoPack')
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+
+    def replacementPaths = null
+    def replacements = {
+        if (replacementPaths == null) {
+            replacementPaths = new LinkedHashSet<String>()
+            replacementPaths.addAll(filesBelow(bankAssets))
+            replacementPaths.addAll(filesBelow(casinoAssets))
+            iconPacks.files.each { archive ->
+                zipTree(archive).visit { details ->
+                    if (!details.directory && details.path.startsWith('resource-pack/assets/rpgiab/'))
+                        replacementPaths.add(details.path.substring('resource-pack/'.length()))
+                }
+            }
+        }
+        replacementPaths
+    }
+
+    from({ zipTree(basePack) }) {
+        exclude { details -> replacements().contains(details.path) }
+    }
+    from(bankAssets)
+    from({ iconPacks.files.sort().collect { zipTree(it) } }) {
+        include 'resource-pack/assets/rpgiab/**'
+        eachFile { details -> details.path = details.path.substring('resource-pack/'.length()) }
+        includeEmptyDirs = false
+    }
+    from(casinoAssets)
+    from(importsDirectory) {
+        include 'assets/**'
+    }
+    fileTree(importsDirectory).matching { include '*.zip' }.files.sort().each { archive ->
+        from(zipTree(archive)) {
+            include 'assets/**'
+            include 'resource-pack/assets/**'
+            eachFile { details ->
+                if (details.path.startsWith('resource-pack/'))
+                    details.path = details.path.substring('resource-pack/'.length())
+            }
+            includeEmptyDirs = false
+        }
+    }
+    into preparedPack
+
+    doFirst {
+        if (iconPacks.files.size() != 9)
+            throw new GradleException("Expected 9 CorporateCraft icon collections, found ${iconPacks.files.size()}")
+    }
+    doLast {
+        File root = preparedPack.get().asFile
+        File metadataFile = new File(root, 'pack.mcmeta')
+        if (!metadataFile.isFile()) throw new GradleException('The pinned base pack did not contain pack.mcmeta')
+        def metadata = new JsonSlurper().parse(metadataFile)
+        metadata.pack.min_format = 84
+        metadata.pack.max_format = 88
+        metadata.pack.description = 'Crownlands Grand Exchange + BankATM + Blackwake Casino'
+        metadataFile.text = JsonOutput.prettyPrint(JsonOutput.toJson(metadata)) + System.lineSeparator()
+        validatePack(root)
+    }
+}
+
+tasks.register('crownlandsResourcePack', Zip) {
+    dependsOn tasks.prepareCrownlandsResourcePack
+    from preparedPack
+    destinationDirectory = layout.buildDirectory.dir('distributions')
+    archiveFileName = 'Crownlands-Shared-Resource-Pack.zip'
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+tasks.register('validateCrownlandsResourcePack') {
+    dependsOn tasks.prepareCrownlandsResourcePack
+}
+
+tasks.assemble {
+    dependsOn tasks.crownlandsResourcePack
+}
