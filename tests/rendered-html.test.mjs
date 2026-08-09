@@ -614,6 +614,8 @@ test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, 
   assert.match(source, /group:"Magic Tree Blocks",pack:"RuneSmith Magic Wood"/);
   assert.match(source, /faceData:\{0:magicTreeFace\("magic-tree:bark"\),1:magicTreeFace\("magic-tree:bark"\),2:magicTreeFace\("magic-tree:bark"\),3:magicTreeFace\("magic-tree:bark"\),4:magicTreeFace\("magic-tree:end"\),5:magicTreeFace\("magic-tree:end"\)\}/);
   assert.match(source, /material==="magic-tree:bark"/);
+  assert.match(source, /scar\?"#80658d":furrow\?"#171320"/);
+  assert.match(source, /id:"runesmith_magic_leaves"[\s\S]*?"#4a55a7","magic-tree:leaves"/);
   assert.match(source, /material==="magic-tree:end"/);
   assert.match(source, /material==="magic-tree:planks"/);
   assert.match(source, /material==="magic-tree:leaves"/);
