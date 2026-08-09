@@ -179,6 +179,8 @@ Exit condition: one pack builds reproducibly and every Crownlands/Casino runtime
 - Produce conservation reports for orders, item escrow, currency escrow, fills, and collections.
 - Test rollback by returning to CorporateCraft with the untouched original database.
 
+Implementation status (2026-08-09): code and automated rehearsal complete; production-copy rehearsal pending. CorporateCraft now selects a fresh GE-only schema for the Crownlands runtime while legacy mode retains the original migration chain. The offline importer opens a quiesced source backup read-only, creates a separate target, filters retired retention/broker rows, verifies row counts and financial digests, enforces escrow/order/collection/foreign-key invariants, records the source SHA-256, and supports exact-source idempotent replay. Automated tests prove partial-fill conservation, source byte preservation, clean-schema repository reads, failed-import rollback, and replay without duplicate rows. No production database copy was available in the project workspace, so the Phase 4 exit condition remains open until an administrator runs the documented rehearsal and reviews its report.
+
 Exit condition: imported totals and per-order states match, with no destructive changes to the source database.
 
 ### Phase 5 - Cutover and compatibility window
