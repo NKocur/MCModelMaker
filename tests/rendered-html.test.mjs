@@ -644,13 +644,18 @@ test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, 
 
 test("RuneSmith lobster fishing includes a detailed 3D pot and a flat raw catch", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  assert.match(source, /const lobsterPotCubes=\(\)=>/);
+  assert.match(source, /const overlapFreeLobsterPotCubes=\(\)=>/);
+  assert.match(source, /const assertNoCubeVolumeOverlaps=\(parts:Cube\[\]\)=>/);
+  assert.match(source, /staveSegments:\[number,number\]\[]=\[\[2,4\],\[5,8\],\[9,11\]\]/);
+  assert.match(source, /"Separated neck stave",\[x,13,z\],\[x\+1,15,z\+1\]/);
+  assert.match(source, /"Rope handle",\[6,17,7\],\[10,18,8\]/);
+  assert.match(source, /return assertNoCubeVolumeOverlaps\(parts\)/);
   assert.match(source, /"Woven base front"/);
   assert.match(source, /"Dark binding hoop"/);
   assert.match(source, /"Narrow neck front"/);
   assert.match(source, /"Rope handle"/);
   assert.match(source, /const makeRawLobsterSprite=\(\)=>/);
-  assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"/);
+  assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"[\s\S]*?cubes:overlapFreeLobsterPotCubes\(\),source:"codex",revision:2/);
   assert.match(source, /id:"runesmith_raw_lobster",name:"RuneSmith Raw Lobster"/);
   assert.match(source, /spriteParent:"generated",sprite:makeRawLobsterSprite\(\)/);
   assert.match(source, /group:"Lobster Fishing",pack:"RuneSmith Fishing"/);
