@@ -733,6 +733,11 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(source, /textures\.minecraft\.net/);
   assert.match(source, /Upload texture profile/);
   assert.match(source, /MINESKIN API KEY/);
+  assert.match(source, /EXISTING MINESKIN SKIN/);
+  assert.match(source, /Pull from MineSkin/);
+  assert.match(source, /const pullFromMineSkin=async/);
+  assert.match(source, /action:"import",reference:mineSkinReference\.trim\(\)/);
+  assert.match(source, /onChange\(\{skin:next,skinModel:profile\.variant,cubes:characterCubes\(profile\.variant\),skinProfile:profile\}\)/);
   assert.match(source, /makeZip\(\[\{name:`\$\{id\}\.png`.*\{name:`\$\{id\}\.yml`/);
   assert.match(source, /type:"minecraft_player_skin"/);
   assert.match(source, /standard_uv_layout:true,outer_layer:true/);
@@ -742,6 +747,7 @@ test("character designer uses the standard Minecraft 64 by 64 skin workflow", as
   assert.match(styles, /\.character-designer\{/);
   assert.match(styles, /image-rendering:pixelated/);
   assert.match(styles, /\.npc-skin-export\{/);
+  assert.match(styles, /\.npc-export-divider/);
 });
 
 test("MineSkin proxy keeps API keys server-side and uses the V2 queue", async () => {
@@ -753,4 +759,9 @@ test("MineSkin proxy keeps API keys server-side and uses the V2 queue", async ()
   assert.match(source, /form\.set\("visibility","unlisted"\)/);
   assert.match(source, /queue\/\$\{encodeURIComponent\(job\)\}/);
   assert.match(source, /skins\/\$\{encodeURIComponent\(payload\.job\.result\)\}/);
+  assert.match(source, /incoming\.action==="import"/);
+  assert.match(source, /validSkinUuid/);
+  assert.match(source, /skinPayload\?\.skin\|\|skinPayload/);
+  assert.match(source, /textures\.minecraft\.net/);
+  assert.match(source, /png:base64\(bytes\)/);
 });
