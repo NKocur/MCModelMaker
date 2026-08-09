@@ -642,6 +642,21 @@ test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, 
   assert.match(source, /\.\.\.magicTreeBlocks,/);
 });
 
+test("RuneSmith lobster fishing includes a detailed 3D pot and a flat raw catch", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const lobsterPotCubes=\(\)=>/);
+  assert.match(source, /"Woven base front"/);
+  assert.match(source, /"Dark binding hoop"/);
+  assert.match(source, /"Narrow neck front"/);
+  assert.match(source, /"Rope handle"/);
+  assert.match(source, /const makeRawLobsterSprite=\(\)=>/);
+  assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"/);
+  assert.match(source, /id:"runesmith_raw_lobster",name:"RuneSmith Raw Lobster"/);
+  assert.match(source, /spriteParent:"generated",sprite:makeRawLobsterSprite\(\)/);
+  assert.match(source, /group:"Lobster Fishing",pack:"RuneSmith Fishing"/);
+  assert.match(source, /\.\.\.runeSmithLobsterFishing/);
+});
+
 test("Blackwake Corsair Coin Toss is a two-outcome animated pirate casino machine", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Blackwake Corsair Coin Toss"/);
