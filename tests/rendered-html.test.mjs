@@ -558,6 +558,15 @@ test("saving overwrites the current library model and models can be permanently 
   assert.match(styles, /\.top-delete-model\{/);
 });
 
+test("browser persistence stores only local projects and reports character save results", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const localProjects=library\.filter\(project=>project\.source==="local"\)/);
+  assert.match(source, /localStorage\.setItem\("blocksmith-library-v2",JSON\.stringify\(localProjects\)\)/);
+  assert.match(source, /pendingSave\.current=true;setSaveStatus\("saving"\)/);
+  assert.match(source, /saveStatus==="saved"\?"Saved ✓":"Save"/);
+  assert.match(source, /className="save-error" role="alert"/);
+});
+
 test("the complete licensed RPGIAB pack and a curated CorporateCraft GUI set are available", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   const data = await readFile(new URL("../app/rpgiabIconData.ts", import.meta.url), "utf8");
