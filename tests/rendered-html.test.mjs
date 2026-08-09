@@ -67,6 +67,12 @@ test("library supports mod packs, categories, collections, search, and accessibl
   assert.match(source, /COLLECTION/);
   assert.match(source, /function ModelThumbnail\(\{model\}/);
   assert.match(source, /<ModelThumbnail model=\{model\}\/>/);
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /const LIBRARY_CONTENT_TYPES:LibraryContentType\[]=\["All Content","Characters","Flat Items","3D Models","Structures"\]/);
+  assert.match(source, /project\.skin\?"Characters":modelKind\(project\)==="structure"\?"Structures":project\.sprite\?"Flat Items":"3D Models"/);
+  assert.match(source, /className="library-type-tabs" role="tablist" aria-label="Library content types"/);
+  assert.match(source, /libraryType==="All Content"\|\|libraryContentType\(model\)===libraryType/);
+  assert.match(styles, /\.library-type-tabs\{/);
   assert.doesNotMatch(source, /className="library-model-art procedural-art"/);
 });
 
