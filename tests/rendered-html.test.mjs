@@ -272,7 +272,7 @@ test("Blackwake pirate weapons form a five-item handheld collection", async () =
 
 test("core GUI icons export as a reusable Minecraft item collection", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  assert.match(source, /"Tools & Weapons","GUI Items","Blocks"/);
+  assert.match(source, /"Tools & Weapons","GUI Items","Icons Essential","Blocks"/);
   assert.match(source, /const CORE_GUI_ICONS=\[/);
   for (const id of ["confirm", "cancel", "previous_page", "next_page", "locked", "unlocked", "information", "warning", "settings", "refresh", "search", "shop", "wallet", "rewards", "home", "profile", "filter", "menu"]) assert.match(source, new RegExp(`id:"${id}"`));
   assert.match(source, /const coreGuiItems:Project\[]=CORE_GUI_ICONS\.map/);
@@ -569,6 +569,7 @@ test("Icons Essential imports every source PNG as an editable flat item", async 
   const data = await readFile(new URL("../app/essentialIconData.ts", import.meta.url), "utf8");
   assert.match(source, /ESSENTIAL_ICON_DATA\.map/);
   assert.match(source, /pack:"Icons Essential v1\.2"/);
+  assert.match(source, /category:"Icons Essential",group:"Icons Essential"/);
   assert.match(source, /namespace:"essential"/);
   assert.match(source, /spriteParent:"generated"/);
   assert.match(source, /\.\.\.essentialIconItems/);
