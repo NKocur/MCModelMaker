@@ -564,6 +564,20 @@ test("saving overwrites the current library model and models can be permanently 
   assert.match(styles, /\.top-delete-model\{/);
 });
 
+test("Icons Essential imports every source PNG as an editable flat item", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const data = await readFile(new URL("../app/essentialIconData.ts", import.meta.url), "utf8");
+  assert.match(source, /ESSENTIAL_ICON_DATA\.map/);
+  assert.match(source, /pack:"Icons Essential v1\.2"/);
+  assert.match(source, /namespace:"essential"/);
+  assert.match(source, /spriteParent:"generated"/);
+  assert.match(source, /\.\.\.essentialIconItems/);
+  assert.match(data, /Crusenho Agus Hennihuno/);
+  assert.match(data, /CC BY 4\.0/);
+  assert.equal([...data.matchAll(/^  \["[a-z0-9_]+","[0-9a-f]+"\],$/gm)].length, 80);
+  for (const [, encoded] of data.matchAll(/^  \["[a-z0-9_]+","([0-9a-f]+)"\],$/gm)) assert.equal(encoded.length, 512);
+});
+
 test("browser persistence stores only local projects and reports character save results", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const localProjects=library\.filter\(project=>project\.source==="local"\)/);
