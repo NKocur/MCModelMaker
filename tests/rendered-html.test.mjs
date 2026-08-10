@@ -564,16 +564,19 @@ test("saving overwrites the current library model and models can be permanently 
   assert.match(styles, /\.top-delete-model\{/);
 });
 
-test("Stack of Gold Coins is an overlap-free placeable 3D prop", async () => {
+test("Whimsical Gold Coin Stack is a small overlap-free placeable 3D prop", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  assert.match(source, /name:"Stack of Gold Coins"/);
+  assert.match(source, /name:"Whimsical Gold Coin Stack"/);
   assert.match(source, /kind:"furniture"/);
   assert.match(source, /placementSize:\[1,1,1\]/);
-  assert.match(source, /cubes:overlapChecked\("Stack of Gold Coins",goldCoinStackCubes\(\)\)/);
-  assert.match(source, /offsets\.forEach/);
-  assert.match(source, /Raised skull brow/);
-  assert.match(source, /Raised skull jaw/);
-  assert.match(source, /group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /cubes:overlapChecked\("Whimsical Gold Coin Stack",goldCoinStackCubes\(\)\)/);
+  assert.match(source, /mainOffsets\.forEach/);
+  assert.match(source, /side_coin_/);
+  assert.match(source, /loose_coin_left/);
+  assert.match(source, /Magic coin glint center/);
+  assert.match(source, /group:"Whimsical Treasure",pack:"Fantasy Daily Rewards"/);
+  const definition = source.match(/const goldCoinStack:Project=\{[^\n]+/)?.[0] ?? "";
+  assert.doesNotMatch(definition, /skull|pirate|doubloon/i);
   assert.match(source, /blackwakeGoldDoubloon,\s+goldCoinStack,\s+blackwakePirateGrog/);
 });
 
