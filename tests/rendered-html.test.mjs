@@ -213,7 +213,7 @@ test("Emerald Fortune Roulette is a two-block animated casino table", async () =
   assert.match(source, /name:"Spin wheel & ball",lengthTicks:40,loop:true/);
   assert.match(source, /roulette_spin_40[^\n]+\[0,360,0\]/);
   assert.match(source, /roulette_ball_40[^\n]+\[0,-720,0\]/);
-  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+blackwakeRockPaperScissors,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
+  assert.match(source, /emeraldFortuneRoulette,\s+blackwakeBlackjackTable,\s+blackwakeCasinoWarTable,\s+blackwakeCorsairCoinToss,\s+blackwakeRockPaperScissors,\s+\.\.\.blackwakePlayingCards,\s+blackwakeGoldDoubloon,\s+goldCoinStack,\s+blackwakePirateGrog,\s+emptyBlackwakeGrogTankard,\s+deckhandLuckyBones,\s+blackwakeSkulljack,\s+dreadAdmiralKrakenJackpot/);
 });
 
 test("Blackwake Blackjack Table is a two-block animated pirate casino table", async () => {
@@ -562,6 +562,19 @@ test("saving overwrites the current library model and models can be permanently 
   assert.match(source, /confirm\(`Delete “\$\{project\.name\}” from your library\?/);
   assert.match(source, /className="top-delete-model"/);
   assert.match(styles, /\.top-delete-model\{/);
+});
+
+test("Stack of Gold Coins is an overlap-free placeable 3D prop", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /name:"Stack of Gold Coins"/);
+  assert.match(source, /kind:"furniture"/);
+  assert.match(source, /placementSize:\[1,1,1\]/);
+  assert.match(source, /cubes:overlapChecked\("Stack of Gold Coins",goldCoinStackCubes\(\)\)/);
+  assert.match(source, /offsets\.forEach/);
+  assert.match(source, /Raised skull brow/);
+  assert.match(source, /Raised skull jaw/);
+  assert.match(source, /group:"Pirate Props",pack:"Fantasy Daily Rewards"/);
+  assert.match(source, /blackwakeGoldDoubloon,\s+goldCoinStack,\s+blackwakePirateGrog/);
 });
 
 test("Icons Essential imports every source PNG as an editable flat item", async () => {
