@@ -272,7 +272,7 @@ test("Blackwake pirate weapons form a five-item handheld collection", async () =
 
 test("core GUI icons export as a reusable Minecraft item collection", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
-  assert.match(source, /"Tools & Weapons","GUI Items","Icons Essential","Blocks"/);
+  assert.match(source, /"Tools & Weapons","GUI Items","Icons Essential","Free Application Icons","Blocks"/);
   assert.match(source, /const CORE_GUI_ICONS=\[/);
   for (const id of ["confirm", "cancel", "previous_page", "next_page", "locked", "unlocked", "information", "warning", "settings", "refresh", "search", "shop", "wallet", "rewards", "home", "profile", "filter", "menu"]) assert.match(source, new RegExp(`id:"${id}"`));
   assert.match(source, /const coreGuiItems:Project\[]=CORE_GUI_ICONS\.map/);
@@ -547,7 +547,7 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(source, /accept="\.png,image\/png"/);
   assert.match(source, /image\.naturalWidth!==16\|\|image\.naturalHeight!==16/);
   assert.match(source, /getContext\("2d",\{willReadFrequently:true\}\)/);
-  assert.match(source, /rgba\[offset\+3\]===0/);
+  assert.match(source, /alpha=rgba\[offset\+3\];if\(alpha===0\)/);
   assert.match(source, /URL\.revokeObjectURL\(url\)/);
   assert.match(styles, /image-rendering:pixelated/);
 });
@@ -593,6 +593,22 @@ test("Icons Essential imports every source PNG as an editable flat item", async 
   assert.match(data, /CC BY 4\.0/);
   assert.equal([...data.matchAll(/^  \["[a-z0-9_]+","[0-9a-f]+"\],$/gm)].length, 80);
   for (const [, encoded] of data.matchAll(/^  \["[a-z0-9_]+","([0-9a-f]+)"\],$/gm)) assert.equal(encoded.length, 512);
+});
+
+test("Aha-Soft application icons are one dedicated full-RGBA flat-item collection", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const data = await readFile(new URL("../app/freeApplicationIconData.ts", import.meta.url), "utf8");
+  assert.match(source, /FREE_APPLICATION_ICON_DATA\.map/);
+  assert.match(source, /category:"Free Application Icons",group:"Free Application Icons",pack:"16x16 Free Application Icons"/);
+  assert.match(source, /namespace:"freeapp"/);
+  assert.match(source, /\.\.\.freeApplicationIconItems/);
+  assert.match(source, /decodeFreeApplicationSprite/);
+  assert.match(source, /parseInt\(hex\.slice\(6,8\),16\)/);
+  assert.match(data, /Aha-Soft/);
+  assert.match(data, /CC BY 3\.0 US/);
+  const rows = [...data.matchAll(/^  \["[a-z0-9_]+","[^"]+","([A-Za-z0-9+/=]+)"\],$/gm)];
+  assert.equal(rows.length, 219);
+  for (const [, encoded] of rows) assert.equal(Buffer.from(encoded, "base64").length, 1024);
 });
 
 test("browser persistence stores only local projects and reports character save results", async () => {
