@@ -541,6 +541,11 @@ test("flat items include an editable 16 by 16 pixel canvas", async () => {
   assert.match(source, />□ Outline<\/button>/);
   assert.match(source, />■ Filled<\/button>/);
   assert.match(source, /onUndo=\{undo\} onRedo=\{redo\}/);
+  assert.match(source, /const \[spriteEditorOpen,setSpriteEditorOpen\]=useState\(false\)/);
+  assert.match(source, /setSpriteEditorOpen\(Boolean\(opened\.sprite\)\)/);
+  assert.match(source, /aria-label="Hide pixel editor"/);
+  assert.match(source, />✎ Pixel editor<\/button>/);
+  assert.match(styles, /\.sprite-editor-toggle\{position:fixed;z-index:8;right:288px/);
   assert.match(source, /onContextMenu=/);
   assert.match(source, /Create 16×16 sprite/);
   assert.match(source, /sprite:Array\(256\)\.fill\(null\)/);
