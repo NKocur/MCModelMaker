@@ -891,3 +891,10 @@ test("MineSkin proxy keeps API keys server-side and uses the V2 queue", async ()
   assert.match(source, /textures\.minecraft\.net/);
   assert.match(source, /png:base64\(bytes\)/);
 });
+
+test("flat item studio preview opens on the sprite front instead of its mirrored back", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const previewPreset=\(mode:PreviewMode,isSprite:boolean\)=>mode==="studio"&&isSprite\?\{\.\.\.PREVIEW_PRESETS\.studio,yaw:PREVIEW_PRESETS\.studio\.yaw-Math\.PI\}:PREVIEW_PRESETS\[mode\]/);
+  assert.match(source, /useState\(\(\)=>previewPreset\(previewMode,Boolean\(project\.sprite\)\)\)/);
+  assert.match(source, /setView\(previewPreset\("studio",Boolean\(project\.sprite\)\)\)/);
+});
