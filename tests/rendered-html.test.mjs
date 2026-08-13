@@ -653,9 +653,13 @@ test("RuneSmith provides complete Minecraft-style families for classic and RS3 o
   assert.equal([...source.matchAll(/source:"codex",revision:3,kind:/g)].length >= 2, true);
   assert.match(source, /const VANILLA_INGOT_ROWS=\["\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\."/);
   assert.match(source, /if\(form==="ingot"\)return makeVanillaIngotSprite\(colors\)/);
+  assert.match(source, /const VANILLA_GOLD_NUGGET_ROWS=\["\.\.\.\.\.\.\.\.\.\.\.\.\.\.\.\."/);
+  assert.match(source, /"\.\.\.\.\.\.BBB\.\.\.\.\.\.\."/);
+  assert.match(source, /if\(form==="nugget"\)return makeVanillaGoldNuggetSprite\(colors\)/);
+  assert.match(source, /form==="nugget"\?7:ore\.id==="runite"\?6:form==="ingot"\?5:3/);
+  assert.match(source, /form==="ingot"\?"minecraft:iron_ingot":"minecraft:gold_nugget"/);
   assert.match(source, /shadow=mix\("#080a10",colors\.dark,\.72\),highlight=mix\(colors\.light,"#ffffff",\.62\)/);
   assert.match(source, /revision:ore\.id==="runite"\?6:3/);
-  assert.match(source, /revision:ore\.id==="runite"\?6:form==="ingot"\?5:3/);
   assert.match(source, /material\.match\(\/\^ore:/);
   assert.match(source, /oreCenters=\[\[3,3\],\[11,2\],\[7,7\],\[13,9\],\[3,12\],\[10,14\]\]/);
   assert.match(source, /stonePalette=ore\?\.\[1\]===\"deepslate\"\?\[\"#303136\",\"#393a3f\",\"#46474b\"\]:\[\"#6e6e69\",\"#7c7c78\",\"#898984\"\]/);
