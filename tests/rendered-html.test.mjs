@@ -907,3 +907,10 @@ test("every library card has an accessible clone action", async () => {
   assert.match(source, /while\(names\.has\(name\.toLowerCase\(\)\)\)name=`\$\{base\} \$\{suffix\+\+\}`/);
   assert.match(styles, /\.library-model-clone\{position:absolute/);
 });
+
+test("flat icon model settings expose the icon name and collection", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /project\.sprite&&<><label className="field-label">MODEL NAME<input value=\{project\.name\}/);
+  assert.match(source, /<label className="field-label">COLLECTION<input value=\{projectGroup\(project\)\} onChange=\{e=>organize\(\{group:e\.target\.value\}\)\}/);
+  assert.match(source, /Edit this icon’s name, collection, export target, and pixels\./);
+});
