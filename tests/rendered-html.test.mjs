@@ -898,3 +898,12 @@ test("flat item studio preview opens on the sprite front instead of its mirrored
   assert.match(source, /useState\(\(\)=>previewPreset\(previewMode,Boolean\(project\.sprite\)\)\)/);
   assert.match(source, /setView\(previewPreset\("studio",Boolean\(project\.sprite\)\)\)/);
 });
+
+test("every library card has an accessible clone action", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  const styles = await readFile(new URL("../app/globals.css", import.meta.url), "utf8");
+  assert.match(source, /className="library-model-clone" aria-label=\{`Clone \$\{model\.name\}`\}/);
+  assert.match(source, /onClick=\{\(\)=>cloneLibraryModel\(model\)\}/);
+  assert.match(source, /while\(names\.has\(name\.toLowerCase\(\)\)\)name=`\$\{base\} \$\{suffix\+\+\}`/);
+  assert.match(styles, /\.library-model-clone\{position:absolute/);
+});
