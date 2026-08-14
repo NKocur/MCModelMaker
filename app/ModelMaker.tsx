@@ -114,7 +114,47 @@ const OBJECT_GUI_ICON_ROWS:Record<string,readonly string[]>={
 };
 const SYMMETRIC_OBJECT_GUI_ICONS=["locked","warning","settings","shop","rewards","profile"] as const;
 for(const id of SYMMETRIC_OBJECT_GUI_ICONS)if(OBJECT_GUI_ICON_ROWS[id].some(row=>row!==[...row].reverse().join("")))throw new Error(`${id} GUI icon must remain horizontally symmetrical`);
-const makeObjectGuiItemSprite=(rows:readonly string[])=>{const pixels:(string|null)[]=Array(256).fill(null);rows.slice(0,16).forEach((row,y)=>[...row.slice(0,16)].forEach((symbol,x)=>{pixels[y*16+x]=OBJECT_GUI_ICON_COLORS[symbol]||null}));return pixels};
+const makeObjectGuiItemSprite=(rows:readonly string[],colors:Record<string,string>=OBJECT_GUI_ICON_COLORS)=>{const pixels:(string|null)[]=Array(256).fill(null);rows.slice(0,16).forEach((row,y)=>[...row.slice(0,16)].forEach((symbol,x)=>{pixels[y*16+x]=colors[symbol]||null}));return pixels};
+const GE_NAV_ICON_COLORS:Record<string,string>={X:"#14100b",n:"#5a4530",N:"#8a6a45",w:"#b08b5c",W:"#e2c898",d:"#7a5a12",G:"#c9a227",Y:"#f2d76b",r:"#6e2018",R:"#b83a2c",p:"#e0705c",E:"#4fa838",L:"#8fdc63",C:"#a9d4ee"};
+const GE_NAV_ICON_ROWS:Record<string,readonly string[]>={
+  ge_home:["................","................","..XXXXXXXXXXXX..","..XRRWWRRWWRRX..","..XRRWWRRWWRRX..","..XXXXXXXXXXXX..","...XwwwwwwwwX...","...XwwwwwwwwX...","..XnnnnnnnnnnX..","..XNNNNNNNNNNX..","..XNNXGGGGXNNX..","..XNNXYYYYXNNX..","..XNNXGGGGXNNX..","..XnnnXXXXnnnX..","..XXXXXXXXXXXX..","................"],
+  back:["................","................",".......XX.......","......XYGX......",".....XYGGX......","....XYGGXX......","...XYGGXXXXXXX..","..XYGGGGGGGGGX..","..XYGGGGGGGGGX..","...XdGGXXXXXXX..","....XdGXX.......",".....XdGX.......","......XdX.......",".......XX.......","................","................"],
+  forward:["................","................",".......XX.......","......XGYX......","......XGGYX.....","......XXGGYX....","..XXXXXXXGGYX...","..XGGGGGGGGGYX..","..XGGGGGGGGGYX..","..XXXXXXXGGdX...",".......XXGdX....",".......XGdX.....",".......XdX......",".......XX.......","................","................"],
+  previous_page:["................","................","....XXX.........","....XYX.....XX..","....XYX....XYX..","....XYX...XYGX..","....XGX..XYGGX..","....XGX.XYGGGX..","....XdX.XdGGGX..","....XdX..XdGGX..","....XdX...XdGX..","....XdX....XdX..","....XdX.....XX..","....XXX.........","................","................"],
+  next_page:["................","................",".........XXX....","..XX.....XYX....","..XYX....XYX....","..XYGX...XYX....","..XYGGX..XGX....","..XYGGGX.XGX....","..XdGGGX.XdX....","..XdGGX..XdX....","..XdGX...XdX....","..XdX....XdX....","..XX.....XdX....",".........XXX....","................","................"],
+  search:["................","................",".....XXXX.......","....XGYYGX......","...XGYCCYGX.....","...XGCCCCGX.....","...XGCCCCGX.....","...XdCCCCdX.....","....XdCCdX......",".....XXXX.......",".......XGGX.....","........XGGX....",".........XddX...","..........XXXX..","................","................"],
+  buy_offer:["................","......XXXX......","......XLEX......","......XLEX......","......XLEX......","...XXXLLEEXXX...","...XLLLLEEEEX...","....XLLLEEEX....",".....XLLEEX.....","......XLEX......",".......XX.......","..XXX......XXX..","..XnX......XnX..","..XnNNNNNNNNnX..","..XXXXXXXXXXXX..","................"],
+  sell_offer:["................",".......XX.......","......XpRX......",".....XppRRX.....","....XpppRRRX....","...XppppRRRRX...","...XXXppRRXXX...","......XpRX......","......XpRX......","......XpRX......","......XXXX......","..XXX......XXX..","..XnX......XnX..","..XnNNNNNNNNnX..","..XXXXXXXXXXXX..","................"],
+  confirm:["................","................","................","...........XXX..","...........XLX..","..........XLEX..",".........XLEX...","..X.....XLEX....",".XLX...XLEX.....",".XELX.XLEX......","..XELXLEX.......","...XELEX........","....XEX.........","....XXX.........","................","................"],
+  cancel:["................","................","................","...XXX....XXX...","..XpppX..XpppX..","...XpRRXXRRpX...","....XRRRRRRX....",".....XRRRRX.....",".....XRRRRX.....","....XRRRRRRX....","...XRrrXXrrRX...","..XrrrX..XrrrX..","...XXX....XXX...","................","................","................"],
+  collect:["................","................",".......XX.......","......XwwX......","......XwwX......",".....XnwwnX.....","....XnNNNNnX....","...XnNNNNNNnX...","..XnNNXGGXNNnX..","..XnNXGYYGXNnX..","..XnNXGGGGXNnX..","..XnNNXGGXNNnX..","..XnnNNNNNNnnX..","...XnnnnnnnnX...","....XXXXXXXX....","................"],
+  offer_history:["................","................","......XXXX......","....XGYYYYGX....","...XGYWWWWYGX...","..XGYWWWWWWYGX..","..XGWWWXXWWWGX..","..XGWWWXXWWWGX..","..XGWWWXXXXWGX..","..XGWWWWWWWWGX..","..XdWWWWWWWWdX..","...XdWWWWWWdX...","....XddddddX....","......XXXX......","................","................"],
+  price_chart:["................","................","...........XXXX.","...........XLEX.","...........XLEX.","...........XLEX.","......XXXX.XLEX.","......XYGX.XLEX.","......XYGX.XLEX.",".XXXX.XYGX.XLEX.",".XpRX.XYGX.XLEX.",".XpRX.XYGX.XLEX.",".XpRX.XYGX.XLEX.",".XXXX.XXXX.XXXX.",".XXXXXXXXXXXXXX.","................"],
+  watchlist:["................",".......XX.......","......XYYX......",".....XYYYYX.....","..XXXXYYYYXXXX..","..XYYYYYYYYYYX..","...XYYYYYYYYX...","...XYGGGGGGYX...","...XGGGXXGGGX...","..XGGGX..XGGGX..",".XGGGX....XGGGX.",".XGdX......XdGX.",".XdX........XdX.",".XXX........XXX.","................","................"],
+  sort:["................","................","...XX...........","..XYGX..........",".XYYGGX...XXXX..",".XXYGXX...XYGX..","..XYGX....XYGX..","..XYGX....XYGX..","..XYGX....XYGX..","..XYGX...XXYGXX.","..XddX...XYGGGX.","..XXXX....XddX..","...........XX...","................","................","................"],
+  coins:["................","......XXXX......",".....XYYYYX.....","....XYGGGGYX....","....XGGGGGGX....","....XdGGGGdX....",".....XddddX.....","......XXXX......","...XXX....XXX...","..XYYYX..XYYYX..",".XYGGGYXXYGGGYX.",".XGGGGGXXGGGGGX.",".XdGGGdXXdGGGdX.","..XdddX..XdddX..","...XXX....XXX...","................"],
+};
+const GE_NAV_ICONS=[
+  {id:"ge_home",name:"GE Home",description:"Return to the Grand Exchange main counter from any sub-menu."},
+  {id:"back",name:"GE Back",description:"Step back one screen inside a Grand Exchange menu."},
+  {id:"forward",name:"GE Forward",description:"Step forward one screen inside a Grand Exchange menu."},
+  {id:"previous_page",name:"GE Previous Page",description:"Jump to the previous page of item listings."},
+  {id:"next_page",name:"GE Next Page",description:"Jump to the next page of item listings."},
+  {id:"search",name:"GE Search",description:"Open item search and price lookup."},
+  {id:"buy_offer",name:"GE Buy Offer",description:"Open a new buy offer slot."},
+  {id:"sell_offer",name:"GE Sell Offer",description:"Open a new sell offer slot."},
+  {id:"confirm",name:"GE Confirm",description:"Confirm the current offer, quantity, or price."},
+  {id:"cancel",name:"GE Cancel",description:"Abort the current offer or close the menu."},
+  {id:"collect",name:"GE Collect",description:"Collect finished offers and coins from the collection box."},
+  {id:"offer_history",name:"GE Offer History",description:"Review completed, aborted, and expired offers."},
+  {id:"price_chart",name:"GE Price Chart",description:"Open the price history graph for an item."},
+  {id:"watchlist",name:"GE Watchlist",description:"Add an item to, or open, the tracked-item list."},
+  {id:"sort",name:"GE Sort",description:"Change the sort order of the current listing."},
+  {id:"coins",name:"GE Coins",description:"Show balances, totals, and coin values."},
+] as const;
+const SYMMETRIC_GE_NAV_ICONS=["ge_home","cancel","collect","watchlist","coins"] as const;
+for(const icon of GE_NAV_ICONS){const rows=GE_NAV_ICON_ROWS[icon.id];if(!rows||rows.length!==16||rows.some(row=>row.length!==16))throw new Error(`${icon.id} Grand Exchange icon must be a 16×16 grid`);if(rows.some(row=>[...row].some(symbol=>symbol!=="."&&!GE_NAV_ICON_COLORS[symbol])))throw new Error(`${icon.id} Grand Exchange icon uses an undefined palette symbol`)}
+for(const id of SYMMETRIC_GE_NAV_ICONS)if(GE_NAV_ICON_ROWS[id].some(row=>row!==[...row].reverse().join("")))throw new Error(`${id} Grand Exchange icon must remain horizontally symmetrical`);
 const centerSpritePixels=(sprite:readonly (string|null)[])=>{const solid=Array.from({length:256},(_,index)=>sprite[index]?index:null).filter((index):index is number=>index!==null);if(!solid.length)return Array<(string|null)>(256).fill(null);const xs=solid.map(index=>index%16),ys=solid.map(index=>Math.floor(index/16)),minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys),dx=Math.round((15-minX-maxX)/2),dy=Math.round((15-minY-maxY)/2),centered=Array<(string|null)>(256).fill(null);solid.forEach(index=>{const x=index%16+dx,y=Math.floor(index/16)+dy;if(x>=0&&x<16&&y>=0&&y<16)centered[y*16+x]=sprite[index]});return centered};
 
 const normalizeStructureBlocks=(blocks:StructureBlock[])=>[...new Map(blocks.filter(block=>block.state!=="minecraft:air").map(block=>[`${block.x},${block.y},${block.z}`,block])).values()];
@@ -515,6 +555,7 @@ const CORPORATECRAFT_ICON_MAP=[
   ["ge_home","Grand Exchange Home","main_menu"],["browse_market","Browse Market","magnifier"],["market_search","Market Search","folder_search"],["buy_offer","Create Buy Offer","arrow_in"],["sell_offer","Create Sell Offer","arrow_out"],["active_offers","Active Offers","clipboard"],["offer_history","Offer History","clock"],["price_chart","Price Chart","progress_bar"],["previous_page","Previous Page","arrow_blue_left"],["next_page","Next Page","arrow_blue_right"],["confirm","Confirm","checkmark"],["cancel","Cancel","stop_sign"],["claim_items","Claim Items","chest_checkmark"],["collections","Collections","chest_item"],["categories","Categories","folder"],["watchlist","Watchlist","star"],["alerts","Market Alerts","exclamation"],["settings","Settings","settings_gear"],["portfolio","Portfolio","inventory"],["stocks","Stock Market","coins"],["futures","Futures Market","clock_play"],["contracts","Contracts","script_text_checkmark"],["corporations","Corporations","group"],["employment","Employment","character_item_get"],["rankings","Rankings","xp"],["news","Market News","dialogue_page"],["discovery","Market Discovery","eye_show"],["orders","Orders","page_data"],["positions","Positions","flag_blue"],["collateral","Collateral","shield"],["settlement","Settlement","anvil_in"],["long_position","Long Position","arrow_raise"],["short_position","Short Position","arrow_lower"],["deposit","Deposit","arrow_in"],["withdraw","Withdraw","arrow_out"],["admin_tools","Admin Tools","tools"],["locked","Locked","lock"],["unlocked","Unlocked","unlock"],["delete","Delete","delete"],["edit","Edit","pencil"]
 ] as const;
 const corporateCraftGuiItems:Project[]=CORPORATECRAFT_ICON_MAP.map(([id,name,sourceId])=>({id:`corporatecraft_gui_${id}`,name:`CorporateCraft ${name}`,description:`Purpose-selected 16×16 item icon for CorporateCraft and its Grand Exchange interfaces. ${RPGIAB_ATTRIBUTION}`,cubes:[],source:"codex",revision:1,kind:"item",namespace:"corporatecraft",baseItem:"minecraft:paper",spriteParent:"generated",sprite:[...(rpgiabSprites.get(sourceId)||Array(256).fill(null))],category:"GUI Items",group:"Grand Exchange & Plugin GUI",pack:"CorporateCraft",attribution:RPGIAB_ATTRIBUTION}));
+const geNavGuiItems:Project[]=GE_NAV_ICONS.map(icon=>({id:`ge_nav_${icon.id}`,name:icon.name,description:`${icon.description} Original hand-drawn 16×16 RuneScape-style Grand Exchange navigation icon.`,cubes:[],source:"codex",revision:1,kind:"item",namespace:"blocksmith",baseItem:"minecraft:paper",spriteParent:"generated",sprite:centerSpritePixels(makeObjectGuiItemSprite(GE_NAV_ICON_ROWS[icon.id],GE_NAV_ICON_COLORS)),category:"GUI Items",group:"Grand Exchange Navigation",pack:"Grand Exchange UI Kit"}));
 
 type OrePalette={dark:string;base:string;light:string};
 const VANILLA_INGOT_ROWS=["................","................","..........AA....",".......AAABBC...","....AAABDDDDBC..",".AAABDDDDDDDDBC.","AEDDDDDDDDDDEEDC","ABEDDDDDDEEEDCBF","ABBEDDEEEDGCCGBF","ABBBEEDGCCCCBBBF","AGBBDGCCCCBBGFF.",".AGBDGCCGGFFF...","..AGBGHFFF......","...AAFF.........","................","................"] as const;
@@ -718,6 +759,7 @@ const pirateBarkeeper:Project={id:"blackwake_pirate_barkeeper",name:"Blackwake P
 const BUILTINS:Project[] = [
   ...coreGuiItems,
   ...corporateCraftGuiItems,
+  ...geNavGuiItems,
   ...essentialIconItems,
   ...freeApplicationIconItems,
   ...rpgiabIconItems,
