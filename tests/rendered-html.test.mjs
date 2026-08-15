@@ -283,7 +283,9 @@ test("Woodcutting Guild Axe follows the vanilla handheld axe template", async ()
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const WOODCUTTING_GUILD_AXE_ROWS=\[/);
   assert.match(source, /const WOODCUTTING_GUILD_AXE_COLORS:Record<string,string>/);
+  for (const vanillaRow of ["........DD......", "........DHHD....", ".......DHSLD....", "......DHSSSGM...", ".......WRN.KK...", "..NN............"]) assert.match(source, new RegExp(vanillaRow.replaceAll(".", "\\.")));
   assert.match(source, /id:"runesmith_woodcutting_guild_axe",name:"Woodcutting Guild Axe"/);
+  assert.match(source, /revision:2/);
   assert.match(source, /baseItem:"minecraft:iron_axe",spriteParent:"handheld"/);
   assert.match(source, /sprite:makeObjectGuiItemSprite\(WOODCUTTING_GUILD_AXE_ROWS,WOODCUTTING_GUILD_AXE_COLORS\)/);
   assert.match(source, /group:"Woodcutting Guild Tools",pack:"RuneSmith Woodcutting Guild"/);

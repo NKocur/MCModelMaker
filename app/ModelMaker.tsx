@@ -72,24 +72,24 @@ const PIRATE_WEAPON_SPRITES={
   saber:makePirateWeaponSprite(["............KKK.","...........KLLK.","..........KLLSK.",".........KLLSK..","........KLLSK...",".......KLLSK....","......KLLSK.....",".....KLLSK......","....KLLSK.......","...KLLSK........","..KKSSK.........",".KGGGGK.........","KGCRGKK.........","KGRGK...........",".KDK............","KKK............."])
 };
 const WOODCUTTING_GUILD_AXE_ROWS=[
-  "........DDDDD...",
-  ".......DSSLLLD..",
-  "......DSSSLLLD..",
-  ".....DSSGGDDDD..",
-  "....DSSSD.......",
-  ".....DDD........",
-  ".....DFD........",
-  "....DFD.........",
-  "...DWD..........",
-  "..DWD...........",
-  ".DWD............",
-  "DWD.............",
-  "DFD.............",
-  ".DD.............",
   "................",
-  "................"
+  "........DD......",
+  "........DHHD....",
+  ".......DHSLD....",
+  "......DHSSSGM...",
+  "......KHLSQSN...",
+  ".......KKFSQSK..",
+  "........FMNSSK..",
+  ".......WRN.KK...",
+  "......WMN.......",
+  ".....WMN........",
+  "....WRN.........",
+  "...WMN..........",
+  "..WRN...........",
+  "..NN............",
+  "................",
 ] as const;
-const WOODCUTTING_GUILD_AXE_COLORS:Record<string,string>={D:"#46524e",S:"#82958c",L:"#d2ddc8",G:"#d5a642",W:"#71472a",F:"#3f7444"};
+const WOODCUTTING_GUILD_AXE_COLORS:Record<string,string>={D:"#3f5147",H:"#f3f5df",S:"#bcc7b8",L:"#dde5d3",Q:"#8d9b91",K:"#181818",W:"#493615",M:"#684e1e",R:"#896727",N:"#281e0b",F:"#3f7444",G:"#d5a642"};
 const CARD_RANKS=["A","2","3","4","5","6","7","8","9","10","J","Q","K"] as const,CARD_SUITS=["spades","hearts","clubs","diamonds"] as const;
 type CardRank=(typeof CARD_RANKS)[number];type CardSuit=(typeof CARD_SUITS)[number];
 const CARD_RANK_NAMES:Record<CardRank,string>={A:"Ace",2:"Two",3:"Three",4:"Four",5:"Five",6:"Six",7:"Seven",8:"Eight",9:"Nine",10:"Ten",J:"Jack",Q:"Queen",K:"King"};
@@ -890,7 +890,7 @@ const blackwakePirateWeapons:Project[]=[
   {id:"blackwake_marlinspike",name:"Blackwake Marlinspike Dagger",description:"A narrow sailor's fighting dagger inspired by a rigging marlinspike, with a bright point and brass crossguard.",baseItem:"minecraft:iron_sword",sprite:PIRATE_WEAPON_SPRITES.dagger},
   {id:"blackwake_captains_saber",name:"Blackwake Captain's Saber",description:"An ornate captain's saber with a polished curved blade, gilded knuckle bow, crimson grip, and tideglass jewel.",baseItem:"minecraft:diamond_sword",sprite:PIRATE_WEAPON_SPRITES.saber}
 ].map(project=>({...project,source:"codex" as const,revision:2,kind:"item" as const,namespace:"blocksmith",spriteParent:"handheld" as const,cubes:[],category:"Tools & Weapons",group:"Blackwake Pirate Weapons",pack:"Fantasy Daily Rewards"}));
-const woodcuttingGuildAxe:Project={id:"runesmith_woodcutting_guild_axe",name:"Woodcutting Guild Axe",description:"A prestigious vanilla-shaped forestry axe with a reinforced steel head, bright cutting edge, small gold guild mark, forest-green bindings, and a hardwood haft.",cubes:[],source:"codex",revision:1,kind:"item",namespace:"runesmith",baseItem:"minecraft:iron_axe",spriteParent:"handheld",sprite:makeObjectGuiItemSprite(WOODCUTTING_GUILD_AXE_ROWS,WOODCUTTING_GUILD_AXE_COLORS),category:"Tools & Weapons",group:"Woodcutting Guild Tools",pack:"RuneSmith Woodcutting Guild"};
+const woodcuttingGuildAxe:Project={id:"runesmith_woodcutting_guild_axe",name:"Woodcutting Guild Axe",description:"A prestigious forestry axe traced from Minecraft 26.2's exact vanilla iron-axe silhouette, retaining its original hardwood haft while adding a green guild binding, subtly green-tinted steel, and a single gold guild mark.",cubes:[],source:"codex",revision:2,kind:"item",namespace:"runesmith",baseItem:"minecraft:iron_axe",spriteParent:"handheld",sprite:makeObjectGuiItemSprite(WOODCUTTING_GUILD_AXE_ROWS,WOODCUTTING_GUILD_AXE_COLORS),category:"Tools & Weapons",group:"Woodcutting Guild Tools",pack:"RuneSmith Woodcutting Guild"};
 const blackwakePlayingCards:Project[]=CARD_SUITS.flatMap(suit=>CARD_RANKS.map(rank=>{const suitName=suit[0].toUpperCase()+suit.slice(1),red=suit==="hearts"||suit==="diamonds";return{id:`blackwake_${rank.toLowerCase()}_of_${suit}`,name:`Blackwake ${CARD_RANK_NAMES[rank]} of ${suitName}`,source:"codex",revision:2,description:`A simplified high-contrast pirate casino card item with a large ${red?"crimson":"black"} ${suit.slice(0,-1)} and readable corner ${rank} at 16×16 pixels.`,kind:"item",namespace:"blocksmith",baseItem:"minecraft:paper",spriteParent:"generated",sprite:makePlayingCardSprite(rank,suit),cubes:[],category:"Miscellaneous",group:"Blackwake Playing Cards",pack:"Fantasy Daily Rewards"}}));
 const emberGreatsword:Project={id:"codex_emberglass_greatsword_01",name:"Emberglass Greatsword",source:"codex",revision:2,description:"A vanilla-style volcanic sword sprite with a blackened hilt and molten glass blade.",kind:"item",namespace:"blocksmith",baseItem:"minecraft:netherite_sword",sprite:makeSwordSprite({blade:"#d65732",edge:"#ffd06a",grip:"#593421",guard:"#293239",glow:"#fff08a"}),cubes:[
   cube("pommel","Coal pommel",[6.7,.1,6.7],[9.3,1.6,9.3],"#20272c","black metal"),cube("ember_pommel","Pommel ember",[7.3,-.4,7.3],[8.7,.5,8.7],"#e56534","emissive ember"),cube("grip","Charred grip",[7,1.4,7],[9,5.2,9],"#593421","charred wood"),cube("wrap_low","Lower copper wrap",[6.7,2,6.7],[9.3,2.65,9.3],"#bd5a4d","hammered copper"),cube("wrap_high","Upper copper wrap",[6.7,3.7,6.7],[9.3,4.35,9.3],"#bd5a4d","hammered copper"),cube("guard_core","Guard core",[6.1,4.8,6.2],[9.9,6.2,9.8],"#293239","black metal"),cube("guard_left","Left flame guard",[3.5,4.35,6.6],[6.3,5.75,9.4],"#7a3429","scorched metal"),cube("guard_left_tip","Left guard tip",[2.6,3.9,7.05],[4.1,5,8.95],"#d65732","hot metal"),cube("guard_right","Right flame guard",[9.7,4.35,6.6],[12.5,5.75,9.4],"#7a3429","scorched metal"),cube("guard_right_tip","Right guard tip",[11.9,3.9,7.05],[13.4,5,8.95],"#d65732","hot metal"),cube("blade_frame","Blade frame",[6.15,5.7,6.55],[9.85,15.1,9.45],"#293239","black metal"),cube("blade_glass","Molten blade core",[6.75,6.1,6.05],[9.25,14.8,6.7],"#ec6a32","emissive emberglass"),cube("edge_left","Left bright edge",[5.75,6.2,6.9],[6.45,14.45,9.1],"#d5a642","hot sharpened metal"),cube("edge_right","Right bright edge",[9.55,6.2,6.9],[10.25,14.45,9.1],"#d5a642","hot sharpened metal"),cube("tip","Forked blade tip",[6.85,14.8,7],[9.15,16.35,9],"#e9a34d","emissive emberglass"),cube("rune","Forge rune",[7.4,8.1,5.7],[8.6,10.2,6.2],"#ffe06b","emissive rune") ]};
