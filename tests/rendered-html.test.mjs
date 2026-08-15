@@ -170,7 +170,11 @@ test("fantasy daily loot collection has three rarity tiers and a pirate chest", 
   assert.match(source, /const cubesOverlap=/);
   assert.match(source, /const overlapChecked=/);
   assert.match(source, /if\(cubesOverlap\(cubes\[i\],cubes\[j\]\)\)throw new Error/);
-  assert.match(source, /source:"codex",revision:3,kind:"furniture"/);
+  assert.match(source, /source:"codex",revision:4,kind:"furniture"/);
+  // The lid shell is a five-course barrel arch; every tier ornament must survive it.
+  for (const course of ["common_arch_0", "rare_arch_2", "legendary_arch_4", "pirate_arch_0"]) assert.match(source, new RegExp(course));
+  assert.match(source, /name:"Shake",lengthTicks:12,loop:true/);
+  assert.ok(source.includes("frame(`${project.id}_open_7`,7,`${project.id}_lid`,[102,0,0])"), "Open must overshoot the stop before settling");
   assert.match(source, /common_rear_left_foot[^\n]+\[1,0,10\],\[4,1,14\]/);
   assert.match(source, /common_rear_right_foot[^\n]+\[12,0,10\],\[15,1,14\]/);
   assert.match(source, /legendary_horn_l[^\n]+\[-1,15\.5,3\],\[1\.5,18\.5,5\.5\]/);
