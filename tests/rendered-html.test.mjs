@@ -967,3 +967,22 @@ test("flat icon model settings expose the icon name and collection", async () =>
   assert.match(source, /<label className="field-label">COLLECTION<input value=\{projectGroup\(project\)\} onChange=\{e=>organize\(\{group:e\.target\.value\}\)\}/);
   assert.match(source, /Edit this icon’s name, collection, export target, and pixels\./);
 });
+test("Dragon Wood Bow is a vanilla-shaped flat item cut from the dragon tree set", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const makeDragonWoodBowSprite=\(\)=>/);
+  assert.match(source, /id:"runesmith_dragon_bow",name:"Dragon Wood Bow"/);
+  assert.match(source, /baseItem:"minecraft:bow",spriteParent:"handheld",sprite:makeDragonWoodBowSprite\(\)/);
+  assert.match(source, /group:"Dragon Wood Gear",pack:"RuneSmith Dragon Wood"/);
+  assert.match(source, /\.\.\.dragonWoodGear,/);
+  const rows = JSON.parse(source.match(/const makeDragonWoodBowSprite=\(\)=>\{const rows=(\[[^;]+?\]),colors/)?.[1] || "[]");
+  assert.equal(rows.length, 16);
+  assert.ok(rows.every(row => row.length === 16));
+  // Sides stay clear so the outline is never clipped in an inventory slot.
+  assert.ok(rows.every(row => row[0] === "." && row[15] === "."), "bow must keep a clear column on both sides");
+  // The limb is dragon heartwood; the string is the single pale tone.
+  assert.match(source, /S:"#d8c4b0"/);
+  assert.ok(source.includes('R:"#d3543d"'), "ember resin vein tone must come from the dragon tree palette");
+  const flat = rows.join("");
+  assert.ok(flat.split("").filter(ch => ch === "S").length >= 8, "string must run the full diagonal");
+  assert.ok(flat.split("").filter(ch => ch !== ".").length > 90, "bow should fill the icon");
+});
