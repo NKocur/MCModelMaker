@@ -716,6 +716,9 @@ test("RuneSmith Dragon Tree is a separate Minecraft-style wood collection", asyn
   assert.match(source, /group:"Dragon Tree Blocks",pack:"RuneSmith Dragon Wood"/);
   assert.match(source, /faceData:\{0:dragonTreeFace\("dragon-tree:bark"\),1:dragonTreeFace\("dragon-tree:bark"\),2:dragonTreeFace\("dragon-tree:bark"\),3:dragonTreeFace\("dragon-tree:bark"\),4:dragonTreeFace\("dragon-tree:end"\),5:dragonTreeFace\("dragon-tree:end"\)\}/);
   assert.match(source, /material==="dragon-tree:bark"/);
+  assert.match(source, /scaleRow=Math\.floor\(y\/4\),scaleY=y%4,offset=scaleRow%2\?3:0/);
+  assert.match(source, /\(scaleY===1&&distance===2\)\|\|\(scaleY===2&&distance===1\)\|\|\(scaleY===3&&distance===0\)/);
+  assert.doesNotMatch(source, /scaleEdge=\(x\+scaleRow\*2\)%5===0\|\|y%3===0/);
   assert.match(source, /material==="dragon-tree:end"/);
   assert.match(source, /material==="dragon-tree:planks"/);
   assert.match(source, /material==="dragon-tree:leaves"/);
