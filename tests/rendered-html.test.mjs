@@ -730,20 +730,28 @@ test("RuneSmith lobster fishing includes a detailed 3D pot and a faceted flat ca
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const overlapFreeLobsterPotCubes=\(\)=>/);
   assert.match(source, /const assertNoCubeVolumeOverlaps=\(parts:Cube\[\]\)=>/);
-  assert.match(source, /staveSegments:\[number,number\]\[]=\[\[2,4\],\[5,8\],\[9,11\]\]/);
-  assert.match(source, /"Separated neck stave",\[x,13,z\],\[x\+1,15,z\+1\]/);
-  assert.match(source, /"Rope handle",\[6,17,7\],\[10,18,8\]/);
   assert.match(source, /return assertNoCubeVolumeOverlaps\(parts\)/);
-  assert.match(source, /"Woven base front"/);
-  assert.match(source, /"Dark binding hoop"/);
-  assert.match(source, /"Narrow neck front"/);
-  assert.match(source, /"Rope handle"/);
+  // The creel is built from octagonal courses: four walls plus four one-wide corner steps.
+  assert.match(source, /const course=\(tag:string,label:string,y0:number,y1:number,r:number,color:string,material:string\)=>\{const a=r-2,lo=8-r,hi=8\+r;/);
+  for (const face of ["_f", "_b", "_l", "_r", "_fl", "_fr", "_bl", "_br"]) {
+    assert.ok(source.includes("pot_${tag}" + face), "octagonal course is missing the " + face + " segment");
+  }
+  assert.match(source, /course\("belly","Bellied lower weave",1,4,6,/);
+  assert.match(source, /course\("mouth","Pot mouth rim",14,15,4\.35,/);
+  assert.match(source, /"Woven base"/);
+  assert.match(source, /"Lower binding hoop"/);
+  assert.match(source, /"Dark funnel entrance"/);
+  assert.match(source, /"Rope handle crown"/);
   assert.match(source, /const makeRuneScapeLobsterSprite=\(\)=>/);
-  assert.match(source, /colors:Record<string,string>=\{D:"#28170d",O:"#a94d0d",L:"#e47718"\}/);
+  assert.match(source, /colors:Record<string,string>=\{D:"#2a1508",d:"#7a2f0c",O:"#d4590f",L:"#ef7c1e",H:"#ffa752",k:"#120802"\}/);
   const lobsterRows = JSON.parse(source.match(/const makeRuneScapeLobsterSprite=\(\)=>\{const rows=(\[[^;]+?\]),colors/)?.[1] || "[]");
   assert.equal(lobsterRows.length, 16);
   assert.ok(lobsterRows.every(row => row.length === 16));
-  assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"[\s\S]*?cubes:overlapFreeLobsterPotCubes\(\),source:"codex",revision:2/);
+  // Drawn head-up and mirror-symmetrical: raised pincers at the top, tail fan at the bottom.
+  assert.ok(lobsterRows.every(row => row === [...row].reverse().join("")), "lobster sprite must stay mirror-symmetrical");
+  assert.ok(lobsterRows.slice(0, 4).every(row => /^\.?D/.test(row)), "raised pincers must reach the top corners");
+  assert.ok(/^\.\.\.D/.test(lobsterRows[15]), "tail fan must sit centred on the bottom row");
+  assert.match(source, /id:"runesmith_lobster_pot",name:"RuneSmith Lobster Pot"[\s\S]*?cubes:overlapFreeLobsterPotCubes\(\),source:"codex",revision:3/);
   assert.match(source, /id:"runesmith_lobster",name:"RuneSmith Lobster"/);
   assert.match(source, /spriteParent:"generated",sprite:makeRuneScapeLobsterSprite\(\)/);
   assert.match(source, /group:"Lobster Fishing",pack:"RuneSmith Fishing"/);
