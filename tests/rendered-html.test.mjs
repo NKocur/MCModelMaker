@@ -707,6 +707,22 @@ test("RuneSmith Magic Tree blocks have Minecraft-style bark, end grain, planks, 
   assert.match(source, /\.\.\.magicTreeBlocks,/);
 });
 
+test("RuneSmith Dragon Tree is a separate Minecraft-style wood collection", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const dragonTreeBlocks:Project\[\]=\[/);
+  assert.match(source, /id:"runesmith_dragon_log",name:"Dragon Tree Log"/);
+  assert.match(source, /id:"runesmith_dragon_planks",name:"Dragon Tree Planks"/);
+  assert.match(source, /id:"runesmith_dragon_leaves",name:"Dragon Tree Leaves"/);
+  assert.match(source, /group:"Dragon Tree Blocks",pack:"RuneSmith Dragon Wood"/);
+  assert.match(source, /faceData:\{0:dragonTreeFace\("dragon-tree:bark"\),1:dragonTreeFace\("dragon-tree:bark"\),2:dragonTreeFace\("dragon-tree:bark"\),3:dragonTreeFace\("dragon-tree:bark"\),4:dragonTreeFace\("dragon-tree:end"\),5:dragonTreeFace\("dragon-tree:end"\)\}/);
+  assert.match(source, /material==="dragon-tree:bark"/);
+  assert.match(source, /material==="dragon-tree:end"/);
+  assert.match(source, /material==="dragon-tree:planks"/);
+  assert.match(source, /material==="dragon-tree:leaves"/);
+  assert.match(source, /material!=="magic-tree:leaves"&&material!=="dragon-tree:leaves"/);
+  assert.match(source, /\.\.\.dragonTreeBlocks,/);
+});
+
 test("RuneSmith lobster fishing includes a detailed 3D pot and a faceted flat catch", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /const overlapFreeLobsterPotCubes=\(\)=>/);
