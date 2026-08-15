@@ -434,42 +434,82 @@ const deckhandLuckyBones:Project={id:"deckhand_lucky_bones_slots",name:"Deckhand
 
 const admiralSlotCubes:Cube[]=[...recolorSlotCubes(skulljackCubes,{"#17191d":"#111722","#25272c":"#202d3c","#373d40":"#56646e","#444a4d":"#687782","#23262a":"#182330","#454c50":"#667680","#9d6c27":"#d2a541","#a46e25":"#c59839","#b67b29":"#d7aa43","#d09a38":"#e0b84f","#d6a13a":"#f0c85b","#9f3c3f":"#7c2340","#c28b35":"#d8ab43","#ae343b":"#3aa4a3"}),{...cube("slots_admiral_crown","Dread Admiral gilded crown",[3,24,4],[13,26,12],"#d9af48","ornate pirate gold"),boneId:"slots_body"},{...cube("slots_admiral_crown_peak","Cursed aqua crown jewel",[6.5,26,6],[9.5,28,10],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},{...cube("slots_admiral_tentacle_l","Left gilded kraken tentacle",[-.5,14,5],[1.5,23,7],"#c99a3b","gilded kraken carving"),rotation:[0,0,-22.5],boneId:"slots_body"},{...cube("slots_admiral_tentacle_r","Right gilded kraken tentacle",[14.5,14,5],[16.5,23,7],"#c99a3b","gilded kraken carving"),rotation:[0,0,22.5],boneId:"slots_body"},{...cube("slots_admiral_eye_l","Left kraken eye gem",[4.6,22.2,3.05],[5.8,23.4,3.35],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},{...cube("slots_admiral_eye_r","Right kraken eye gem",[10.2,22.2,3.05],[11.4,23.4,3.35],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},{...cube("slots_admiral_payout_rim","Legendary payout gold rim",[3.5,3.5,1.45],[12.5,7,1.8],"#e2b94f","ornate pirate gold"),boneId:"slots_body"}];
 const dreadAdmiralKrakenJackpot:Project={id:"dread_admiral_kraken_jackpot",name:"Dread Admiral's Kraken Jackpot",description:"Legendary-tier pirate slot machine with midnight naval timber, lavish gold trim, kraken tentacles, cursed aqua jewels, a crowned marquee, and independently animated reels.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:admiralSlotCubes,bones:blackwakeSkulljack.bones?.map(bone=>({...bone})),animations:blackwakeSkulljack.animations?.map(clip=>({...clip,id:"dread_admiral_jackpot_spin",name:"Dread Admiral Jackpot Spin",keyframes:clip.keyframes.map(keyframe=>({...keyframe}))}))};
-const sirensFortuneCubes:Cube[]=[
-  {...cube("siren_foot_l","Left verdigris foot",[2,0,4],[5,2,10],"#2b6055","verdigris sea copper"),boneId:"slots_body"},
-  {...cube("siren_foot_r","Right verdigris foot",[11,0,4],[14,2,10],"#2b6055","verdigris sea copper"),boneId:"slots_body"},
-  {...cube("siren_plinth","Barnacled base plinth",[2,2,3],[14,4,13],"#16232b","drowned hull timber"),boneId:"slots_body"},
-  {...cube("siren_lower","Drowned timber lower cabinet",[2,4,3],[14,9,13],"#22343d","drowned hull timber"),boneId:"slots_body"},
-  {...cube("siren_tray","Nacre payout tray",[3.5,5,1.8],[12.5,7.5,3],"#c98a5e","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_tray_mouth","Payout tray opening",[4.5,5.6,1.4],[11.5,7,1.8],"#080d10","deep cabinet shadow"),boneId:"slots_body"},
-  {...cube("siren_coin","Loose payout doubloon",[7.2,5.4,1],[8.8,7,1.4],"#d9af48","siren gold"),boneId:"siren_coin"},
-  {...cube("siren_mid_band","Verdigris control band",[2,9,2.6],[14,11,13],"#3f8a78","verdigris sea copper"),boneId:"slots_body"},
-  {...cube("siren_coin_slot","Doubloon intake plate",[9.8,9.2,2],[12.4,10.4,2.6],"#d9af48","siren gold"),boneId:"slots_body"},
-  {...cube("siren_frame_l","Left window upright",[2,11,2.6],[3,18,13],"#22343d","drowned hull timber"),boneId:"slots_body"},
-  {...cube("siren_frame_r","Right window upright",[13,11,2.6],[14,18,13],"#22343d","drowned hull timber"),boneId:"slots_body"},
-  {...cube("siren_frame_back","Window back wall",[3,11,8],[13,18,13],"#16232b","drowned hull timber"),boneId:"slots_body"},
-  {...cube("siren_bezel_t","Upper reel bezel",[3,17.6,2.2],[13,18,2.6],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_bezel_b","Lower reel bezel",[3,11,2.2],[13,11.4,2.6],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_bezel_l","Left reel bezel",[3,11.4,2.2],[3.4,17.6,2.6],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_bezel_r","Right reel bezel",[12.6,11.4,2.2],[13,17.6,2.6],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_drum_1","Reel 1 brass drum",[3.5,12.3,2.8],[6.1,16.7,7.2],"#c3bda9","brass reel drum"),boneId:"slots_reel_1"},
-  {...cube("siren_sym_1_f","Reel 1 front — Pearl",[3.95,13.2,2.6],[5.6499999999999995,15.8,2.8],"#e8e2d0","nacre pearl symbol"),boneId:"slots_reel_1"},
-  {...cube("siren_sym_1_t","Reel 1 top — Doubloon",[3.95,16.7,3.4],[5.6499999999999995,16.9,6.6],"#d9af48","doubloon symbol"),boneId:"slots_reel_1"},
-  {...cube("siren_sym_1_b","Reel 1 back — Trident",[3.95,13.2,7.2],[5.6499999999999995,15.8,7.4],"#a06fe0","violet trident symbol"),boneId:"slots_reel_1"},
-  {...cube("siren_sym_1_u","Reel 1 underside — Siren sigil",[3.95,12.1,3.4],[5.6499999999999995,12.3,6.6],"#c98a5e","siren sigil symbol"),boneId:"slots_reel_1"},
-  {...cube("siren_drum_2","Reel 2 brass drum",[6.7,12.3,2.8],[9.3,16.7,7.2],"#c3bda9","brass reel drum"),boneId:"slots_reel_2"},
-  {...cube("siren_sym_2_f","Reel 2 front — Doubloon",[7.15,13.2,2.6],[8.850000000000001,15.8,2.8],"#d9af48","doubloon symbol"),boneId:"slots_reel_2"},
-  {...cube("siren_sym_2_t","Reel 2 top — Trident",[7.15,16.7,3.4],[8.850000000000001,16.9,6.6],"#a06fe0","violet trident symbol"),boneId:"slots_reel_2"},
-  {...cube("siren_sym_2_b","Reel 2 back — Siren sigil",[7.15,13.2,7.2],[8.850000000000001,15.8,7.4],"#c98a5e","siren sigil symbol"),boneId:"slots_reel_2"},
-  {...cube("siren_sym_2_u","Reel 2 underside — Pearl",[7.15,12.1,3.4],[8.850000000000001,12.3,6.6],"#e8e2d0","nacre pearl symbol"),boneId:"slots_reel_2"},
-  {...cube("siren_drum_3","Reel 3 brass drum",[9.9,12.3,2.8],[12.5,16.7,7.2],"#c3bda9","brass reel drum"),boneId:"slots_reel_3"},
-  {...cube("siren_sym_3_f","Reel 3 front — Trident",[10.35,13.2,2.6],[12.05,15.8,2.8],"#a06fe0","violet trident symbol"),boneId:"slots_reel_3"},
-  {...cube("siren_sym_3_t","Reel 3 top — Siren sigil",[10.35,16.7,3.4],[12.05,16.9,6.6],"#c98a5e","siren sigil symbol"),boneId:"slots_reel_3"},
-  {...cube("siren_sym_3_b","Reel 3 back — Pearl",[10.35,13.2,7.2],[12.05,15.8,7.4],"#e8e2d0","nacre pearl symbol"),boneId:"slots_reel_3"},
-  {...cube("siren_sym_3_u","Reel 3 underside — Doubloon",[10.35,12.1,3.4],[12.05,12.3,6.6],"#d9af48","doubloon symbol"),boneId:"slots_reel_3"},
-  {...cube("siren_div_1","Left reel divider",[6.2,11.4,2.6],[6.6,17.6,3],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_div_2","Right reel divider",[9.4,11.4,2.6],[9.8,17.6,3],"#e0a878","tarnished siren gold"),boneId:"slots_body"},
-  {...cube("siren_header","Upper verdigris band",[2,18,2.6],[14,20,13],"#3f8a78","verdigris sea copper"),boneId:"slots_body"},
-  {...cube("siren_crown","Cabinet crown",[3,20,3],[13,22,12],"#16232b","drowned hull timber"),boneId:"slots_body"},
+type DrumSlotPalette={timber:string;timberDark:string;metal:string;metalDark:string;trim:string;tray:string;gold:string;shadow:string;drum:string;knob:string;metalWord:string;woodWord:string;mTimber:string;mMetal:string;mTrim:string;mGold:string;mShadow:string;mDrum:string;mKnob:string;nPlinth?:string;nTray?:string;nCoin?:string;nSlot?:string;nDrum?:string;nLever?:string;nKnob?:string};
+type DrumSlotSymbol={c:string;label:string;m:string};
+// Shared drum-reel cabinet: the reels are 4.4 x 4.4 square-section drums carrying four symbols
+// each, recessed behind the bezel, so every 90 degrees of spin presents a different face.
+const drumSlotCubes=(p:string,pal:DrumSlotPalette,syms:readonly DrumSlotSymbol[]):Cube[]=>{
+  const out:Cube[]=[],mw=pal.metalWord,wd=pal.woodWord,cap=(s:string)=>s[0].toUpperCase()+s.slice(1);
+  const add=(id:string,name:string,from:Vec3,to:Vec3,color:string,material:string,boneId:string,rotation:Vec3=[0,0,0])=>out.push({...cube(id,name,from,to,color,material),boneId,rotation});
+  add(`${p}_foot_l`,`Left ${mw} foot`,[2,0,4],[5,2,10],pal.metalDark,pal.mMetal,"slots_body");
+  add(`${p}_foot_r`,`Right ${mw} foot`,[11,0,4],[14,2,10],pal.metalDark,pal.mMetal,"slots_body");
+  add(`${p}_plinth`,pal.nPlinth||`${cap(wd)} base plinth`,[2,2,3],[14,4,13],pal.timberDark,pal.mTimber,"slots_body");
+  add(`${p}_lower`,`${cap(wd)} lower cabinet`,[2,4,3],[14,9,13],pal.timber,pal.mTimber,"slots_body");
+  add(`${p}_tray`,pal.nTray||"Payout tray",[3.5,5,1.8],[12.5,7.5,3],pal.tray,pal.mTrim,"slots_body");
+  add(`${p}_tray_mouth`,"Payout tray opening",[4.5,5.6,1.4],[11.5,7,1.8],pal.shadow,pal.mShadow,"slots_body");
+  add(`${p}_coin`,pal.nCoin||"Loose payout coin",[7.2,5.4,1],[8.8,7,1.4],pal.gold,pal.mGold,"slots_coin");
+  add(`${p}_mid_band`,`${cap(mw)} control band`,[2,9,2.6],[14,11,13],pal.metal,pal.mMetal,"slots_body");
+  add(`${p}_coin_slot`,pal.nSlot||"Coin intake plate",[9.8,9.2,2],[12.4,10.4,2.6],pal.gold,pal.mGold,"slots_body");
+  add(`${p}_frame_l`,"Left window upright",[2,11,2.6],[3,18,13],pal.timber,pal.mTimber,"slots_body");
+  add(`${p}_frame_r`,"Right window upright",[13,11,2.6],[14,18,13],pal.timber,pal.mTimber,"slots_body");
+  add(`${p}_frame_back`,"Window back wall",[3,11,8],[13,18,13],pal.timberDark,pal.mTimber,"slots_body");
+  add(`${p}_bezel_t`,"Upper reel bezel",[3,17.6,2.2],[13,18,2.6],pal.trim,pal.mTrim,"slots_body");
+  add(`${p}_bezel_b`,"Lower reel bezel",[3,11,2.2],[13,11.4,2.6],pal.trim,pal.mTrim,"slots_body");
+  add(`${p}_bezel_l`,"Left reel bezel",[3,11.4,2.2],[3.4,17.6,2.6],pal.trim,pal.mTrim,"slots_body");
+  add(`${p}_bezel_r`,"Right reel bezel",[12.6,11.4,2.2],[13,17.6,2.6],pal.trim,pal.mTrim,"slots_body");
+  ([[3.5,6.1],[6.7,9.3],[9.9,12.5]] as const).forEach(([x0,x1],index)=>{
+    const n=index+1,bone=`slots_reel_${n}`,a=x0+.45,b=x1-.45,face=[0,1,2,3].map(k=>syms[(k+index)%4]);
+    add(`${p}_drum_${n}`,`Reel ${n} ${pal.nDrum||"drum"}`,[x0,12.3,2.8],[x1,16.7,7.2],pal.drum,pal.mDrum,bone);
+    add(`${p}_sym_${n}_f`,`Reel ${n} front — ${face[0].label}`,[a,13.2,2.6],[b,15.8,2.8],face[0].c,face[0].m,bone);
+    add(`${p}_sym_${n}_t`,`Reel ${n} top — ${face[1].label}`,[a,16.7,3.4],[b,16.9,6.6],face[1].c,face[1].m,bone);
+    add(`${p}_sym_${n}_b`,`Reel ${n} back — ${face[2].label}`,[a,13.2,7.2],[b,15.8,7.4],face[2].c,face[2].m,bone);
+    add(`${p}_sym_${n}_u`,`Reel ${n} underside — ${face[3].label}`,[a,12.1,3.4],[b,12.3,6.6],face[3].c,face[3].m,bone);
+  });
+  add(`${p}_div_1`,"Left reel divider",[6.2,11.4,2.6],[6.6,17.6,3],pal.trim,pal.mTrim,"slots_body");
+  add(`${p}_div_2`,"Right reel divider",[9.4,11.4,2.6],[9.8,17.6,3],pal.trim,pal.mTrim,"slots_body");
+  add(`${p}_header`,`Upper ${mw} band`,[2,18,2.6],[14,20,13],pal.metal,pal.mMetal,"slots_body");
+  add(`${p}_crown`,"Cabinet crown",[3,20,3],[13,22,12],pal.timberDark,pal.mTimber,"slots_body");
+  add(`${p}_lever_mount`,`${cap(mw)} lever mount`,[14,11,7],[15.5,14,10],pal.metalDark,pal.mMetal,"slots_body");
+  add(`${p}_lever`,pal.nLever||"Lever shaft",[15.5,13,8],[17.5,14,9],pal.trim,pal.mTrim,"slots_lever");
+  add(`${p}_lever_knob`,pal.nKnob||"Lever knob",[17.5,12.4,7.4],[19,14.6,9.6],pal.knob,pal.mKnob,"slots_lever");
+  return out};
+const drumSlotBones=(lamps:boolean):Bone[]=>[
+  {id:"slots_body",name:"Cabinet",parentId:null,pivot:[8,0,8]},
+  {id:"slots_reel_1",name:"Left reel drum",parentId:"slots_body",pivot:[4.8,14.5,5]},
+  {id:"slots_reel_2",name:"Centre reel drum",parentId:"slots_body",pivot:[8,14.5,5]},
+  {id:"slots_reel_3",name:"Right reel drum",parentId:"slots_body",pivot:[11.2,14.5,5]},
+  {id:"slots_lever",name:"Pull lever",parentId:"slots_body",pivot:[15.5,13.5,8.5]},
+  {id:"slots_coin",name:"Payout coin",parentId:"slots_body",pivot:[8,6.2,1.2]},
+  ...(lamps?[{id:"slots_lamp_l",name:"Left lamp",parentId:"slots_body",pivot:[3.85,24.5,7.6]},
+             {id:"slots_lamp_r",name:"Right lamp",parentId:"slots_body",pivot:[12.15,24.5,7.6]}] as Bone[]:[])];
+// Reels stop one after another, each landing on an exact multiple of 90 degrees after a short
+// overshoot and settle, so the drum comes to rest square in the window.
+const drumSpinClip=(k:string):AnimationClip=>({id:`${k}_spin`,name:"Pull & Spin",lengthTicks:44,loop:false,keyframes:[
+  frame(`${k}_lever_0`,0,"slots_lever"),frame(`${k}_lever_4`,4,"slots_lever",[0,0,-45]),frame(`${k}_lever_10`,10,"slots_lever"),
+  ...([[1,[[0,0],[6,450],[12,900],[16,1170],[19,1272],[22,1260],[44,1260]]],
+      [2,[[0,0],[6,450],[14,1080],[22,1620],[26,1812],[29,1800],[44,1800]]],
+      [3,[[0,0],[8,540],[16,1170],[26,1890],[33,2250],[36,2362],[40,2340],[44,2340]]]] as const)
+    .flatMap(([reel,steps])=>steps.map(([tick,deg])=>frame(`${k}_r${reel}_${tick}`,tick,`slots_reel_${reel}`,[deg,0,0])))]});
+const drumJackpotClip=(k:string,lamps:boolean):AnimationClip=>({id:`${k}_jackpot`,name:"Jackpot Payout",lengthTicks:30,loop:false,keyframes:[
+  ...([[0,0],[5,3.5],[11,0],[16,2],[21,0],[30,0]] as const).map(([tick,lift])=>frame(`${k}_coin_${tick}`,tick,"slots_coin",[0,0,0],[0,lift,lift?-0.6:0])),
+  ...([[0,0],[4,.4],[8,0],[30,0]] as const).map(([tick,lift])=>frame(`${k}_body_${tick}`,tick,"slots_body",[0,0,0],[0,lift,0])),
+  ...(lamps?[0,5,10,15,20,25,30].flatMap(tick=>[
+    frame(`${k}_laml_${tick}`,tick,"slots_lamp_l",[0,0,0],[0,tick%10===5?.8:0,0]),
+    frame(`${k}_lamr_${tick}`,tick,"slots_lamp_r",[0,0,0],[0,tick%10===5?0:.8,0])]):[])]});
+const drumIdleClip=(k:string):AnimationClip=>({id:`${k}_idle`,name:"Attract Idle",lengthTicks:60,loop:true,keyframes:
+  [0,15,30,45,60].flatMap(tick=>[
+    frame(`${k}_idlel_${tick}`,tick,"slots_lamp_l",[0,0,0],[0,tick%30===15?.5:0,0]),
+    frame(`${k}_idler_${tick}`,tick,"slots_lamp_r",[0,0,0],[0,tick%30===15?0:.5,0])])});
+const drumSymbol=(c:string,label:string,m:string):DrumSlotSymbol=>({c,label,m});
+const sirenSlotPalette:DrumSlotPalette={ timber:"#22343d", timberDark:"#16232b", metal:"#3f8a78", metalDark:"#2b6055",trim:"#e0a878", tray:"#c98a5e", gold:"#d9af48", shadow:"#080d10", drum:"#c3bda9", knob:"#a06fe0",metalWord:"verdigris", woodWord:"drowned timber",nPlinth:"Barnacled base plinth", nTray:"Nacre payout tray", nCoin:"Loose payout doubloon",nSlot:"Doubloon intake plate", nDrum:"brass drum", nLever:"Copper lever shaft", nKnob:"Violet pearl knob",mTimber:"drowned hull timber", mMetal:"verdigris sea copper", mTrim:"tarnished siren gold",mGold:"siren gold", mShadow:"deep cabinet shadow", mDrum:"brass reel drum", mKnob:"emissive abyssal violet glow" };
+const deckhandSlotPalette:DrumSlotPalette={ timber:"#67472a", timberDark:"#4a3322", metal:"#5e6461", metalDark:"#555b59",trim:"#9d7d42", tray:"#8c6a32", gold:"#8c6a32", shadow:"#0c0a08", drum:"#a89f8a", knob:"#786346",metalWord:"dull iron", woodWord:"patched tavern timber",nTray:"Coin payout tray", nCoin:"Loose copper coin", nDrum:"bone drum",nLever:"Iron lever shaft", nKnob:"Worn oak knob",mTimber:"patched tavern timber", mMetal:"dull ship iron", mTrim:"worn brass trim",mGold:"tarnished coin brass", mShadow:"deep cabinet shadow", mDrum:"weathered bone drum", mKnob:"worn oak knob" };
+const skulljackSlotPalette:DrumSlotPalette={ timber:"#25272c", timberDark:"#17191d", metal:"#454c50", metalDark:"#373d40",trim:"#d09a38", tray:"#b67b29", gold:"#c58e36", shadow:"#08090b", drum:"#b9b3a0", knob:"#ae343b",metalWord:"salt-bitten iron", woodWord:"black ship timber",nTray:"Gold payout tray", nCoin:"Loose doubloon", nSlot:"Doubloon coin slot",nDrum:"bone drum", nLever:"Gold lever shaft", nKnob:"Ruby lever knob",mTimber:"blackened ship timber", mMetal:"salt-bitten iron", mTrim:"pirate gold",mGold:"pirate gold", mShadow:"deep cabinet shadow", mDrum:"bone reel drum", mKnob:"cursed ruby" };
+const admiralSlotPalette:DrumSlotPalette={ timber:"#202d3c", timberDark:"#111722", metal:"#667680", metalDark:"#56646e",trim:"#e0b84f", tray:"#d7aa43", gold:"#d7aa43", shadow:"#080b10", drum:"#c8cdd2", knob:"#3aa4a3",metalWord:"storm steel", woodWord:"midnight naval timber",nTray:"Gilded payout tray", nCoin:"Loose doubloon", nSlot:"Doubloon coin slot",nDrum:"ivory drum", nLever:"Gold lever shaft", nKnob:"Cursed aqua knob",mTimber:"midnight naval timber", mMetal:"storm-forged steel", mTrim:"ornate pirate gold",mGold:"ornate pirate gold", mShadow:"deep cabinet shadow", mDrum:"pale ivory drum", mKnob:"emissive cursed aqua jewel" };
+const sirenSlotSymbols:readonly DrumSlotSymbol[]=[drumSymbol("#e8e2d0","Pearl","nacre pearl symbol"),drumSymbol("#d9af48","Doubloon","doubloon symbol"),drumSymbol("#a06fe0","Trident","violet trident symbol"),drumSymbol("#c98a5e","Siren sigil","siren sigil symbol")];
+const deckhandSlotSymbols:readonly DrumSlotSymbol[]=[drumSymbol("#b8b39d","Lucky bone","weathered bone symbol"),drumSymbol("#b69a55","Dull coin","tarnished coin symbol"),drumSymbol("#7f4a3d","Rum tankard","rum tankard symbol"),drumSymbol("#646b68","Iron anchor","dull iron anchor symbol")];
+const skulljackSlotSymbols:readonly DrumSlotSymbol[]=[drumSymbol("#d0cab0","Bone skull","blocky skull symbol"),drumSymbol("#d6a13a","Doubloon","shining doubloon symbol"),drumSymbol("#9f3c3f","Crimson parrot","crimson parrot symbol"),drumSymbol("#8e979b","Cutlass","steel cutlass symbol")];
+const admiralSlotSymbols:readonly DrumSlotSymbol[]=[drumSymbol("#4fc7c3","Kraken eye","cursed aqua kraken symbol"),drumSymbol("#f0c85b","Doubloon","shining doubloon symbol"),drumSymbol("#7c2340","Admiral's crest","crimson admiral crest symbol"),drumSymbol("#687782","Anchor","steel anchor symbol")];
+const sirensFortuneCubes:Cube[]=[...drumSlotCubes("siren",sirenSlotPalette,sirenSlotSymbols),
   {...cube("siren_marquee","Siren marquee board",[4,22,4],[12,24.5,11],"#2b6055","verdigris sea copper"),boneId:"slots_body"},
   {...cube("siren_plaque","Carved siren plaque",[4.5,20.4,2.6],[11.5,23.6,3],"#c98a5e","tarnished siren gold"),boneId:"slots_body"},
   {...cube("siren_emblem_shaft","Trident shaft",[7.7,20.8,2.2],[8.3,22.4,2.6],"#d7b3ff","emissive abyssal violet glow"),boneId:"slots_body"},
@@ -482,17 +522,39 @@ const sirensFortuneCubes:Cube[]=[
   {...cube("siren_bust_head","Siren figurehead head",[7.15,27.8,6.7],[8.85,29.2,8.3],"#e8e2d0","nacre pearl inlay"),boneId:"slots_body"},
   {...cube("siren_bust_hair","Kelp mantle",[6.7,27.4,8.6],[9.3,29.4,9.2],"#3f8a78","verdigris sea copper"),boneId:"slots_body"},
   {...cube("siren_crest","Glowing pearl crest",[7.4,29.2,7],[8.6,30.2,8],"#d7b3ff","emissive abyssal violet glow"),boneId:"slots_body"},
-  {...cube("siren_lamp_l","Left biolume lamp",[3.2,24.5,6.2],[4.5,26.4,9],"#a06fe0","emissive abyssal violet glow"),boneId:"siren_lamp_l"},
-  {...cube("siren_lamp_r","Right biolume lamp",[11.5,24.5,6.2],[12.8,26.4,9],"#a06fe0","emissive abyssal violet glow"),boneId:"siren_lamp_r"},
-  {...cube("siren_lever_mount","Verdigris lever mount",[14,11,7],[15.5,14,10],"#2b6055","verdigris sea copper"),boneId:"slots_body"},
-  {...cube("siren_lever","Copper lever shaft",[15.5,13,8],[17.5,14,9],"#e0a878","tarnished siren gold"),boneId:"slots_lever"},
-  {...cube("siren_lever_knob","Violet pearl knob",[17.5,12.4,7.4],[19,14.6,9.6],"#a06fe0","emissive abyssal violet glow"),boneId:"slots_lever"}
+  {...cube("siren_lamp_l","Left biolume lamp",[3.2,24.5,6.2],[4.5,26.4,9],"#a06fe0","emissive abyssal violet glow"),boneId:"slots_lamp_l"},
+  {...cube("siren_lamp_r","Right biolume lamp",[11.5,24.5,6.2],[12.8,26.4,9],"#a06fe0","emissive abyssal violet glow"),boneId:"slots_lamp_r"}
 ];
-const sirensFortune:Project={id:"sirens_fortune_slots",name:"Siren's Fortune",description:"Mythic-tier pirate slot machine built around square-section reel drums that each carry four symbols, so every quarter turn lands a different face in the recessed nacre window. Verdigris sea copper over drowned hull timber, a glowing trident marquee, a siren figurehead and biolume lamps, with staggered reel stops that overshoot and settle, a jackpot payout, and an idle attract loop.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Siren's Fortune",sirensFortuneCubes),bones:[{id:"slots_body",name:"Cabinet",parentId:null,pivot:[8,0,8]},{id:"slots_reel_1",name:"Pearl reel drum",parentId:"slots_body",pivot:[4.8,14.5,5]},{id:"slots_reel_2",name:"Doubloon reel drum",parentId:"slots_body",pivot:[8,14.5,5]},{id:"slots_reel_3",name:"Trident reel drum",parentId:"slots_body",pivot:[11.2,14.5,5]},{id:"slots_lever",name:"Pull lever",parentId:"slots_body",pivot:[15.5,13.5,8.5]},{id:"siren_lamp_l",name:"Left biolume lamp",parentId:"slots_body",pivot:[3.85,24.5,7.6]},{id:"siren_lamp_r",name:"Right biolume lamp",parentId:"slots_body",pivot:[12.15,24.5,7.6]},{id:"siren_coin",name:"Payout doubloon",parentId:"slots_body",pivot:[8,6.2,1.2]}],animations:[
-  {id:"sirens_fortune_spin",name:"Pull & Spin",lengthTicks:44,loop:false,keyframes:[frame("sf_lever_0",0,"slots_lever"),frame("sf_lever_4",4,"slots_lever",[0,0,-45]),frame("sf_lever_10",10,"slots_lever"),frame("sf_r1_0",0,"slots_reel_1",[0,0,0]),frame("sf_r1_6",6,"slots_reel_1",[450,0,0]),frame("sf_r1_12",12,"slots_reel_1",[900,0,0]),frame("sf_r1_16",16,"slots_reel_1",[1170,0,0]),frame("sf_r1_19",19,"slots_reel_1",[1272,0,0]),frame("sf_r1_22",22,"slots_reel_1",[1260,0,0]),frame("sf_r1_44",44,"slots_reel_1",[1260,0,0]),frame("sf_r2_0",0,"slots_reel_2",[0,0,0]),frame("sf_r2_6",6,"slots_reel_2",[450,0,0]),frame("sf_r2_14",14,"slots_reel_2",[1080,0,0]),frame("sf_r2_22",22,"slots_reel_2",[1620,0,0]),frame("sf_r2_26",26,"slots_reel_2",[1812,0,0]),frame("sf_r2_29",29,"slots_reel_2",[1800,0,0]),frame("sf_r2_44",44,"slots_reel_2",[1800,0,0]),frame("sf_r3_0",0,"slots_reel_3",[0,0,0]),frame("sf_r3_8",8,"slots_reel_3",[540,0,0]),frame("sf_r3_16",16,"slots_reel_3",[1170,0,0]),frame("sf_r3_26",26,"slots_reel_3",[1890,0,0]),frame("sf_r3_33",33,"slots_reel_3",[2250,0,0]),frame("sf_r3_36",36,"slots_reel_3",[2362,0,0]),frame("sf_r3_40",40,"slots_reel_3",[2340,0,0]),frame("sf_r3_44",44,"slots_reel_3",[2340,0,0])]},
-  {id:"sirens_fortune_jackpot",name:"Jackpot Payout",lengthTicks:30,loop:false,keyframes:[frame("sf_coin_0",0,"siren_coin",[0,0,0],[0,0,0]),frame("sf_coin_5",5,"siren_coin",[0,0,0],[0,3.5,-0.6]),frame("sf_coin_11",11,"siren_coin",[0,0,0],[0,0,0]),frame("sf_coin_16",16,"siren_coin",[0,0,0],[0,2,-0.4]),frame("sf_coin_21",21,"siren_coin",[0,0,0],[0,0,0]),frame("sf_coin_30",30,"siren_coin",[0,0,0],[0,0,0]),frame("sf_lampl_0",0,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_lampl_5",5,"siren_lamp_l",[0,0,0],[0,0.8,0]),frame("sf_lampl_10",10,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_lampl_15",15,"siren_lamp_l",[0,0,0],[0,0.8,0]),frame("sf_lampl_20",20,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_lampl_25",25,"siren_lamp_l",[0,0,0],[0,0.8,0]),frame("sf_lampl_30",30,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_lampr_0",0,"siren_lamp_r",[0,0,0],[0,0.8,0]),frame("sf_lampr_5",5,"siren_lamp_r",[0,0,0],[0,0,0]),frame("sf_lampr_10",10,"siren_lamp_r",[0,0,0],[0,0.8,0]),frame("sf_lampr_15",15,"siren_lamp_r",[0,0,0],[0,0,0]),frame("sf_lampr_20",20,"siren_lamp_r",[0,0,0],[0,0.8,0]),frame("sf_lampr_25",25,"siren_lamp_r",[0,0,0],[0,0,0]),frame("sf_lampr_30",30,"siren_lamp_r",[0,0,0],[0,0.8,0]),frame("sf_body_0",0,"slots_body",[0,0,0],[0,0,0]),frame("sf_body_4",4,"slots_body",[0,0,0],[0,0.4,0]),frame("sf_body_8",8,"slots_body",[0,0,0],[0,0,0]),frame("sf_body_30",30,"slots_body",[0,0,0],[0,0,0])]},
-  {id:"sirens_fortune_idle",name:"Attract Idle",lengthTicks:60,loop:true,keyframes:[frame("sf_idle_l_0",0,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_idle_l_15",15,"siren_lamp_l",[0,0,0],[0,0.5,0]),frame("sf_idle_l_30",30,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_idle_l_45",45,"siren_lamp_l",[0,0,0],[0,0.5,0]),frame("sf_idle_l_60",60,"siren_lamp_l",[0,0,0],[0,0,0]),frame("sf_idle_r_0",0,"siren_lamp_r",[0,0,0],[0,0.5,0]),frame("sf_idle_r_15",15,"siren_lamp_r",[0,0,0],[0,0,0]),frame("sf_idle_r_30",30,"siren_lamp_r",[0,0,0],[0,0.5,0]),frame("sf_idle_r_45",45,"siren_lamp_r",[0,0,0],[0,0,0]),frame("sf_idle_r_60",60,"siren_lamp_r",[0,0,0],[0,0.5,0])]}
-]};
+const sirensFortune:Project={id:"sirens_fortune_slots",name:"Siren's Fortune",description:"Mythic-tier pirate slot machine built around square-section reel drums that each carry four symbols, so every quarter turn lands a different face in the recessed nacre window. Verdigris sea copper over drowned hull timber, a glowing trident marquee, a siren figurehead and biolume lamps, with staggered reel stops that overshoot and settle, a jackpot payout, and an idle attract loop.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Siren's Fortune",sirensFortuneCubes),bones:drumSlotBones(true),animations:[drumSpinClip("sirens_fortune"),drumJackpotClip("sirens_fortune",true),drumIdleClip("sirens_fortune")]};
+const deckhandRefitCubes:Cube[]=[...drumSlotCubes("deckhand",deckhandSlotPalette,deckhandSlotSymbols),
+  {...cube("deckhand_sign","Weathered Lucky Bones sign",[4,20.4,2.6],[12,22.6,3],"#76502c","weathered tavern sign"),boneId:"slots_body"},
+  {...cube("deckhand_bone_l","Left lucky bone",[5,21,2.2],[7.4,21.6,2.6],"#b8b39d","weathered bone"),boneId:"slots_body",rotation:[0,0,-22.5] as Vec3},
+  {...cube("deckhand_bone_r","Right lucky bone",[8.6,21,2.2],[11,21.6,2.6],"#b8b39d","weathered bone"),boneId:"slots_body",rotation:[0,0,22.5] as Vec3},
+  {...cube("deckhand_patch","Bolted cabinet repair patch",[2.1,6,13],[5.5,10,13.4],"#646b68","dull repair iron"),boneId:"slots_body"}
+];
+const deckhandLuckyBonesRefit:Project={id:"deckhand_lucky_bones_refit",name:"Deckhand's Lucky Bones Refit",description:"The common-tier tavern slot machine rebuilt on square-section reel drums. Same patched tavern timber, dull ship iron, weathered bone signage and bolted repair patch as the original, but each drum now carries four symbols behind a recessed window and the reels stop one at a time instead of swinging a single painted plate.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Deckhand's Lucky Bones Refit",deckhandRefitCubes),bones:drumSlotBones(false),animations:[drumSpinClip("deckhand_refit"),drumJackpotClip("deckhand_refit",false)]};
+const skulljackRefitCubes:Cube[]=[...drumSlotCubes("skulljack",skulljackSlotPalette,skulljackSlotSymbols),
+  {...cube("skulljack_marquee","Captain's marquee",[4,22,4],[12,24.5,11],"#9d6c27","pirate gold"),boneId:"slots_body"},
+  {...cube("skulljack_plaque","Skull jackpot plaque",[4.5,20.4,2.6],[11.5,23.6,3],"#6d461d","carved captain's plaque"),boneId:"slots_body"},
+  {...cube("skulljack_skull","Marquee bone skull",[6.6,21.4,2.2],[9.4,23.2,2.6],"#d0cab0","weathered bone"),boneId:"slots_body"},
+  {...cube("skulljack_jaw","Marquee skull jaw",[7.3,20.8,2.2],[8.7,21.4,2.6],"#bab49d","weathered bone"),boneId:"slots_body"},
+  {...cube("skulljack_eye_l","Left marquee eye",[7.1,22.1,1.9],[7.7,22.7,2.2],"#08090b","skull shadow"),boneId:"slots_body"},
+  {...cube("skulljack_eye_r","Right marquee eye",[8.3,22.1,1.9],[8.9,22.7,2.2],"#08090b","skull shadow"),boneId:"slots_body"}
+];
+const blackwakeSkulljackRefit:Project={id:"blackwake_skulljack_refit",name:"Blackwake Skulljack Refit",description:"The rare-tier Skulljack rebuilt on square-section reel drums. Black ship timber, salt-bitten iron, pirate gold trim and the bone skull marquee are unchanged; the reels are now four-symbol drums recessed behind the bezel, with staggered stops and a jackpot payout.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Blackwake Skulljack Refit",skulljackRefitCubes),bones:drumSlotBones(false),animations:[drumSpinClip("skulljack_refit"),drumJackpotClip("skulljack_refit",false)]};
+const admiralRefitCubes:Cube[]=[...drumSlotCubes("admiral",admiralSlotPalette,admiralSlotSymbols),
+  {...cube("admiral_marquee","Dread Admiral marquee",[4,22,4],[12,24.5,11],"#d2a541","ornate pirate gold"),boneId:"slots_body"},
+  {...cube("admiral_gilded_crown","Dread Admiral gilded crown",[3,24.5,4.5],[13,26.5,11.5],"#d9af48","ornate pirate gold"),boneId:"slots_body"},
+  {...cube("admiral_crown_jewel","Cursed aqua crown jewel",[6.5,26.5,6.5],[9.5,28.5,9.5],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},
+  {...cube("admiral_plaque","Admiral jackpot plaque",[4.5,20.4,2.6],[11.5,23.6,3],"#c59839","ornate pirate gold"),boneId:"slots_body"},
+  {...cube("admiral_eye_l","Left kraken eye gem",[5.2,22.2,2.2],[6.4,23.4,2.6],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},
+  {...cube("admiral_eye_r","Right kraken eye gem",[9.6,22.2,2.2],[10.8,23.4,2.6],"#4fc7c3","emissive cursed aqua jewel"),boneId:"slots_body"},
+  {...cube("admiral_tentacle_l","Left gilded kraken tentacle",[0,14,5],[2,23,7],"#c99a3b","gilded kraken carving"),boneId:"slots_body",rotation:[0,0,-22.5] as Vec3},
+  {...cube("admiral_tentacle_r","Right gilded kraken tentacle",[14,14,5],[16,23,7],"#c99a3b","gilded kraken carving"),boneId:"slots_body",rotation:[0,0,22.5] as Vec3},
+  {...cube("admiral_rim_t","Upper payout gold rim",[3.6,7,1.4],[12.4,7.6,1.8],"#e2b94f","ornate pirate gold"),boneId:"slots_body"},
+  {...cube("admiral_rim_b","Lower payout gold rim",[3.6,5,1.4],[12.4,5.6,1.8],"#e2b94f","ornate pirate gold"),boneId:"slots_body"}
+];
+const dreadAdmiralKrakenJackpotRefit:Project={id:"dread_admiral_kraken_jackpot_refit",name:"Dread Admiral's Kraken Jackpot Refit",description:"The legendary-tier Kraken Jackpot rebuilt on square-section reel drums. Midnight naval timber, lavish gold, gilded kraken tentacles and cursed aqua jewels are kept; the reels become four-symbol drums in a recessed window, with staggered stops that settle square and a jackpot payout.",source:"codex",revision:1,kind:"furniture",namespace:"blocksmith",baseItem:"minecraft:paper",category:"Furniture",group:"Pirate Slot Machines",pack:"Fantasy Daily Rewards",placementSize:[1,2,1],cubes:overlapChecked("Dread Admiral's Kraken Jackpot Refit",admiralRefitCubes),bones:drumSlotBones(false),animations:[drumSpinClip("admiral_refit"),drumJackpotClip("admiral_refit",false)]};
 
 const rouletteCubes:Cube[]=[
   {...cube("roulette_foot_fl","Front-left brass foot",[.5,0,.5],[4.5,1,4.5],"#b88a32","aged casino brass"),boneId:"roulette_table"},{...cube("roulette_foot_fr","Front-right brass foot",[27.5,0,.5],[31.5,1,4.5],"#b88a32","aged casino brass"),boneId:"roulette_table"},{...cube("roulette_foot_rl","Rear-left brass foot",[.5,0,11.5],[4.5,1,15.5],"#b88a32","aged casino brass"),boneId:"roulette_table"},{...cube("roulette_foot_rr","Rear-right brass foot",[27.5,0,11.5],[31.5,1,15.5],"#b88a32","aged casino brass"),boneId:"roulette_table"},
@@ -951,6 +1013,9 @@ const BUILTINS:Project[] = [
   crownvaultDailyReliquary,
   runeboundDailyCoffer,
   wayfarerDailyChest,
+  deckhandLuckyBonesRefit,
+  blackwakeSkulljackRefit,
+  dreadAdmiralKrakenJackpotRefit,
   sirensFortune,
   gildedBriarManor,
   marshlightTradingPost,
