@@ -279,6 +279,17 @@ test("Blackwake pirate weapons form a five-item handheld collection", async () =
   assert.match(source, /\.\.\.blackwakePirateWeapons/);
 });
 
+test("Woodcutting Guild Axe follows the vanilla handheld axe template", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /const WOODCUTTING_GUILD_AXE_ROWS=\[/);
+  assert.match(source, /const WOODCUTTING_GUILD_AXE_COLORS:Record<string,string>/);
+  assert.match(source, /id:"runesmith_woodcutting_guild_axe",name:"Woodcutting Guild Axe"/);
+  assert.match(source, /baseItem:"minecraft:iron_axe",spriteParent:"handheld"/);
+  assert.match(source, /sprite:makeObjectGuiItemSprite\(WOODCUTTING_GUILD_AXE_ROWS,WOODCUTTING_GUILD_AXE_COLORS\)/);
+  assert.match(source, /group:"Woodcutting Guild Tools",pack:"RuneSmith Woodcutting Guild"/);
+  assert.match(source, /woodcuttingGuildAxe,/);
+});
+
 test("core GUI icons export as a reusable Minecraft item collection", async () => {
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /"Tools & Weapons","GUI Items","Icons Essential","Free Application Icons","Blocks"/);
