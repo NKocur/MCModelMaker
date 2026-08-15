@@ -125,14 +125,23 @@ test("Briarback Goblin Fighter is an original combat-ready humanoid rig", async 
   const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
   assert.match(source, /name:"Briarback Goblin Fighter"/);
   assert.match(source, /baseEntity:"minecraft:zombie",category:"Creatures",group:"Goblinoids",pack:"Wild Frontier"/);
-  for (const feature of ["Oversized left ear", "Long hooked nose", "Bent scrap buckler", "Knotted club head"]) assert.match(source, new RegExp(feature));
-  assert.match(source, /id:"goblin_jaw",name:"Tusking jaw",parentId:"goblin_head"/);
+  // RuneScape-goblin read: bald oversized head, broad drooping nose, swept pointed ears, bare feet.
+  for (const feature of ["Oversized bald head", "Oversized left ear", "Left ear point", "Broad goblin nose", "Drooping nose bulb", "Left beady eye", "Left splayed foot", "Knotted club head"]) assert.match(source, new RegExp(feature));
+  for (const gone of ["goblin_hair", "goblin_tusk", "Bent scrap buckler", "scrap pauldron"]) assert.ok(!source.includes(gone), `${gone} should not survive the goblin redesign`);
+  assert.match(source, /id:"goblin_jaw",name:"Lower jaw",parentId:"goblin_head"/);
   assert.match(source, /id:"goblin_arm_r",name:"Club arm",parentId:"goblin_body"/);
   for (const clip of ["Idle", "Walk", "Club Attack", "Hurt", "Death"]) assert.match(source, new RegExp(`name:"${clip}"`));
   assert.match(source, /goblin_attack_arm_4[^\n]+\[-125,0,-18\]/);
   assert.match(source, /goblin_death_body_24[^\n]+\[88,0,0\]/);
-  assert.match(source, /goblin_club_head[^\n]+\[12,1,5\.6\],\[15\.4,5,9\.2\]/);
-  assert.match(source, /goblin_club_spike[^\n]+\[13,0,6\.5\],\[14\.4,1,8\.4\]/);
+  // Every goblin cube must be volume-disjoint; the rig previously carried 33 overlapping pairs.
+  const goblinBlock = source.slice(source.indexOf('id:"briarback_goblin_fighter"'), source.indexOf("  bones:[", source.indexOf('id:"briarback_goblin_fighter"')));
+  const boxes = [...goblinBlock.matchAll(/cube\("[^"]+","[^"]+",\[([-\d.,]+)\],\[([-\d.,]+)\]/g)]
+    .map(m => ({ from: m[1].split(",").map(Number), to: m[2].split(",").map(Number) }));
+  assert.ok(boxes.length >= 30, "expected the full goblin cube list");
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const clash = [0, 1, 2].every(axis => Math.min(boxes[i].to[axis], boxes[j].to[axis]) - Math.max(boxes[i].from[axis], boxes[j].from[axis]) > 1e-6);
+    assert.ok(!clash, `goblin cubes ${i} and ${j} share volume`);
+  }
   assert.match(source, /swampWatchtower,\s+briarbackGoblin,\s+marshAlligator/);
 });
 
