@@ -986,3 +986,28 @@ test("Dragon Wood Bow is a vanilla-shaped flat item cut from the dragon tree set
   assert.ok(flat.split("").filter(ch => ch === "S").length >= 8, "string must run the full diagonal");
   assert.ok(flat.split("").filter(ch => ch !== ".").length > 90, "bow should fill the icon");
 });
+test("Woodcutting Guild fletching bench is a two-block arrow and bow station", async () => {
+  const source = await readFile(new URL("../app/ModelMaker.tsx", import.meta.url), "utf8");
+  assert.match(source, /id:"woodcutting_guild_fletching_bench",name:"Woodcutting Guild Fletching Bench"/);
+  assert.match(source, /group:"Woodcutting Guild Stations",pack:"RuneSmith Woodcutting Guild"/);
+  assert.match(source, /placementSize:\[2,1,1\]/);
+  assert.match(source, /cubes:overlapChecked\("Woodcutting Guild Fletching Bench",\[/);
+  // left bay fletches arrows, right bay shapes bows, and both guild woods are stocked
+  for (const part of ["Arrow shaft 1", "Arrowhead tray", "Goose feather bundle", "Fletching knife blade",
+    "Bow stave segment 1", "Stave tiller line", "Bowstring coil", "Draw-knife blade", "Finished bow limb 1",
+    "Dragon wood staves", "Magic wood staves", "Guild brass crest"]) assert.match(source, new RegExp(part));
+  assert.match(source, /id:"bench_stave",name:"Bow stave in the tiller",parentId:"bench_body"/);
+  for (const clip of ["Fletch Arrow", "Tiller Bow"]) assert.match(source, new RegExp(`name:"${clip}"`));
+  // the bench spans exactly two blocks, and the bays sit either side of the divider
+  const block = source.slice(source.indexOf('id:"woodcutting_guild_fletching_bench"'), source.indexOf('"guild_bench_fletch"'));
+  const boxes = [...block.matchAll(/cube\("[^"]+","[^"]+",\[([-\d.,]+)\],\[([-\d.,]+)\]/g)]
+    .map(m => ({ from: m[1].split(",").map(Number), to: m[2].split(",").map(Number) }));
+  assert.ok(boxes.length >= 60, "expected the full bench cube list");
+  assert.equal(Math.min(...boxes.map(b => b.from[0])), 0);
+  assert.equal(Math.max(...boxes.map(b => b.to[0])), 32);
+  assert.ok(boxes.every(b => b.to[1] <= 16 && b.from[1] >= 0), "bench must stay one block tall");
+  for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
+    const clash = [0, 1, 2].every(ax => Math.min(boxes[i].to[ax], boxes[j].to[ax]) - Math.max(boxes[i].from[ax], boxes[j].from[ax]) > 1e-6);
+    assert.ok(!clash, `bench cubes ${i} and ${j} share volume`);
+  }
+});
